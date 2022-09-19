@@ -2,7 +2,7 @@ import { FormDivider, FormRow, ScrollView, FormSwitch, Form, FormSection } from 
 import { SettingsStore, getBoolean } from 'enmity/api/settings';
 import { getIDByName } from 'enmity/api/assets';
 import { React, Toasts, Constants, StyleSheet } from 'enmity/metro/common';
-import { version, release} from '../../manifest.json';
+import {name, version, release} from '../../manifest.json';
 import { bulk, filters} from 'enmity/metro';
 
 interface SettingsProps {
@@ -35,7 +35,7 @@ export default ({ settings }: SettingsProps) => {
                         value={settings.getBoolean('masterDisable', false)}
                         onValueChange={() => {
                                 settings.toggle('masterDisable', false)
-                                Toasts.open({ content: `Successfully ${settings.getBoolean('masterDisable', false) ? 'disabled' : 'enabled'} AccountInfo.`, source: toastTrail });
+                                Toasts.open({ content: `Successfully ${settings.getBoolean('masterDisable', false) ? 'disabled' : 'enabled'} ${name}.`, source: toastTrail });
                             }
                         }
                     />
@@ -46,7 +46,7 @@ export default ({ settings }: SettingsProps) => {
         <FormSection title="Source Code">
             <FormRow
                 label="Download"
-                subLabel="Copy the link of the plugin to Clipboard"
+                subLabel={`Copy the link of ${name} to Clipboard`}
                 leading={<FormRow.Icon style={styles.icon} source={getIDByName('toast_copy_link')} />}
                 trailing={FormRow.Arrow}
                 onPress={() => {
@@ -56,7 +56,7 @@ export default ({ settings }: SettingsProps) => {
             />
             <FormRow
                 label="Source"
-                subLabel="Open the Repo of the Plugin Externally"
+                subLabel={`Open the Repo of ${name} Externally`}
                 leading={<FormRow.Icon style={styles.icon} source={getIDByName('ic_leave_stage')} />}
                 trailing={FormRow.Arrow}
                 onPress={() => {

@@ -48,7 +48,7 @@ const Dislate: Plugin = {
                         leading={<FormRow.Icon source={getIDByName('img_nitro_star')} />}
                         label="Translate"
                         onPress={() => {
-                           console.log(`${args[0].message.content}`)
+                           console.log(`${((args[0])["message"])["content"]}`)
                            LazyActionSheet.hideActionSheet();
                         }}
                      />
