@@ -16,22 +16,24 @@ export default () => {
       setLanguages(names)
    }, [])
 
-   
-   return <>
-      <Search
-         placeholder="Search Language"
-         onChangeText={text => setQuery(text)}
-      />
-      <ScrollView>
-         {languages.filter(language => language.includes(query)).map(language => 
-            <FormRow 
-               label={language}
-               onPress={() => {
-                    set('Dislate', "DislateLangTo", language)
-                    Navigation.pop()
-               }}
-            />
-         )}
-      </ScrollView>  
-   </>;
+    const getCapitalised = (str: string) => {
+        return str.charAt(0).toUpperCase() + str.slice(1)
+    }
+    return <>
+        <Search
+            placeholder="Search Language"
+            onChangeText={text => setQuery(text)}
+        />
+        <ScrollView>
+            {languages.filter(language => language.includes(query)).map(language => 
+                <FormRow 
+                    label={getCapitalised(language)}
+                    onPress={() => {
+                        set('Dislate', "DislateLangTo", language)
+                        Navigation.pop()
+                    }}
+                />
+            )}
+        </ScrollView>  
+    </>;
 };

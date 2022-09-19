@@ -15,7 +15,9 @@ export default () => {
       setEngines(enginesArr)
    }, [])
 
-   
+   const getCapitalised = (str: string) => {
+      return str.charAt(0).toUpperCase() + str.slice(1)
+   }
    return <>
       <Search
          placeholder="Search Language"
@@ -24,7 +26,7 @@ export default () => {
       <ScrollView>
          {engines.filter(engine => engine.includes(query)).map(engine => 
             <FormRow 
-               label={engine}
+               label={getCapitalised(engine)}
                onPress={() => {
                     set('Dislate', "DislateLangEngine", engine)
                     Navigation.pop()

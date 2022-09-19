@@ -75,11 +75,14 @@ const Dislate: Plugin = {
                            leading={<FormRow.Icon source={getIDByName('img_nitro_star')} />}
                            onPress={() => {
                               try{
-                                 translate(originalMessage.content, { 
-                                    to: get("Dislate", "DislateLangTo", "japanese"), 
-                                    engine: get("Dislate", "DislateLangEngine", "deepl")}).then(res => {
+                                 () => {
+                                    translate(originalMessage.content, { 
+                                       to: get("Dislate", "DislateLangTo", "japanese"), 
+                                       engine: get("Dislate", "DislateLangEngine", "deepl")})
+                                    .then((res: string) => {
                                        setTranslated(res)
                                     });
+                                 }
                                  if (
                                     !originalMessage?.editedTimestamp ||
                                     originalMessage?.editedTimestamp._isValid
