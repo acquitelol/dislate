@@ -7,7 +7,7 @@ import { bulk, filters, getByProps } from 'enmity/metro';
 import { create } from 'enmity/patcher';
 import manifest from '../manifest.json';
 import Settings from './components/Settings';
-import { get } from 'enmity/api/settings'
+import { get, set } from 'enmity/api/settings'
 
 // main declaration of modules being altered by the plugin
 const [
