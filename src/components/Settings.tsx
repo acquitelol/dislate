@@ -1,4 +1,4 @@
-import { FormDivider, FormRow, ScrollView, FormSwitch, FormSection, FormSelect } from 'enmity/components';
+import { FormDivider, FormRow, ScrollView, FormSwitch, FormSection, FormSelect, Text } from 'enmity/components';
 import { SettingsStore, getBoolean } from 'enmity/api/settings';
 import { getIDByName } from 'enmity/api/assets';
 import { React, Toasts, Constants, StyleSheet } from 'enmity/metro/common';
@@ -23,31 +23,47 @@ export default ({ settings }: SettingsProps) => {
    const styles = StyleSheet.createThemedStyleSheet({
         icon: {
             color: Constants.ThemeColorMap.INTERACTIVE_NORMAL
+        },
+        item: {
+            color: Constants.ThemeColorMap.TEXT_MUTED
         }
     });
     var apiOptions = ["deepl", "libre", "yandex"];
     var engineLangTo = Object.keys(names)
-    var engines =<FormSection title={"Engine: " + settings?.get("DislateLangEngine", apiOptions[0]) ?? "N/A"}>
-        <FormSelect 
-            options={apiOptions} 
-            onChange={(value: string) => { settings?.set("DislateTo", null); 
-                                           settings?.set("DislateEngine", value)}} 
-            value={settings?.get("DislateLangEngine", apiOptions[0])} />
-    </FormSection>
-
-    var transTo = <FormSection title={"Translate To: " + settings?.get("DislateLangTo", engineLangTo[0]) ?? "N/A"}>
-        <FormSelect 
-            options={engineLangTo} 
-            onChange={(value: string) => settings?.set("DislateLangTo", value)} 
-            value={settings?.get("DislateLangTo", engineLangTo[0])} 
-        />
-    </FormSection>
 
    return <>
     <ScrollView>
-        {engines}
-        <FormDivider />
-        {transTo}
+        <FormSection title="Language Settings">
+            <FormSection>
+                <FormRow
+                    label='Current Engine'
+                    leading={<FormRow.Icon style={styles.icon} source={getIDByName('Check')} />}
+                    trailing={() => <Text style={styles.item}>
+                        {settings?.get("DislateLangEngine", apiOptions[0]) ?? "N/A"}
+                    </Text>}
+                />
+                <FormSelect 
+                    options={apiOptions} 
+                    onChange={(value: string) => { settings?.set("DislateLangTo", "japanese"); 
+                                                settings?.set("DislateEngine", value)}} 
+                    value={settings?.get("DislateLangEngine", apiOptions[0])} 
+                />
+            </FormSection>
+            <FormSection>
+                <FormRow
+                    label='Current Language'
+                    leading={<FormRow.Icon style={styles.icon} source={getIDByName('Check')} />}
+                    trailing={() => <Text style={styles.item}>
+                        {settings?.get("DislateLangTo", "japanese") ?? "N/A"}
+                    </Text>}
+                />
+                <FormSelect 
+                    options={engineLangTo} 
+                    onChange={(value: string) => settings?.set("DislateLangTo", value)} 
+                    value={settings?.get("DislateLangTo", "japanese")} 
+                />
+            </FormSection>
+        </FormSection>
         <FormDivider />
 		<FormSection title="Disable Entire Plugin">
             <FormRow
