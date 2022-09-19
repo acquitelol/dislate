@@ -56,9 +56,10 @@ const Dislate: Plugin = {
             if (sheet === "MessageLongPressActionSheet") {
                component.then((instance) => {
                   Patcher.after(instance, "default", (_, message, res) => {
+                     const finalLocation = res?.props?.children?.props?.children?.props?.children[1]
                      // doesnt place a new element if its already there
                      if (
-                        res.props.children.props.children.props.children[1][0].key == "1002"
+                        finalLocation[0]?.key == "1002"
                      ) {
                         return;
                      }
@@ -78,7 +79,7 @@ const Dislate: Plugin = {
                      } catch { }
 
                      // adds new element to the top of lazyActionSheet array
-                     res.props.children.props.children.props.children[1].unshift(
+                     finalLocation.unshift(
                         <FormRow
                            key={`1002`} // for no new items every time
                            label='Translate'
