@@ -1,7 +1,8 @@
-import { FormDivider, FormRow, ScrollView, FormSwitch, FormSection, FormSelect, Text, Form } from 'enmity/components';
-import { SettingsStore, getBoolean } from 'enmity/api/settings';
+// main imports of elements and dependencies
+import { FormDivider, FormRow, ScrollView, FormSwitch, FormSection, Text } from 'enmity/components';
+import { SettingsStore } from 'enmity/api/settings';
 import { getIDByName } from 'enmity/api/assets';
-import { React, Toasts, Constants, StyleSheet } from 'enmity/metro/common';
+import { Toasts, Constants, StyleSheet } from 'enmity/metro/common';
 import {name, version, release} from '../../manifest.json';
 import { bulk, filters} from 'enmity/metro';
 import { Navigation } from 'enmity/metro/common'
@@ -9,10 +10,12 @@ import Page from './Page'
 import Names from './Names'
 import { get, set } from 'enmity/api/settings'
 
+// main settingsStore interface
 interface SettingsProps {
    settings: SettingsStore;
 }
 
+// main declaration of modules being altered by the plugin
 const [
     Router,
     Clipboard,
@@ -22,6 +25,7 @@ const [
  );
 
 export default ({ settings }: SettingsProps) => {
+    // icon and styles
    const toastTrail = getIDByName('ic_selection_checked_24px');
    const styles = StyleSheet.createThemedStyleSheet({
         icon: {
@@ -42,8 +46,9 @@ export default ({ settings }: SettingsProps) => {
                     {get("Dislate", "DislateLangFrom", "english") ?? "N/A"}
                 </Text>}
                 onPress={()=>{
-                    set("Dislate", "DislateLangFilter", false)
-                    Navigation.push(Page, { component: Names, name: "Dislate: Language From" })
+                    // selects which route the page will overwrite: "from" being false and "to" being true
+                    set("Dislate", "DislateLangFilter", false) // selects "from" route to be overwritten
+                    Navigation.push(Page, { component: Names, name: "Dislate: Language From" }) // opens custom page with languages
                 }}
             />
             <FormDivider/>
@@ -54,8 +59,9 @@ export default ({ settings }: SettingsProps) => {
                     {get("Dislate", "DislateLangTo", "japanese") ?? "N/A"}
                 </Text>}
                 onPress={()=>{
-                    set("Dislate", "DislateLangFilter", true)
-                    Navigation.push(Page, { component: Names, name: "Dislate: Language To" })
+                    // selects which route the page will overwrite: "from" being false and "to" being true
+                    set("Dislate", "DislateLangFilter", true) // selects "to" route to be overwritten
+                    Navigation.push(Page, { component: Names, name: "Dislate: Language To" }) // opens custom page with languages
                 }}
             />
         </FormSection>
@@ -66,10 +72,10 @@ export default ({ settings }: SettingsProps) => {
                 leading={<FormRow.Icon style={styles.icon} source={getIDByName('ic_rulebook_16px')} />}
                 trailing={
                     <FormSwitch
-                        value={settings.getBoolean('masterDisable', false)}
+                        value={settings.getBoolean('masterDisable', false)} // main masterDisable function
                         onValueChange={() => {
                                 settings.toggle('masterDisable', false)
-                                Toasts.open({ content: `Successfully ${settings.getBoolean('masterDisable', false) ? 'disabled' : 'enabled'} ${name}.`, source: toastTrail });
+                                Toasts.open({ content: `Successfully ${settings.getBoolean('masterDisable', false) ? 'disabled' : 'enabled'} ${name}.`, source: toastTrail }); // overwrites it with the opposite
                             }
                         }
                     />

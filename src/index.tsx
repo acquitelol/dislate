@@ -1,13 +1,13 @@
 // main imports of elements and dependencies
-import { Constants, React, StyleSheet } from 'enmity/metro/common';
-import { FormDivider, FormRow, Text, View} from 'enmity/components';
+import { FormRow } from 'enmity/components';
 import { Plugin, registerPlugin } from 'enmity/managers/plugins';
 import { getIDByName } from 'enmity/api/assets';
-import { bulk, filters, getByProps } from 'enmity/metro';
+import { bulk, filters } from 'enmity/metro';
+import { Toasts } from 'enmity/metro/common';
 import { create } from 'enmity/patcher';
 import manifest from '../manifest.json';
 import Settings from './components/Settings';
-import { get, set } from 'enmity/api/settings';
+import { get } from 'enmity/api/settings';
 import { translateString } from './utils';
 
 
@@ -35,40 +35,46 @@ const Dislate: Plugin = {
    onStart() {
       const unpatchActionSheet = () => {
 
-         for (const handler of ["MESSAGE_UPDATE", "MESSAGE_DELETE"]) {
+         // wake up flux message update
+         for (const handler of ["MESSAGE_UPDATE"]) {
             try {
                FluxDispatcher.dispatch({
                      type: handler,
-                     message: {}, // should be enough to wake them up
+                     message: {},
                   });
             } catch(err) { console.log(`[Dislate Local Error ${err}]`);}
          }
       
+         // main patch
          Patcher.before(LazyActionSheet, "openLazy", (_, [component, sheet], _res) => {
             if (sheet === "MessageLongPressActionSheet") {
                component.then((instance) => {
                   Patcher.after(instance, "default", (_, message, res) => {
+                     // doesnt place a new element if its already there
                      if (
                         res.props.children.props.children.props.children[1][0].key == "1002"
                      ) {
                         return;
                      }
 
+                     // gets original message sent by user
                      const originalMessage = MessageStore.getMessage(
                         message[0].message.channel_id,
                         message[0].message.id
                      );
                      
+                     // return if theres no content
                      if (!message[0]?.message?.content) return;
 
+                     // returns if the timestamp is invalid
                      try {
                         if (!message[0].edited_timestamp._isValid) return;
                      } catch { }
 
+                     // adds new element to the top of lazyActionSheet array
                      res.props.children.props.children.props.children[1].unshift(
-                        
                         <FormRow
-                           key={`1002`}
+                           key={`1002`} // for no new items every time
                            label='Translate'
                            leading={<FormRow.Icon source={getIDByName('img_nitro_star')} />}
                            onPress={() => {
@@ -77,11 +83,13 @@ const Dislate: Plugin = {
                                     !originalMessage?.editedTimestamp ||
                                     originalMessage?.editedTimestamp._isValid
                                  ) {
+                                    // translates message into language from settings
                                     translateString(
                                        originalMessage.content, 
                                        get("Dislate", "DislateLangFrom", "english"), 
                                        get("Dislate", "DislateLangTo", "japanese")
                                     ).then(res => {
+                                       // updates the message clicked with the new content and language translated to
                                        const editEvent = {
                                           type: "MESSAGE_UPDATE",
                                           message: {
@@ -95,12 +103,19 @@ const Dislate: Plugin = {
                                           },
                                           log_edit: false
                                        };
+                                       // dispatches the event
                                        FluxDispatcher.dispatch(editEvent);
+
+                                       // opens a toast to declare success
+                                       Toasts.open({ 
+                                          content: `Modified message to ${get("Dislate", "DislateLangTo", "japanese")}}.`, 
+                                          source: getIDByName('img_nitro_star')
+                                       })
                                     })
                                     
                                     
                                  }
-
+                                 // hides the action sheet
                                  LazyActionSheet.hideActionSheet()
                               } catch(err) { console.log(`[Dislate Local Error ${err}]`);}
                               
@@ -111,9 +126,10 @@ const Dislate: Plugin = {
             }
          })
       }
+
       setTimeout(() => {
          unpatchActionSheet();
-      }, 300); // give Flux some time to initialize -- 300ms should be more than enough
+      }, 300); // gives flux time to init
    },
 
    onStop() {

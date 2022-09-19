@@ -1,6 +1,8 @@
-import { React, Navigation, NavigationNative, NavigationStack, StyleSheet, ColorMap } from 'enmity/metro/common';
+// main imports of elements and dependencies
+import { Navigation, NavigationNative, NavigationStack, StyleSheet, ColorMap } from 'enmity/metro/common';
 import { Button, View } from 'enmity/components';
 
+// main settings stack
 export const Settings = NavigationStack.createStackNavigator();
 
 const { ThemeColorMap } = ColorMap;
@@ -55,7 +57,12 @@ export default ({ name = 'Page', component = View } = {}) => {
           headerLeft: () => (<Button
             color={styles.close.color}
             title='Close'
-            onPress={(): void => Navigation.pop()}
+            onPress={
+                (): void => {
+                    // closes page
+                    Navigation.pop()
+                }
+            }
           />),
           ...NavigationStack.TransitionPresets.ModalSlideFromBottomIOS
         }}
