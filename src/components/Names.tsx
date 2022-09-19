@@ -38,7 +38,7 @@ export default () => {
                         // sets language to either "from" or "to" based on filter
                         get("Dislate", "DislateLangFilter") ? set('Dislate', "DislateLangTo", language) : set('Dislate', "DislateLangFrom", language)
                         // announces success with a toast
-                        Toasts.open({ content: `Successfully set ${language} as Language ${get("Dislate", "DislateLangFilter") ? "To" : "From"}.`, 
+                        Toasts.open({ content: `Set Language to Translate${get("Dislate", "DislateLangFilter") ? "To" : "From"}.`, 
                             source: get("Dislate", "DislateLangFilter") ? getIDByName('ic_activity_24px') : getIDByName('ic_raised_hand')
                         })
                         // closes the page
