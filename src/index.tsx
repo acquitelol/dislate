@@ -44,7 +44,7 @@ const Dislate: Plugin = {
                         iconSource={getIDByName("img_nitro_star")}
                         label="Translate"
                         onPress={() => {
-                           alert(`${args}`)
+                           console.log(`${args}`)
                            LazyActionSheet.hideActionSheet();
                         }}
                      />
