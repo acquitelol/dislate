@@ -7,7 +7,6 @@ import { bulk, filters} from 'enmity/metro';
 import { Navigation } from 'enmity/metro/common'
 import Page from './Page'
 import Names from './Names'
-import Engine from './Engine'
 import { get, set } from 'enmity/api/settings'
 
 interface SettingsProps {
@@ -38,23 +37,12 @@ export default ({ settings }: SettingsProps) => {
         <FormSection title="Language Settings">
             <FormRow
                 label='Current Language'
-                leading={<FormRow.Icon style={styles.icon} source={getIDByName('Check')} />}
+                leading={<FormRow.Icon style={styles.icon} source={getIDByName('ic_activity_24px')} />}
                 trailing={() => <Text style={styles.item}>
                     {get("Dislate", "DislateLangTo", "japanese") ?? "N/A"}
                 </Text>}
                 onPress={()=>{
                     Navigation.push(Page, { component: Names, name: "Dislate: Language" })
-                }}
-            />
-            <FormDivider/>
-            <FormRow
-                label='Current Engine'
-                leading={<FormRow.Icon style={styles.icon} source={getIDByName('Check')} />}
-                trailing={() => <Text style={styles.item}>
-                    {get("Dislate", "DislateLangEngine", "deepl") ?? "N/A"}
-                </Text>}
-                onPress={()=>{
-                    Navigation.push(Page, { component: Engine, name: "Dislate: Engines" })
                 }}
             />
         </FormSection>

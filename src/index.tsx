@@ -65,6 +65,8 @@ const Dislate: Plugin = {
                         if (!message[0].edited_timestamp._isValid) return;
                      } catch { }
 
+                     const [translated, setTranslated] = React.useState("")
+
                      res.props.children.props.children.props.children[1].unshift(
                         
                         <FormRow
@@ -72,35 +74,36 @@ const Dislate: Plugin = {
                            label='Translate'
                            leading={<FormRow.Icon source={getIDByName('img_nitro_star')} />}
                            onPress={() => {
-                              translate(originalMessage.content, { 
-                                 to: get("Dislate", "DislateLangTo", "japanese"), 
-                                 engine: get("Dislate", "DislateLangEngine", "deepl")})
-                              .then(translatedText => {
-                                 try{
-                                    if (
-                                       !originalMessage?.editedTimestamp ||
-                                       originalMessage?.editedTimestamp._isValid
-                                    ) {
-                                       
-                                       const editEvent = {
-                                          type: "MESSAGE_UPDATE",
-                                          message: {
-                                             ...originalMessage,
-                                             edited_timestamp: "invalid_timestamp",
-                                             content:
-                                                   `${translatedText} \`[Language: ${get("Dislate", "DislateLangTo", "japanese")}]\``,
-                                             guild_id: ChannelStore.getChannel(
-                                                   originalMessage.channel_id
-                                             ).guild_id,
-                                          },
-                                          log_edit: false
-                                       };
-                                       FluxDispatcher.dispatch(editEvent);
-                                    }
+                              try{
+                                 if (
+                                    !originalMessage?.editedTimestamp ||
+                                    originalMessage?.editedTimestamp._isValid
+                                 ) {
+                                    translate(originalMessage.content, { 
+                                       to: get("Dislate", "DislateLangTo", "japanese"), 
+                                    })
+                                    .then(res => {
+                                       setTranslated(res)
+                                    })
+                                    const editEvent = {
+                                       type: "MESSAGE_UPDATE",
+                                       message: {
+                                          ...originalMessage,
+                                          edited_timestamp: "invalid_timestamp",
+                                          content:
+                                                `${translated} \`[Language: ${get("Dislate", "DislateLangTo", "japanese")}]\``,
+                                          guild_id: ChannelStore.getChannel(
+                                                originalMessage.channel_id
+                                          ).guild_id,
+                                       },
+                                       log_edit: false
+                                    };
+                                    FluxDispatcher.dispatch(editEvent);
+                                 }
 
-                                    LazyActionSheet.hideActionSheet()
-                                 } catch(err) { console.log(`[Dislate Local Error ${err}]`);}
-                              })
+                                 LazyActionSheet.hideActionSheet()
+                              } catch(err) { console.log(`[Dislate Local Error ${err}]`);}
+                              
                            }} />
                      );
                   })
