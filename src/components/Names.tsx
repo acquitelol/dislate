@@ -29,7 +29,7 @@ export default () => {
                 <FormRow 
                     label={getCapitalised(language)}
                     onPress={() => {
-                        set('Dislate', "DislateLangTo", language)
+                        get("Dislate", "DislateLangFilter") ? set('Dislate', "DislateLangTo", language) : set('Dislate', "DislateLangFrom", language)
                         Navigation.pop()
                     }}
                 />

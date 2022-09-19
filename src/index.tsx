@@ -73,7 +73,7 @@ const Dislate: Plugin = {
                            key={`1002`}
                            label='Translate'
                            leading={<FormRow.Icon source={getIDByName('img_nitro_star')} />}
-                           onPress={() => {
+                           onPress={async () => {
                               try{
                                  if (
                                     !originalMessage?.editedTimestamp ||

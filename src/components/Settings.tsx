@@ -36,12 +36,25 @@ export default ({ settings }: SettingsProps) => {
     <ScrollView>
         <FormSection title="Language Settings">
             <FormRow
-                label='Current Language'
+                label='Translate From'
+                leading={<FormRow.Icon style={styles.icon} source={getIDByName('ic_raised_hand')} />}
+                trailing={() => <Text style={styles.item}>
+                    {get("Dislate", "DislateLangFrom", "english") ?? "N/A"}
+                </Text>}
+                onPress={()=>{
+                    set("Dislate", "DislateLangFilter", false)
+                    Navigation.push(Page, { component: Names, name: "Dislate: Language" })
+                }}
+            />
+            <FormDivider/>
+            <FormRow
+                label='Translate To'
                 leading={<FormRow.Icon style={styles.icon} source={getIDByName('ic_activity_24px')} />}
                 trailing={() => <Text style={styles.item}>
                     {get("Dislate", "DislateLangTo", "japanese") ?? "N/A"}
                 </Text>}
                 onPress={()=>{
+                    set("Dislate", "DislateLangFilter", true)
                     Navigation.push(Page, { component: Names, name: "Dislate: Language" })
                 }}
             />
