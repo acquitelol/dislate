@@ -3,7 +3,7 @@ import { FormRow } from 'enmity/components';
 import { Plugin, registerPlugin } from 'enmity/managers/plugins';
 import { getIDByName } from 'enmity/api/assets';
 import { bulk, filters } from 'enmity/metro';
-import { Toasts } from 'enmity/metro/common';
+import { React, Toasts } from 'enmity/metro/common';
 import { create } from 'enmity/patcher';
 import manifest from '../manifest.json';
 import Settings from './components/Settings';
