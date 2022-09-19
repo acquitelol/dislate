@@ -35,16 +35,20 @@ const Dislate: Plugin = {
            if (sheet === "MessageLongPressActionSheet") {
              component.then((instance) => {
                Patcher.after(instance, "default", (_, args, res) => {
+                  if(res.props.children().props.children.props.children[1][0].key == "696") {
+                     return
+                  }
                   const children = findInReactTree(res, r => r.find?.(c => Array.isArray(c)));
                   if (!children || !children[1]) return res;
                   const items = children[1];
 
                   items.unshift(
                      <FormRow
+                        key="696"
                         leading={<FormRow.Icon source={getIDByName('img_nitro_star')} />}
                         label="Translate"
                         onPress={() => {
-                           console.log(`${args}`)
+                           console.log(`${args[0].message.content}`)
                            LazyActionSheet.hideActionSheet();
                         }}
                      />
