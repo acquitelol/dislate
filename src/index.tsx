@@ -8,7 +8,7 @@ import { create } from 'enmity/patcher';
 import manifest from '../manifest.json';
 import Settings from './components/Settings';
 import { get, set } from 'enmity/api/settings';
-import {translateString} from '../utils/translate';
+import { translateString } from './utils';
 
 
 // main declaration of modules being altered by the plugin
@@ -73,7 +73,7 @@ const Dislate: Plugin = {
                            key={`1002`}
                            label='Translate'
                            leading={<FormRow.Icon source={getIDByName('img_nitro_star')} />}
-                           onPress={async () => {
+                           onPress={() => {
                               try{
                                  if (
                                     !originalMessage?.editedTimestamp ||
