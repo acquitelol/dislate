@@ -64,33 +64,35 @@ const Dislate: Plugin = {
                               label='Translate'
                               leading={<FormRow.Icon source={getIDByName('img_nitro_star')} />}
                               onPress={() => {
-                                 if (
-                                    !originalMessage?.editedTimestamp ||
-                                    originalMessage?.editedTimestamp._isValid
-                                 ) {
-                                    try{
-                                       var origContent = originalMessage.content
-                                       var origChannel = originalMessage.channel_id
-                                    }catch{
-                                       var origContent = message[0].message.content
-                                       var origChannel = message[0].message.channel_id
-                                    }
-                                    message[0] = {};
-                                    const editEvent = {
-                                       type: "MESSAGE_UPDATE",
-                                       message: {
-                                          ...originalMessage,
-                                          edited_timestamp: "invalid_timestamp",
-                                          content:
-                                                origContent + ` \`[edited by ${manifest.authors[0].name}]\``,
-                                          guild_id: ChannelStore.getChannel(
-                                                origChannel
-                                          ).guild_id,
-                                       },
-                                       log_edit: false
-                                    };
-                                    FluxDispatcher.dispatch(editEvent);
-                                 }
+                                 // if (
+                                 //    !originalMessage?.editedTimestamp ||
+                                 //    originalMessage?.editedTimestamp._isValid
+                                 // ) {
+                                 //    try{
+                                 //       var origContent = originalMessage.content
+                                 //       var origChannel = originalMessage.channel_id
+                                 //    }catch{
+                                 //       var origContent = message[0].message.content
+                                 //       var origChannel = message[0].message.channel_id
+                                 //    }
+                                 //    message[0] = {};
+                                 //    const editEvent = {
+                                 //       type: "MESSAGE_UPDATE",
+                                 //       message: {
+                                 //          ...originalMessage,
+                                 //          edited_timestamp: "invalid_timestamp",
+                                 //          content:
+                                 //                origContent + ` \`[edited by ${manifest.authors[0].name}]\``,
+                                 //          guild_id: ChannelStore.getChannel(
+                                 //                origChannel
+                                 //          ).guild_id,
+                                 //       },
+                                 //       log_edit: false
+                                 //    };
+                                 //    FluxDispatcher.dispatch(editEvent);
+                                 // }
+
+                                 console.log(originalMessage)
                                  LazyActionSheet.hideActionSheet()
                                  items.shift()
                               }} />
