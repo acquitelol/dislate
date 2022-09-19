@@ -41,7 +41,7 @@ const Dislate: Plugin = {
 
                   items.unshift(
                      <FormRow
-                        iconSource={getIDByName("img_nitro_star")}
+                        leading={<FormRow.Icon source={getIDByName('img_nitro_star')} />}
                         label="Translate"
                         onPress={() => {
                            console.log(`${args}`)
