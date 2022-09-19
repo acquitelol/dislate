@@ -1,9 +1,9 @@
 {
-   "name": "plugin-template",
-   "description": "Template for enmity plugins.",
+   "name": "dislate",
+   "description": "translates",
    "version": "1.0.0",
    "license": "GPL-3.0",
-   "author": "Zoey & eternal",
+   "author": "Acquite",
    "scripts": {
       "build": "rollup -c --configPlugin esbuild"
    },

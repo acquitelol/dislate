@@ -1,11 +1,13 @@
 {
-   "name": "SilentTyping",
+   "name": "Dislate",
    "version": "1.0.0",
-   "description": "Silences your typing indicator.",
+   "description": "Translates",
+   "release": "development",
    "authors": [
       {
-         "name": "eternal",
-         "id": "263689920210534400"
+         "name": "acquite",
+         "id": "581573474296791211"
       }
-   ]
+   ],
+   "color": "#ff1f84"
 }
