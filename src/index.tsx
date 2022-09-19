@@ -71,20 +71,18 @@ const Dislate: Plugin = {
                                     try{
                                        var origContent = originalMessage.content
                                        var origChannel = originalMessage.channel_id
-                                       message[0] = {};
                                     }catch{
                                        var origContent = message[0].message.content
                                        var origChannel = message[0].message.channel_id
-                                       message[0] = {};
                                     }
-
+                                    message[0] = {};
                                     const editEvent = {
                                        type: "MESSAGE_UPDATE",
                                        message: {
                                           ...originalMessage,
                                           edited_timestamp: "invalid_timestamp",
                                           content:
-                                                origContent + " `[edited by Acquite]`",
+                                                origContent + ` \`[edited by ${manifest.authors[0].name}]\``,
                                           guild_id: ChannelStore.getChannel(
                                                 origChannel
                                           ).guild_id,
@@ -104,15 +102,11 @@ const Dislate: Plugin = {
                });
             });
          }
-
-         unpatchActionSheet()
       })
 
-      const unPatchClose = Patcher.after(LazyActionSheet, "hideActionSheet", () => {
-         Patcher.unpatchAll()
-         unpatchActionSheet()
-         unPatchClose()
-      })
+      setTimeout(() => {
+         unpatchActionSheet();
+     }, 300); // give Flux some time to initialize -- 300ms should be more than enough
    },
 
    onStop() {
