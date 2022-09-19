@@ -14,11 +14,15 @@ import { findInReactTree, findInTree } from 'enmity/utilities'
 const [
    Clipboard,
    LazyActionSheet,
-   getLastSelectedChannelId
+   ChannelStore,
+   MessageStore,
+   FluxDispatcher
 ] = bulk(
    filters.byProps('setString'),
    filters.byProps("openLazy", "hideActionSheet"),
-   filters.byProps("getLastSelectedChannelId")
+   filters.byProps("getChannel", "getDMFromUserId"),
+   filters.byProps("getMessage", "getMessages"),
+   filters.byProps("_currentDispatchActionType", "_subscriptions", "_actionHandlers", "_waitQueue")
 );
 
 // initialization
@@ -28,19 +32,19 @@ const Dislate: Plugin = {
    ...manifest,
 
    onStart() {
-      Patcher.before(
+      const unpatchActionSheet = Patcher.before(
          LazyActionSheet,
          "openLazy",
          (_, [component, sheet], res) => {
-            const [channelId, setChannelId] = React.useState()
-            const [messageContent, setMessageContent] = React.useState()
-
+            
             if (sheet === "MessageLongPressActionSheet") {
                component.then((instance) => {
                   Patcher.after(instance, "default", (_, message, res) => {
-                     setChannelId(message["0"]["message"]["channel_id"])
-                     setMessageContent(message["0"]["message"]["content"])
-                     
+                     const originalMessage = MessageStore.getMessage(
+                        message[0].message.channelId,
+                        message[0].message.id
+                     );
+
                      const origRender = res.type.render;
                      res.type.render = function (...args) {
                         const res = origRender.apply(this, args);
@@ -60,8 +64,35 @@ const Dislate: Plugin = {
                               label='Translate'
                               leading={<FormRow.Icon source={getIDByName('img_nitro_star')} />}
                               onPress={() => {
-                                 console.log(messageContent)
+                                 if (
+                                    !originalMessage?.editedTimestamp ||
+                                    originalMessage?.editedTimestamp._isValid
+                                 ) {
+                                    try{
+                                       var origContent = originalMessage.content
+                                       message[0] = {};
+                                    }catch{
+                                       var origContent = message[0].message.content
+                                       message[0] = {};
+                                    }
+
+                                    const editEvent = {
+                                       type: "MESSAGE_UPDATE",
+                                       message: {
+                                          ...originalMessage,
+                                          edited_timestamp: "invalid_timestamp",
+                                          content:
+                                                origContent + " `[edited by Acquite]`",
+                                          guild_id: ChannelStore.getChannel(
+                                                originalMessage.channel_id
+                                          ).guild_id,
+                                       },
+                                       log_edit: false
+                                    };
+                                    FluxDispatcher.dispatch(editEvent);
+                                 }
                                  LazyActionSheet.hideActionSheet()
+                                 items.shift()
                               }} />
                            );
                            return res;
@@ -71,6 +102,14 @@ const Dislate: Plugin = {
                });
             });
          }
+
+         unpatchActionSheet()
+      })
+
+      const unPatchClose = Patcher.after(LazyActionSheet, "hideActionSheet", () => {
+         Patcher.unpatchAll()
+         unpatchActionSheet()
+         unPatchClose()
       })
    },
 
