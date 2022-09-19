@@ -7,8 +7,8 @@ import { bulk, filters, getByProps } from 'enmity/metro';
 import { create } from 'enmity/patcher';
 import manifest from '../manifest.json';
 import Settings from './components/Settings';
-import { get, set } from 'enmity/api/settings'
-import translate from "translate";
+import { get, set } from 'enmity/api/settings';
+import {translateString} from '../utils/translate';
 
 
 // main declaration of modules being altered by the plugin
@@ -79,11 +79,12 @@ const Dislate: Plugin = {
                                     !originalMessage?.editedTimestamp ||
                                     originalMessage?.editedTimestamp._isValid
                                  ) {
-                                    translate(originalMessage.content, { 
-                                       from: get("Dislate", "DislateLangFrom", "english"),
-                                       to: get("Dislate", "DislateLangTo", "japanese")
-                                    }).then(res => {
-                                       console.log(res)
+                                    translateString(
+                                       originalMessage.content, 
+                                       get("Dislate", "DislateLangFrom", "english"), 
+                                       get("Dislate", "DislateLangTo", "japanese")
+                                    ).then(res => {
+                                       setTranslated(res)
                                     })
                                     
                                     const editEvent = {
