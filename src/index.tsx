@@ -70,9 +70,11 @@ const Dislate: Plugin = {
                                  ) {
                                     try{
                                        var origContent = originalMessage.content
+                                       var origChannel = originalMessage.channel_id
                                        message[0] = {};
                                     }catch{
                                        var origContent = message[0].message.content
+                                       var origChannel = message[0].message.channel_id
                                        message[0] = {};
                                     }
 
@@ -84,7 +86,7 @@ const Dislate: Plugin = {
                                           content:
                                                 origContent + " `[edited by Acquite]`",
                                           guild_id: ChannelStore.getChannel(
-                                                originalMessage.channel_id
+                                                origChannel
                                           ).guild_id,
                                        },
                                        log_edit: false
