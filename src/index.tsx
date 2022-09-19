@@ -75,13 +75,12 @@ const Dislate: Plugin = {
                            leading={<FormRow.Icon source={getIDByName('img_nitro_star')} />}
                            onPress={() => {
                               try{
-                                 () => {
-                                    translate(originalMessage.content, { 
+                                 async () => {
+                                    let translatedText = await translate(originalMessage.content, { 
                                        to: get("Dislate", "DislateLangTo", "japanese"), 
                                        engine: get("Dislate", "DislateLangEngine", "deepl")})
-                                    .then((res: string) => {
-                                       setTranslated(res)
-                                    });
+                                    
+                                    return setTranslated(translatedText)
                                  }
                                  if (
                                     !originalMessage?.editedTimestamp ||
@@ -93,7 +92,9 @@ const Dislate: Plugin = {
                                           ...originalMessage,
                                           edited_timestamp: "invalid_timestamp",
                                           content:
-                                                `${translated} \`[${get("Dislate", "DislateLangTo", "japanese")}]\``,
+                                                `${translated} 
+\`[Language: ${get("Dislate", "DislateLangTo", "japanese")}]\`
+\`[Engine: ${get("Dislate", "DislateLangEngine", "deepl")}]\``,
                                           guild_id: ChannelStore.getChannel(
                                                 originalMessage.channel_id
                                           ).guild_id,
