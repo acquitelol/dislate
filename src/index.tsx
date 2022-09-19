@@ -75,26 +75,23 @@ const Dislate: Plugin = {
                            leading={<FormRow.Icon source={getIDByName('img_nitro_star')} />}
                            onPress={() => {
                               try{
-                                 async () => {
-                                    let translatedText = await translate(originalMessage.content, { 
-                                       to: get("Dislate", "DislateLangTo", "japanese"), 
-                                       engine: get("Dislate", "DislateLangEngine", "deepl")})
-                                    
-                                    return setTranslated(translatedText)
-                                 }
                                  if (
                                     !originalMessage?.editedTimestamp ||
                                     originalMessage?.editedTimestamp._isValid
                                  ) {
+                                    translate(originalMessage.content, { 
+                                       to: get("Dislate", "DislateLangTo", "japanese"), 
+                                       engine: get("Dislate", "DislateLangEngine", "deepl")})
+                                    .then(res => {
+                                       setTranslated(res)
+                                    })
                                     const editEvent = {
                                        type: "MESSAGE_UPDATE",
                                        message: {
                                           ...originalMessage,
                                           edited_timestamp: "invalid_timestamp",
                                           content:
-                                                `${translated} 
-\`[Language: ${get("Dislate", "DislateLangTo", "japanese")}]\`
-\`[Engine: ${get("Dislate", "DislateLangEngine", "deepl")}]\``,
+                                                `${translated} \`[Language: ${get("Dislate", "DislateLangTo", "japanese")}]\``,
                                           guild_id: ChannelStore.getChannel(
                                                 originalMessage.channel_id
                                           ).guild_id,
