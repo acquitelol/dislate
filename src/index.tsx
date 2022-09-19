@@ -7,8 +7,7 @@ import { bulk, filters, getByProps } from 'enmity/metro';
 import { create } from 'enmity/patcher';
 import manifest from '../manifest.json';
 import Settings from './components/Settings';
-import { getBoolean, set, toggle } from 'enmity/api/settings'
-import { findInReactTree, findInTree } from 'enmity/utilities'
+import { get } from 'enmity/api/settings'
 
 // main declaration of modules being altered by the plugin
 const [
@@ -40,89 +39,72 @@ const Dislate: Plugin = {
                      type: handler,
                      message: {}, // should be enough to wake them up
                   });
-            } catch (err) {
-               console.log('[Dislate Dispatch Error]', err);
-            }
+            } catch(err) { console.log(`[Dislate Local Error ${err}]`);}
          }
       
-         Patcher.before(
-            LazyActionSheet,
-            "openLazy",
-            (_, [component, sheet], res) => {
-               
-               if (sheet === "MessageLongPressActionSheet") {
-                  component.then((instance) => {
-                     Patcher.after(instance, "default", (_, message, res) => {
-                        const originalMessage = MessageStore.getMessage(
-                           message[0].message.channelId,
-                           message[0].message.id
-                        );
+         Patcher.before(LazyActionSheet, "openLazy", (_, [component, sheet], _res) => {
+            if (sheet === "MessageLongPressActionSheet") {
+               component.then((instance) => {
+                  Patcher.after(instance, "default", (_, message, res) => {
+                     if (
+                        res.props.children.props.children.props.children[1][0].key == "1002"
+                     ) {
+                        return;
+                     }
 
-                        const origRender = res.type.render;
-                        res.type.render = function (...args) {
-                           const res = origRender.apply(this, args);
-                           const wrapper = findInTree(res, r => r.type?.render?.name === 'Wrapper', { walkable: ['props', 'type', 'children'] });
-                           if (!wrapper) return res;
+                     const originalMessage = MessageStore.getMessage(
+                        message[0].message.channel_id,
+                        message[0].message.id
+                     );
+                     
+                     if (!message[0]?.message?.content) return;
 
-                           const origWrapper = wrapper.type.render;
-                           wrapper.type.render = function (...args) {
-                              const res = origWrapper.apply(this, args);
-                              if (!res) return;
+                     try {
+                        if (!message[0].edited_timestamp._isValid) return;
+                     } catch { }
 
-                              const children = findInReactTree(res, r => r.find?.(c => Array.isArray(c)));
-                              if (!children || !children[1]) return res;
+                     res.props.children.props.children.props.children[1].unshift(
+                        <FormRow
+                           key={`1002`}
+                           label='Translate'
+                           leading={<FormRow.Icon source={getIDByName('img_nitro_star')} />}
+                           onPress={() => {
+                              try{
+                                 if (
+                                    !originalMessage?.editedTimestamp ||
+                                    originalMessage?.editedTimestamp._isValid
+                                 ) {
+                                    const editEvent = {
+                                       type: "MESSAGE_UPDATE",
+                                       message: {
+                                          ...originalMessage,
+                                          edited_timestamp: "invalid_timestamp",
+                                          content:
+                                                `${originalMessage.content}
+[${get('Dislate', "DislateLangEngine")}]
+[${get('Dislate', "DislateLangTo")}]`,
+                                          guild_id: ChannelStore.getChannel(
+                                                originalMessage.channel_id
+                                          ).guild_id,
+                                       },
+                                       log_edit: false
+                                    };
+                                    FluxDispatcher.dispatch(editEvent);
+                                 }
 
-                              const items = children[1];
-                              items.unshift(<FormRow
-                                 label='Translate'
-                                 leading={<FormRow.Icon source={getIDByName('img_nitro_star')} />}
-                                 onPress={() => {
-                                    // if (
-                                    //    !originalMessage?.editedTimestamp ||
-                                    //    originalMessage?.editedTimestamp._isValid
-                                    // ) {
-                                    //    try{
-                                    //       var origContent = originalMessage.content
-                                    //       var origChannel = originalMessage.channel_id
-                                    //    }catch{
-                                    //       var origContent = message[0].message.content
-                                    //       var origChannel = message[0].message.channel_id
-                                    //    }
-                                    //    message[0] = {};
-                                    //    const editEvent = {
-                                    //       type: "MESSAGE_UPDATE",
-                                    //       message: {
-                                    //          ...originalMessage,
-                                    //          edited_timestamp: "invalid_timestamp",
-                                    //          content:
-                                    //                origContent + ` \`[edited by ${manifest.authors[0].name}]\``,
-                                    //          guild_id: ChannelStore.getChannel(
-                                    //                origChannel
-                                    //          ).guild_id,
-                                    //       },
-                                    //       log_edit: false
-                                    //    };
-                                    //    FluxDispatcher.dispatch(editEvent);
-                                    // }
-
-                                    console.log(originalMessage)
-                                    LazyActionSheet.hideActionSheet()
-                                    items.shift()
-                                 }} />
-                              );
-                              return res;
-                           };
-                        return res;
-                     };
-                  });
+                                 LazyActionSheet.hideActionSheet()
+                              } catch(err) { console.log(`[Dislate Local Error ${err}]`);}
+                              
+                           }} />
+                     );
+                  })
                });
             }
-            
          })
       }
       setTimeout(() => {
          unpatchActionSheet();
-     }, 300); // give Flux some time to initialize -- 300ms should be more than enough
+      }, 300); // give Flux some time to initialize -- 300ms should be more than enough
    },
 
    onStop() {
