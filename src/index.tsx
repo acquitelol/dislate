@@ -8,6 +8,8 @@ import { create } from 'enmity/patcher';
 import manifest from '../manifest.json';
 import Settings from './components/Settings';
 import { get, set } from 'enmity/api/settings'
+import translate from "translate";
+
 
 // main declaration of modules being altered by the plugin
 const [
@@ -63,6 +65,7 @@ const Dislate: Plugin = {
                         if (!message[0].edited_timestamp._isValid) return;
                      } catch { }
 
+                     
                      res.props.children.props.children.props.children[1].unshift(
                         <FormRow
                            key={`1002`}
@@ -70,6 +73,9 @@ const Dislate: Plugin = {
                            leading={<FormRow.Icon source={getIDByName('img_nitro_star')} />}
                            onPress={() => {
                               try{
+                                 const translatedMessage = translate(originalMessage.content, { 
+                                    to: get("Dislate", "DislateLangTo", "japanese"), 
+                                    engine: get("Dislate", "DislateLangEngine", "deepl")});
                                  if (
                                     !originalMessage?.editedTimestamp ||
                                     originalMessage?.editedTimestamp._isValid
@@ -80,9 +86,7 @@ const Dislate: Plugin = {
                                           ...originalMessage,
                                           edited_timestamp: "invalid_timestamp",
                                           content:
-                                                `${originalMessage.content}
-[${get('Dislate', "DislateLangEngine")}]
-[${get('Dislate', "DislateLangTo")}]`,
+                                                `${translatedMessage} \`[${get("Dislate", "DislateLangTo", "japanese")}]\``,
                                           guild_id: ChannelStore.getChannel(
                                                 originalMessage.channel_id
                                           ).guild_id,
