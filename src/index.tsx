@@ -31,7 +31,7 @@ const Dislate: Plugin = {
       Patcher.before(
          LazyActionSheet,
          "openLazy",
-         (_, [component, sheet], res) => {
+         (_, [component, sheet]) => {
            if (sheet === "MessageLongPressActionSheet") {
              component.then((instance) => {
                Patcher.after(instance, "default", (_, args, res) => {
@@ -49,7 +49,6 @@ const Dislate: Plugin = {
                         label="Translate"
                         onPress={() => {
                            console.log(`${((args[0])["message"])["content"]}`)
-                           LazyActionSheet.hideActionSheet();
                         }}
                      />
                   );
