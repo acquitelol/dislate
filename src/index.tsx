@@ -65,17 +65,21 @@ const Dislate: Plugin = {
                         if (!message[0].edited_timestamp._isValid) return;
                      } catch { }
 
-                     
+                     const [translated, setTranslated] = React.useState("")
+
                      res.props.children.props.children.props.children[1].unshift(
+                        
                         <FormRow
                            key={`1002`}
                            label='Translate'
                            leading={<FormRow.Icon source={getIDByName('img_nitro_star')} />}
                            onPress={() => {
                               try{
-                                 const translatedMessage = translate(originalMessage.content, { 
+                                 translate(originalMessage.content, { 
                                     to: get("Dislate", "DislateLangTo", "japanese"), 
-                                    engine: get("Dislate", "DislateLangEngine", "deepl")});
+                                    engine: get("Dislate", "DislateLangEngine", "deepl")}).then(res => {
+                                       setTranslated(res)
+                                    });
                                  if (
                                     !originalMessage?.editedTimestamp ||
                                     originalMessage?.editedTimestamp._isValid
@@ -86,7 +90,7 @@ const Dislate: Plugin = {
                                           ...originalMessage,
                                           edited_timestamp: "invalid_timestamp",
                                           content:
-                                                `${translatedMessage} \`[${get("Dislate", "DislateLangTo", "japanese")}]\``,
+                                                `${translated} \`[${get("Dislate", "DislateLangTo", "japanese")}]\``,
                                           guild_id: ChannelStore.getChannel(
                                                 originalMessage.channel_id
                                           ).guild_id,
