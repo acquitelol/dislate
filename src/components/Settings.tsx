@@ -2,7 +2,7 @@
 import { FormDivider, FormRow, ScrollView, FormSwitch, FormSection, Text } from 'enmity/components';
 import { SettingsStore } from 'enmity/api/settings';
 import { getIDByName } from 'enmity/api/assets';
-import { Toasts, Constants, StyleSheet } from 'enmity/metro/common';
+import { React, Toasts, Constants, StyleSheet } from 'enmity/metro/common';
 import {name, version, release} from '../../manifest.json';
 import { bulk, filters} from 'enmity/metro';
 import { Navigation } from 'enmity/metro/common'

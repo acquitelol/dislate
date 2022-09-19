@@ -1,5 +1,5 @@
 // main imports of elements and dependencies
-import { Navigation, NavigationNative, NavigationStack, StyleSheet, ColorMap } from 'enmity/metro/common';
+import { React, Navigation, NavigationNative, NavigationStack, StyleSheet, ColorMap } from 'enmity/metro/common';
 import { Button, View } from 'enmity/components';
 
 // main settings stack
