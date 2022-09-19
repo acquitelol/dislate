@@ -80,11 +80,12 @@ const Dislate: Plugin = {
                                     originalMessage?.editedTimestamp._isValid
                                  ) {
                                     translate(originalMessage.content, { 
-                                       to: get("Dislate", "DislateLangTo", "japanese"), 
+                                       from: get("Dislate", "DislateLangFrom", "english"),
+                                       to: get("Dislate", "DislateLangTo", "japanese")
+                                    }).then(res => {
+                                       console.log(res)
                                     })
-                                    .then(res => {
-                                       setTranslated(res)
-                                    })
+                                    
                                     const editEvent = {
                                        type: "MESSAGE_UPDATE",
                                        message: {

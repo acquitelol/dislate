@@ -43,7 +43,7 @@ export default ({ settings }: SettingsProps) => {
                 </Text>}
                 onPress={()=>{
                     set("Dislate", "DislateLangFilter", false)
-                    Navigation.push(Page, { component: Names, name: "Dislate: Language" })
+                    Navigation.push(Page, { component: Names, name: "Dislate: Language From" })
                 }}
             />
             <FormDivider/>
@@ -55,7 +55,7 @@ export default ({ settings }: SettingsProps) => {
                 </Text>}
                 onPress={()=>{
                     set("Dislate", "DislateLangFilter", true)
-                    Navigation.push(Page, { component: Names, name: "Dislate: Language" })
+                    Navigation.push(Page, { component: Names, name: "Dislate: Language To" })
                 }}
             />
         </FormSection>
