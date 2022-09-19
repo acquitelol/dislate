@@ -26,6 +26,12 @@ const [
    filters.byProps("_currentDispatchActionType", "_subscriptions", "_actionHandlers", "_waitQueue")
 );
 
+// adds capital letter to first character of a string
+const getCapitalised = (str) => {
+   return str.charAt(0).toUpperCase() + str.slice(1)
+}
+
+
 // initialization
 const Patcher = create('dislate');
 
@@ -96,7 +102,7 @@ const Dislate: Plugin = {
                                              ...originalMessage,
                                              edited_timestamp: "invalid_timestamp",
                                              content:
-                                                   `${res} \`[Language: ${get("Dislate", "DislateLangTo", "japanese")}]\``,
+                                                   `${res} \`[Language: ${getCapitalised(get("Dislate", "DislateLangTo", "japanese"))}]\``,
                                              guild_id: ChannelStore.getChannel(
                                                    originalMessage.channel_id
                                              ).guild_id,
@@ -108,7 +114,7 @@ const Dislate: Plugin = {
 
                                        // opens a toast to declare success
                                        Toasts.open({ 
-                                          content: `Modified message to ${get("Dislate", "DislateLangTo", "japanese")}}.`, 
+                                          content: `Modified message to ${getCapitalised(get("Dislate", "DislateLangTo", "japanese"))}.`, 
                                           source: getIDByName('img_nitro_star')
                                        })
                                     })

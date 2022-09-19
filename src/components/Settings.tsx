@@ -24,6 +24,11 @@ const [
     filters.byProps('setString'),
  );
 
+ // adds capital letter to first character of a string
+ const getCapitalised = (str) => {
+    return str.charAt(0).toUpperCase() + str.slice(1)
+}
+
 export default ({ settings }: SettingsProps) => {
     // icon and styles
    const toastTrail = getIDByName('ic_selection_checked_24px');
@@ -43,7 +48,7 @@ export default ({ settings }: SettingsProps) => {
                 label='Translate From'
                 leading={<FormRow.Icon style={styles.icon} source={getIDByName('ic_raised_hand')} />}
                 trailing={() => <Text style={styles.item}>
-                    {get("Dislate", "DislateLangFrom", "english") ?? "N/A"}
+                    {getCapitalised(get("Dislate", "DislateLangFrom", "english")) ?? "N/A"}
                 </Text>}
                 onPress={()=>{
                     // selects which route the page will overwrite: "from" being false and "to" being true
@@ -56,7 +61,7 @@ export default ({ settings }: SettingsProps) => {
                 label='Translate To'
                 leading={<FormRow.Icon style={styles.icon} source={getIDByName('ic_activity_24px')} />}
                 trailing={() => <Text style={styles.item}>
-                    {get("Dislate", "DislateLangTo", "japanese") ?? "N/A"}
+                    {getCapitalised(get("Dislate", "DislateLangTo", "japanese")) ?? "N/A"}
                 </Text>}
                 onPress={()=>{
                     // selects which route the page will overwrite: "from" being false and "to" being true
