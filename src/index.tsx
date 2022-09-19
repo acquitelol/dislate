@@ -65,8 +65,6 @@ const Dislate: Plugin = {
                         if (!message[0].edited_timestamp._isValid) return;
                      } catch { }
 
-                     const [translated, setTranslated] = React.useState("")
-
                      res.props.children.props.children.props.children[1].unshift(
                         
                         <FormRow
@@ -84,23 +82,23 @@ const Dislate: Plugin = {
                                        get("Dislate", "DislateLangFrom", "english"), 
                                        get("Dislate", "DislateLangTo", "japanese")
                                     ).then(res => {
-                                       setTranslated(res)
+                                       const editEvent = {
+                                          type: "MESSAGE_UPDATE",
+                                          message: {
+                                             ...originalMessage,
+                                             edited_timestamp: "invalid_timestamp",
+                                             content:
+                                                   `${res} \`[Language: ${get("Dislate", "DislateLangTo", "japanese")}]\``,
+                                             guild_id: ChannelStore.getChannel(
+                                                   originalMessage.channel_id
+                                             ).guild_id,
+                                          },
+                                          log_edit: false
+                                       };
+                                       FluxDispatcher.dispatch(editEvent);
                                     })
                                     
-                                    const editEvent = {
-                                       type: "MESSAGE_UPDATE",
-                                       message: {
-                                          ...originalMessage,
-                                          edited_timestamp: "invalid_timestamp",
-                                          content:
-                                                `${translated} \`[Language: ${get("Dislate", "DislateLangTo", "japanese")}]\``,
-                                          guild_id: ChannelStore.getChannel(
-                                                originalMessage.channel_id
-                                          ).guild_id,
-                                       },
-                                       log_edit: false
-                                    };
-                                    FluxDispatcher.dispatch(editEvent);
+                                    
                                  }
 
                                  LazyActionSheet.hideActionSheet()
