@@ -28,34 +28,44 @@ const Dislate: Plugin = {
    ...manifest,
 
    onStart() {
-
-      const [channelId, setChannelId] = React.useState()
-      const [messageContent, setMessageContent] = React.useState()
-
       Patcher.before(
          LazyActionSheet,
          "openLazy",
          (_, [component, sheet], res) => {
            if (sheet === "MessageLongPressActionSheet") {
              component.then((instance) => {
-               Patcher.after(instance, "default", (_, message, res) => {
+               const [channelId, setChannelId] = React.useState()
+               const [messageContent, setMessageContent] = React.useState()
+
+               Patcher.after(instance, "default", (self, message, res) => {
                   setChannelId(message["0"]["message"]["channel_id"])
                   setMessageContent(message["0"]["message"]["content"])
                   
-                  const children = findInReactTree(res, r => r.find?.(c => Array.isArray(c)));
-                  if (!children || !children[1]) return res;
-                  const items = children[1];
+                  const origRender = res.type.render;
+                  res.type.render = function (...args) {
+                     const res = origRender.apply(self, args);
+                     const wrapper = findInTree(res, r => r.type?.render?.name === 'Wrapper', { walkable: ['props', 'type', 'children'] });
+                     if (!wrapper) return res;
 
-                  items.unshift(
-                     <FormRow
-                        leading={<FormRow.Icon source={getIDByName('img_nitro_star')} />}
-                        label="Translate"
-                        onPress={() => {
-                           console.log(`${messageContent}`)
-                           LazyActionSheet.hideActionSheet();
-                        }}
-                     />
-                  );
+                     const origWrapper = wrapper.type.render;
+                     wrapper.type.render = function (...args) {
+                        const res = origWrapper.apply(self, args);
+                        if (!res) return;
+                        const children = findInReactTree(res, r => r.find?.(c => Array.isArray(c)));
+                        if (!children || !children[1]) return res;
+                        const items = children[1];
+                        items.unshift(<FormRow
+                           label='Translate'
+                           leading={<FormRow.Icon source={getIDByName('img_nitro_star')} />}
+                           onPress={() => {
+                              console.log(messageContent)
+                              LazyActionSheet.hideActionSheet()
+                           }} />
+                        );
+                        return res;
+                     };
+                     return res;
+                  };
                });
             });
          }
