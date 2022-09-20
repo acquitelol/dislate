@@ -8,7 +8,7 @@ import { create } from 'enmity/patcher';
 import manifest from '../manifest.json';
 import Settings from './components/Settings';
 import { get } from 'enmity/api/settings';
-import { translateString } from './utils';
+import { translateString, formatString } from './utils';
 
 
 // main declaration of modules being altered by the plugin
@@ -25,11 +25,6 @@ const [
    filters.byProps("getMessage", "getMessages"),
    filters.byProps("_currentDispatchActionType", "_subscriptions", "_actionHandlers", "_waitQueue")
 );
-
-// adds capital letter to first character of a string
-const getCapitalised = (str) => {
-   return str.charAt(0).toUpperCase() + str.slice(1)
-}
 
 
 // initialization
@@ -100,7 +95,7 @@ const Dislate: Plugin = {
                                     // translates message into language from settings
                                     translateString(
                                        originalMessage.content, 
-                                       get("Dislate", "DislateLangFrom", "english"), 
+                                       get("Dislate", "DislateLangFrom", "detect"), 
                                        get("Dislate", "DislateLangTo", "japanese")
                                     ).then(res => {
                                        // updates the message clicked with the new content and language translated to
@@ -110,7 +105,7 @@ const Dislate: Plugin = {
                                              ...originalMessage,
                                              edited_timestamp: "invalid_timestamp",
                                              content:
-                                                   `${res} \`[Language: ${getCapitalised(get("Dislate", "DislateLangTo", "japanese"))}]\``,
+                                                   `${res} \`[${formatString(get("Dislate", "DislateLangTo", "japanese"))}]\``,
                                              guild_id: ChannelStore.getChannel(
                                                    originalMessage.channel_id
                                              ).guild_id,
@@ -122,7 +117,7 @@ const Dislate: Plugin = {
 
                                        // opens a toast to declare success
                                        Toasts.open({ 
-                                          content: `Modified message to ${getCapitalised(get("Dislate", "DislateLangTo", "japanese"))}.`, 
+                                          content: `Modified message to ${formatString(get("Dislate", "DislateLangTo", "japanese"))}.`, 
                                           source: getIDByName('img_nitro_star')
                                        })
                                     })

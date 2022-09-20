@@ -6,6 +6,7 @@ import langNames from 'translate/src/languages/names'
 import { Navigation } from 'enmity/metro/common'
 import { get, set } from 'enmity/api/settings'
 import { getIDByName } from 'enmity/api/assets';
+import { formatString } from '../utils';
 
 // main search module
 const Search = getByName('StaticSearchBarContainer');
@@ -21,10 +22,6 @@ export default () => {
       setLanguages(names)
    }, [])
 
-   // adds capital letter to first character of a string
-    const getCapitalised = (str: string) => {
-        return str.charAt(0).toUpperCase() + str.slice(1)
-    }
     return <>
         <Search
             placeholder="Search Language"
@@ -32,8 +29,9 @@ export default () => {
         />
         <ScrollView>
             {languages.filter(language => language.includes(query)).map(language => 
-                <FormRow 
-                    label={getCapitalised(language)}
+            (get("Dislate", "DislateLangFilter") && language=='detect') ? <></> :
+                <FormRow
+                    label={formatString(language)}
                     onPress={() => {
                         // sets language to either "from" or "to" based on filter
                         get("Dislate", "DislateLangFilter") ? set('Dislate', "DislateLangTo", language) : set('Dislate', "DislateLangFrom", language)

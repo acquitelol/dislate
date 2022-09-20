@@ -9,6 +9,7 @@ import { Navigation } from 'enmity/metro/common'
 import Page from './Page'
 import Names from './Names'
 import { get, set } from 'enmity/api/settings'
+import { formatString } from '../utils';
 
 // main settingsStore interface
 interface SettingsProps {
@@ -24,10 +25,6 @@ const [
     filters.byProps('setString'),
  );
 
- // adds capital letter to first character of a string
- const getCapitalised = (str) => {
-    return str.charAt(0).toUpperCase() + str.slice(1)
-}
 
 export default ({ settings }: SettingsProps) => {
     // icon and styles
@@ -48,7 +45,7 @@ export default ({ settings }: SettingsProps) => {
                 label='Translate From'
                 leading={<FormRow.Icon style={styles.icon} source={getIDByName('ic_raised_hand')} />}
                 trailing={() => <Text style={styles.item}>
-                    {getCapitalised(get("Dislate", "DislateLangFrom", "english")) ?? "N/A"}
+                    {formatString(get("Dislate", "DislateLangFrom", "detect")) ?? "N/A"}
                 </Text>}
                 onPress={()=>{
                     // selects which route the page will overwrite: "from" being false and "to" being true
@@ -61,7 +58,7 @@ export default ({ settings }: SettingsProps) => {
                 label='Translate To'
                 leading={<FormRow.Icon style={styles.icon} source={getIDByName('ic_activity_24px')} />}
                 trailing={() => <Text style={styles.item}>
-                    {getCapitalised(get("Dislate", "DislateLangTo", "japanese")) ?? "N/A"}
+                    {formatString(get("Dislate", "DislateLangTo", "japanese")) ?? "N/A"}
                 </Text>}
                 onPress={()=>{
                     // selects which route the page will overwrite: "from" being false and "to" being true
