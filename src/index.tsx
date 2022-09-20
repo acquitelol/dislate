@@ -56,6 +56,12 @@ const Dislate: Plugin = {
             if (sheet === "MessageLongPressActionSheet") {
                component.then((instance) => {
                   Patcher.after(instance, "default", (_, message, res) => {
+                     // returns if theres no props on res
+                     if (!res.props) {
+                        console.log(`[Dislate Local Error: Property "Props" Does not Exist on "res"]`)
+                        return res;
+                     }
+
                      const finalLocation = res?.props?.children?.props?.children?.props?.children[1]
                      // doesnt place a new element if its already there
                      if (
@@ -73,6 +79,7 @@ const Dislate: Plugin = {
                      // return if theres no content
                      if (!message[0]?.message?.content) return;
 
+                     
                      // returns if the timestamp is invalid
                      try {
                         if (!message[0].edited_timestamp._isValid) return;
