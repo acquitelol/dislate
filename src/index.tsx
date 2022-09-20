@@ -65,7 +65,7 @@ const Dislate: Plugin = {
                      const finalLocation = res?.props?.children?.props?.children?.props?.children[1]
                      // doesnt place a new element if its already there
                      if (
-                        finalLocation[0]?.key == "1002"
+                        finalLocation[0].key == "1002"
                      ) {
                         return;
                      }
@@ -77,7 +77,7 @@ const Dislate: Plugin = {
                      );
                      
                      // return if theres no content
-                     if (!message[0]?.message?.content) return;
+                     if (!message[0].message.content) return;
 
                      
                      // returns if the timestamp is invalid
