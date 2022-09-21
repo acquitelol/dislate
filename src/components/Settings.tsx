@@ -1,5 +1,5 @@
 // main imports of elements and dependencies
-import { FormDivider, FormRow, ScrollView, FormSwitch, FormSection, Text } from 'enmity/components';
+import { FormDivider, FormRow, ScrollView, FormSwitch, FormSection, Text, Form } from 'enmity/components';
 import { SettingsStore } from 'enmity/api/settings';
 import { getIDByName } from 'enmity/api/assets';
 import { React, Toasts, Constants, StyleSheet } from 'enmity/metro/common';
@@ -68,7 +68,22 @@ export default ({ settings }: SettingsProps) => {
             />
         </FormSection>
         <FormDivider />
-		<FormSection title="Disable Entire Plugin">
+		<FormSection title="Utility">
+            <FormRow
+                label='Initialisation Toasts'
+                leading={<FormRow.Icon style={styles.icon} source={getIDByName('toast_image_saved')} />}
+                trailing={
+                    <FormSwitch
+                        value={settings.getBoolean('toastEnable', false)} // main masterDisable function
+                        onValueChange={() => {
+                                settings.toggle('toastEnable', false)
+                                Toasts.open({ content: `Successfully ${settings.getBoolean('toastEnable', false) ? 'enabled' : 'disabled'} Load Toasts.`, source: toastTrail }); // overwrites it with the opposite
+                            }
+                        }
+                    />
+                }
+            />
+            <FormDivider />
             <FormRow
                 label='Disable Plugin'
                 leading={<FormRow.Icon style={styles.icon} source={getIDByName('ic_rulebook_16px')} />}
