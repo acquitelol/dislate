@@ -2,7 +2,8 @@
 import { FormRow } from 'enmity/components';
 import { Plugin, registerPlugin } from 'enmity/managers/plugins';
 import { getIDByName } from 'enmity/api/assets';
-import { bulk, filters } from 'enmity/metro';
+import { findInReactTree } from 'enmity/utilities'
+import { bulk, filters, getByProps } from 'enmity/metro';
 import { React, Toasts } from 'enmity/metro/common';
 import { create } from 'enmity/patcher';
 import manifest from '../manifest.json';
@@ -15,15 +16,11 @@ import { translateString, formatString } from './utils';
 const [
    Clipboard,
    LazyActionSheet,
-   ChannelStore,
-   MessageStore,
-   FluxDispatcher
+   ChannelStore
 ] = bulk(
    filters.byProps('setString'),
    filters.byProps("openLazy", "hideActionSheet"),
    filters.byProps("getChannel", "getDMFromUserId"),
-   filters.byProps("getMessage", "getMessages"),
-   filters.byProps("_currentDispatchActionType", "_subscriptions", "_actionHandlers", "_waitQueue")
 );
 
 
@@ -46,6 +43,15 @@ const Dislate: Plugin = {
                   console.log("[Dislate] Plugin is force disabled from Settings.")
                   return;
                }
+
+               const MessageStore = getByProps("getMessage", "getMessages")
+
+               const FluxDispatcher = getByProps(
+                  "_currentDispatchActionType", 
+                  "_subscriptions", 
+                  "_actionHandlers", 
+                  "_waitQueue"
+               )
 
                // wake up flux message update
                for (const handler of ["MESSAGE_UPDATE"]) {
@@ -75,13 +81,33 @@ const Dislate: Plugin = {
                               return res;
                            }
 
+                           // array of all buttonRow items in the lazyActionSheet
                            const finalLocation = res?.props?.children?.props?.children?.props?.children[1]
+
+                           /* calculates where (
+                              it would put the translate button 
+                              &&
+                              the button is
+                           )*/
+                           const calculateIndex = () => {
+                              // adds 1 to the index if invischat is active
+                              const sheetIndex = (invisChat: number) => {
+                                 if (finalLocation[0+invisChat]?.props?.message=='Reply') {
+                                     return 1+invisChat
+                                 } else if (finalLocation[1+invisChat]?.props?.message=='Reply') {
+                                    return 2+invisChat
+                                 }
+                                 return 0+invisChat
+                              }
+                              // main logic
+                              if (finalLocation[0].key=='420') {
+                                 return sheetIndex(1)
+                              }
+                              return sheetIndex(0)
+                         }
+
                            // doesnt place a new element if its already there
-                           if (
-                              finalLocation[0].key == "1002"
-                           ) {
-                              return;
-                           }
+                           if(finalLocation[calculateIndex()].key=='1002') { return }
 
                            // gets original message sent by user
                            const originalMessage = MessageStore.getMessage(
@@ -92,61 +118,59 @@ const Dislate: Plugin = {
                            // return if theres no content
                            if (!message[0].message.content) return;
 
-                           
                            // returns if the timestamp is invalid
                            try {
                               if (!message[0].edited_timestamp._isValid) return;
                            } catch { }
 
-                           // adds new element to the top of lazyActionSheet array
-                           finalLocation.unshift(
-                              <FormRow
-                                 key={`1002`} // for no new items every time
-                                 label='Translate'
-                                 leading={<FormRow.Icon source={getIDByName('img_nitro_star')} />}
-                                 onPress={() => {
-                                    try{
-                                       if (
-                                          !originalMessage?.editedTimestamp ||
-                                          originalMessage?.editedTimestamp._isValid
-                                       ) {
-                                          // translates message into language from settings
-                                          translateString(
-                                             originalMessage.content, 
-                                             get("Dislate", "DislateLangFrom", "detect"), 
-                                             get("Dislate", "DislateLangTo", "japanese")
-                                          ).then(res => {
-                                             // updates the message clicked with the new content and language translated to
-                                             const editEvent = {
-                                                type: "MESSAGE_UPDATE",
-                                                message: {
-                                                   ...originalMessage,
-                                                   edited_timestamp: "invalid_timestamp",
-                                                   content:
-                                                         `${res} \`[${formatString(get("Dislate", "DislateLangTo", "japanese"))}]\``,
-                                                   guild_id: ChannelStore.getChannel(
-                                                         originalMessage.channel_id
-                                                   ).guild_id,
-                                                },
-                                                log_edit: false
-                                             };
-                                             // dispatches the event
-                                             FluxDispatcher.dispatch(editEvent);
+                           const formElem = <FormRow
+                              key={`1002`} // for no new items every time
+                              label='Translate'
+                              leading={<FormRow.Icon source={getIDByName('img_nitro_star')} />}
+                              onPress={() => {
+                                 try{
+                                    if (
+                                       !originalMessage?.editedTimestamp ||
+                                       originalMessage?.editedTimestamp._isValid
+                                    ) {
+                                       // translates message into language from settings
+                                       translateString(
+                                          originalMessage.content, 
+                                          get("Dislate", "DislateLangFrom", "detect"), 
+                                          get("Dislate", "DislateLangTo", "japanese")
+                                       ).then(res => {
+                                          // updates the message clicked with the new content and language translated to
+                                          const editEvent = {
+                                             type: "MESSAGE_UPDATE",
+                                             message: {
+                                                ...originalMessage,
+                                                edited_timestamp: "invalid_timestamp",
+                                                content:
+                                                      `${res} \`[${formatString(get("Dislate", "DislateLangTo", "japanese"))}]\``,
+                                                guild_id: ChannelStore.getChannel(
+                                                      originalMessage.channel_id
+                                                ).guild_id,
+                                             },
+                                             log_edit: false
+                                          };
+                                          // dispatches the event
+                                          FluxDispatcher.dispatch(editEvent);
 
-                                             // opens a toast to declare success
-                                             Toasts.open({ 
-                                                content: `Modified message to ${formatString(get("Dislate", "DislateLangTo", "japanese"))}.`, 
-                                                source: getIDByName('img_nitro_star')
-                                             })
+                                          // opens a toast to declare success
+                                          Toasts.open({ 
+                                             content: `Modified message to ${formatString(get("Dislate", "DislateLangTo", "japanese"))}.`, 
+                                             source: getIDByName('img_nitro_star')
                                           })
-                                          
-                                       }
-                                       // hides the action sheet
-                                       LazyActionSheet.hideActionSheet()
-                                    } catch(err) { console.log(`[Dislate Local Error ${err}]`);}
-                                    
-                                 }} />
-                           );
+                                       })
+                                       
+                                    }
+                                    // hides the action sheet
+                                    LazyActionSheet.hideActionSheet()
+                                 } catch(err) { console.log(`[Dislate Local Error ${err}]`);}
+                                 
+                              }} />
+                              
+                              finalLocation.splice(calculateIndex(), 0, formElem)
                         })
                      });
                   }
