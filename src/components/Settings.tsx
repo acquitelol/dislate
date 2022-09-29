@@ -3,7 +3,7 @@ import { FormDivider, FormRow, ScrollView, FormSwitch, FormSection, Text, Form }
 import { SettingsStore } from 'enmity/api/settings';
 import { getIDByName } from 'enmity/api/assets';
 import { React, Toasts, Constants, StyleSheet } from 'enmity/metro/common';
-import {name, version, release} from '../../manifest.json';
+import {name, version, release, plugin} from '../../manifest.json';
 import { bulk, filters} from 'enmity/metro';
 import { Navigation } from 'enmity/metro/common'
 import Page from './Page'
@@ -18,8 +18,8 @@ interface SettingsProps {
 
 // main declaration of modules being altered by the plugin
 const [
-    Router,
-    Clipboard,
+    Router, // used to open a url externally
+    Clipboard, // used to copy the dl link to keyboard
  ] = bulk(
     filters.byProps('transitionToGuild'),
     filters.byProps('setString'),
@@ -36,7 +36,7 @@ export default ({ settings }: SettingsProps) => {
         item: {
             color: Constants.ThemeColorMap.TEXT_MUTED
         }
-    });
+    }); // main stylesheet
 
    return <>
     <ScrollView>
@@ -74,7 +74,7 @@ export default ({ settings }: SettingsProps) => {
                 leading={<FormRow.Icon style={styles.icon} source={getIDByName('toast_image_saved')} />}
                 trailing={
                     <FormSwitch
-                        value={settings.getBoolean('toastEnable', false)} // main masterDisable function
+                        value={settings.getBoolean('toastEnable', false)} // main toast function function
                         onValueChange={() => {
                                 settings.toggle('toastEnable', false)
                                 Toasts.open({ content: `Successfully ${settings.getBoolean('toastEnable', false) ? 'enabled' : 'disabled'} Load Toasts.`, source: toastTrail }); // overwrites it with the opposite
@@ -107,7 +107,7 @@ export default ({ settings }: SettingsProps) => {
                 leading={<FormRow.Icon style={styles.icon} source={getIDByName('toast_copy_link')} />}
                 trailing={FormRow.Arrow}
                 onPress={() => {
-                    Clipboard.setString("https://raw.githubusercontent.com/acquitelol/dislate/main/dist/Dislate.js");
+                    Clipboard.setString(`${plugin[0].download}?${Math.floor(Math.random() * 1001)}.js`);
                     Toasts.open({ content: 'Copied to clipboard', source: getIDByName('pending-alert') });
                 }}
             />
@@ -117,12 +117,12 @@ export default ({ settings }: SettingsProps) => {
                 leading={<FormRow.Icon style={styles.icon} source={getIDByName('ic_leave_stage')} />}
                 trailing={FormRow.Arrow}
                 onPress={() => {
-                    Router.openURL("https://github.com/acquitelol/dislate")
+                    Router.openURL(plugin[0].repo)
                 }}
             />
         </FormSection>
 		<FormRow label={`Plugin Version: ${version}
-Release Channel: ${release}`} />
+Release Channel: ${release}`} /> {/*shows the plugin's options defined in manifest*/}
     </ScrollView>
    </>
 };
