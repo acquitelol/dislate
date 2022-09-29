@@ -40,7 +40,7 @@ export default ({ settings }: SettingsProps) => {
 
    return <>
     <ScrollView>
-        <FormSection title="Language Settings">
+        <FormSection title="Language">
             <FormRow
                 label='Translate From'
                 leading={<FormRow.Icon style={styles.icon} source={getIDByName('ic_raised_hand')} />}
@@ -72,6 +72,7 @@ export default ({ settings }: SettingsProps) => {
             <FormRow
                 label='Initialisation Toasts'
                 leading={<FormRow.Icon style={styles.icon} source={getIDByName('toast_image_saved')} />}
+                subLabel={`Enable Toasts to display Loading State of ${name}`}
                 trailing={
                     <FormSwitch
                         value={settings.getBoolean('toastEnable', false)} // main toast function function
@@ -100,7 +101,7 @@ export default ({ settings }: SettingsProps) => {
             />
         </FormSection>
         <FormDivider />
-        <FormSection title="Source Code">
+        <FormSection title="Source">
             <FormRow
                 label="Download"
                 subLabel={`Copy the link of ${name} to Clipboard`}
