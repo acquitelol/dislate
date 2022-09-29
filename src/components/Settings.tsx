@@ -85,18 +85,18 @@ export default ({ settings }: SettingsProps) => {
             />
             <FormDivider />
             <FormRow
-                label='Disable Plugin'
+                label='Copy Debug Info'
+                subLabel={`Copy useful debug information of ${name} to clipboard.`}
                 leading={<FormRow.Icon style={styles.icon} source={getIDByName('ic_rulebook_16px')} />}
-                trailing={
-                    <FormSwitch
-                        value={settings.getBoolean('masterDisable', false)} // main masterDisable function
-                        onValueChange={() => {
-                                settings.toggle('masterDisable', false)
-                                Toasts.open({ content: `Successfully ${settings.getBoolean('masterDisable', false) ? 'disabled' : 'enabled'} ${name}.`, source: toastTrail }); // overwrites it with the opposite
-                            }
-                        }
-                    />
-                }
+                trailing={FormRow.Arrow}
+                onPress={() => {
+                    Clipboard.setString(`
+                    **[Dislate] Debug Information**
+                    > **Version:** ${version}
+                    > **Channel:** ${release}
+                    `);
+                    Toasts.open({ content: 'Copied to clipboard', source: getIDByName('pending-alert') });
+                }}
             />
         </FormSection>
         <FormDivider />
@@ -122,7 +122,7 @@ export default ({ settings }: SettingsProps) => {
             />
         </FormSection>
 		<FormRow label={`Plugin Version: ${version}
-Release Channel: ${release}`} /> {/*shows the plugin's options defined in manifest*/}
+Release Channel: ${release}`} />
     </ScrollView>
    </>
 };

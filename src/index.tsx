@@ -70,7 +70,7 @@ const Dislate: Plugin = {
                            // returns if theres no props on res
                            if (!res.props) {
                               console.log(`[Dislate Local Error: Property "Props" Does not Exist on "res"]`)
-                              return; // (dont do anything more)
+                              return res; // (dont do anything more)
                            }
 
                            // array of all buttonRow items in the lazyActionSheet
@@ -86,22 +86,26 @@ const Dislate: Plugin = {
                               // adds 1 to the index if invischat is active
                               const sheetIndex = (invisChat: number) => {
                                  if (finalLocation[0+invisChat]?.props?.message=='Reply') {
-                                     return 1+invisChat // its not your message but you can reply
+                                    // its not your message but you can reply
+                                    return 1+invisChat 
                                  } else if (finalLocation[1+invisChat]?.props?.message=='Reply') {
-                                    return 2+invisChat // its your message
+                                    // its your message
+                                    return 2+invisChat 
                                  }
-                                 return 0+invisChat // its not your message and you cant reply
+                                 // its not your message and you cant reply
+                                 return 0+invisChat 
                               }
                               // main logic
                               if (finalLocation[0].key=='420') { // only returns early if the key of the 0th element is 420 (invisCHat is active)
-                                 return sheetIndex(1) // return an extra 1 to the index to account for InvisChat
+                                 // return an extra 1 to the index to account for InvisChat
+                                 return sheetIndex(1) 
                               }
-                              return sheetIndex(0) // return default of 0
+                              // return default of 0
+                              return sheetIndex(0) 
                          }
 
                            // doesnt place a new element if its already there {returns early}
                            if(finalLocation[calculateIndex()].key=='1002') { return }
-
                            // gets original message sent by user based on the params from the component
                            const originalMessage = MessageStore.getMessage(
                               message[0].message.channel_id,
@@ -109,11 +113,14 @@ const Dislate: Plugin = {
                            ); // this object contains all the info from the message such as author and content etc
 
                            // return if theres no content (likely an attachment or embed with no content)
-                           if (!message[0].message.content) return;
-
-                           if (!message[0]?.edited_timestamp?._isValid) return;
-
-                           const formElem = /*main native component*/ <FormRow
+                           if (!originalMessage.content) { return console.log("[Dislate] No message content.") };
+                           
+                           // returns if the timestamp is invalid already (plugin messes with it)
+                           try {
+                              if (!message[0].edited_timestamp._isValid) return;
+                           } catch { }
+                           
+                           const formElem = <FormRow
                               key={`1002`} // for no new items every time, 100% required
                               label='Translate'
                               leading={<FormRow.Icon source={getIDByName('img_nitro_star')} />}
@@ -161,10 +168,8 @@ const Dislate: Plugin = {
                                  } catch(err) { console.log(`[Dislate Local Error ${err}]`);}
                                  
                               }} />
-                              
-                              masterDisableBool // only modify the actionSheet and add the element in the index if the plugin hasnt been disabled manually.
-                                 ? console.log("[Dislate Local Error] Plugin has been disabled manually.") 
-                                 : finalLocation.splice(calculateIndex(), 0, formElem)
+                              // add element to the form
+                              finalLocation.splice(calculateIndex(), 0, formElem) 
                         })
                      });
                   }
