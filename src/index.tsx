@@ -9,6 +9,7 @@ import manifest from '../manifest.json';
 import Settings from './components/Settings';
 import { get, getBoolean } from 'enmity/api/settings';
 import { translateString, formatString } from './utils';
+import { translateCmd } from './components/Translate'
 
 
 // main declaration of modules being altered by the plugin
@@ -25,7 +26,11 @@ const Patcher = create('dislate');
 
 const Dislate: Plugin = {
    ...manifest,
+   commands: [], // start off with no commands
+
    onStart() {
+      this.commands = [translateCmd]; // add the translate command to the list
+
       let attempt = 0; // starts at attempt 0
       let attempts = 3; // max 3 attempts
       const unpatchActionSheet = () => {
@@ -118,7 +123,7 @@ const Dislate: Plugin = {
                            // returns if the timestamp is invalid already (plugin messes with it)
                            try {
                               if (!message[0].edited_timestamp._isValid) return;
-                           } catch { }
+                           } catch { } // returns if the timestamp is invalid (its already been translated)
                            
                            const formElem = <FormRow
                               key={`1002`} // for no new items every time, 100% required
@@ -209,7 +214,8 @@ const Dislate: Plugin = {
    },
 
    onStop() {
-      // unpatches everything
+      // unpatches everything and clears commands
+      this.commands = [];
       Patcher.unpatchAll();
    },
 

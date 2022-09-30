@@ -123,7 +123,7 @@ export default ({ settings }: SettingsProps) => {
             />
         </FormSection>
 		<FormRow label={`Plugin Version: ${version}
-Release Channel: ${release}`} />
+Release Channel: ${release}`} /> 
     </ScrollView>
    </>
 };

@@ -32,6 +32,7 @@ export default () => {
             (get("Dislate", "DislateLangFilter") && language=='detect') ? <></> :
                 <FormRow
                     label={formatString(language)}
+                    trailing={FormRow.Arrow}
                     onPress={() => {
                         // sets language to either "from" or "to" based on filter
                         get("Dislate", "DislateLangFilter") ? set('Dislate', "DislateLangTo", language) : set('Dislate', "DislateLangFrom", language)
