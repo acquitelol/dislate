@@ -275,7 +275,3 @@ const Dislate: Plugin = {
 };
 
 registerPlugin(Dislate);
-
-function useEffect(arg0: () => void, setTranslateType: any) {
-   throw new Error('Function not implemented.');
-}
