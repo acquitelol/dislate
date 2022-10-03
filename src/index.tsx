@@ -9,8 +9,8 @@ import manifest from '../manifest.json';
 import Settings from './components/Settings';
 import { get, getBoolean } from 'enmity/api/settings';
 import { translateString, formatString } from './utils';
-import { translateCmd } from './components/Translate'
-
+import { translateCommand } from './components/Translate'
+import { debugCommand } from './components/Debug'
 
 // main declaration of modules being altered by the plugin
 const [
@@ -23,14 +23,21 @@ const [
 
 // initialization of patcher
 const Patcher = create('dislate');
+enum buttonType {
+   Translate,
+   Revert
+} // enum used as a sort of "boolean" for the message state
 
 const Dislate: Plugin = {
    ...manifest,
    commands: [], // start off with no commands
 
    onStart() {
-      this.commands = [translateCmd]; // add the translate command to the list
-
+      let cachedData: object[] = [{"invalid_id": "acquite sucks"}] // used for reverting messages back
+      this.commands = [
+         translateCommand, // translate command
+         debugCommand // command to display useful debug info, sort of like /debug on enmity itself
+      ]; // add the translate and debug command to the list
       let attempt = 0; // starts at attempt 0
       let attempts = 3; // max 3 attempts
       const unpatchActionSheet = () => {
@@ -72,6 +79,9 @@ const Dislate: Plugin = {
                   if (sheet === "MessageLongPressActionSheet") { // only works for the long press on message context menu
                      component.then((instance) => { // patches the component which was fetched when the openLazy event was fired
                         Patcher.after(instance, "default", (_, message, res) => {
+                           // used to change between the two states without having to rerender the button
+                           const [translateType, setTranslateType] = React.useState<buttonType>(buttonType.Translate) 
+
                            // returns if theres no props on res
                            if (!res.props) {
                               console.log(`[Dislate Local Error: Property "Props" Does not Exist on "res"]`)
@@ -108,7 +118,6 @@ const Dislate: Plugin = {
                               // return default of 0
                               return sheetIndex(0) 
                          }
-
                            // doesnt place a new element if its already there {returns early}
                            if(finalLocation[calculateIndex()].key=='1002') { return }
                            // gets original message sent by user based on the params from the component
@@ -120,21 +129,56 @@ const Dislate: Plugin = {
                            // return if theres no content (likely an attachment or embed with no content)
                            if (!originalMessage.content) { return console.log("[Dislate] No message content.") };
                            
-                           // returns if the timestamp is invalid already (plugin messes with it)
-                           try {
-                              if (!message[0].edited_timestamp._isValid) return;
-                           } catch { } // returns if the timestamp is invalid (its already been translated)
+                           const messageId = originalMessage.id // the id of the message that was long pressed
+                           const messageContent = originalMessage.content // the content of the message that was long pressed (not undefined because checked above)
+                           const findExistingObject = cachedData.find(o => Object.keys(o)[0] === messageId) // try to find an existing object in cache, will return undefined if nothing found
                            
                            const formElem = <FormRow
                               key={`1002`} // for no new items every time, 100% required
-                              label='Translate'
-                              leading={<FormRow.Icon source={getIDByName('img_nitro_star')} />}
+                              label={`${translateType===buttonType.Translate?"Translate":"Revert"}` /*change the label depending on the current state*/}
+                              leading={<FormRow.Icon source={translateType===buttonType.Translate
+                                    ?getIDByName('img_nitro_star')
+                                    :getIDByName('ic_highlight')} /> /* change the icon of the button depending on the current state */}
+                              onLongPress={() => {
+                                 try {
+                                    if (!findExistingObject) { // if it cant find an object that means that the message hasnt been translated yet as its not in cache
+                                       // opens a toast to declare failure
+                                       Toasts.open({ 
+                                          // formats the string and shows language that it has changed it to
+                                          content: `Message has not been translated yet.`, 
+                                          source: getIDByName('img_nitro_star')
+                                       })
+                                       return console.log("[Dislate] Message hasn't been translated yet.")
+                                    }
+
+                                    setTranslateType(
+                                       translateType===buttonType.Translate?buttonType.Revert:buttonType.Translate
+                                    ) // toggle the state of the button using the enum made earlier
+
+                                    // opens a toast to declare success
+                                    Toasts.open({ 
+                                       // formats the string and shows language that it has changed it to
+                                       content: `Toggled to ${translateType===buttonType.Revert?"Translate":"Revert"} message.`, 
+                                       source: translateType===buttonType.Revert
+                                          ?getIDByName('img_nitro_star')
+                                          :getIDByName('ic_highlight')
+                                    })
+                                 } catch(err) { console.log(`[Dislate Local Error ${err}]`);}
+                              }}
                               onPress={() => {
                                  try{
-                                    if ( // only runs if there isnt a timestamp already
-                                       !originalMessage?.editedTimestamp ||
-                                       originalMessage?.editedTimestamp._isValid
-                                    ) {
+                                    if (translateType===buttonType.Translate) { // does a different function depending on the state
+                                       if (findExistingObject) { // if it matches that means its in cache and the only possible method is to revert it.
+                                          // opens a toast to declare failure
+                                          Toasts.open({ 
+                                             // formats the string and shows language that it has changed it to
+                                             content: `Message has already been translated.`, 
+                                             source: getIDByName('img_nitro_star')
+                                          })
+                                          // hides the action sheet
+                                          LazyActionSheet.hideActionSheet() // function on the LazyActionSheet module
+                                          return console.log("[Dislate] Message has already been translated, please revert the translation to translate again.")
+                                       }
                                        // translates message into language from settings
                                        translateString( // main function based on utils/index.tsx
                                           originalMessage.content, // the valid content from the message sent
@@ -146,7 +190,6 @@ const Dislate: Plugin = {
                                              type: "MESSAGE_UPDATE",
                                              message: {
                                                 ...originalMessage,
-                                                edited_timestamp: "invalid_timestamp", // set an invalid timestamp so it doesnt run again when you click translate (translating nothing)
                                                 content:
                                                       // res is the message content, and it puts the language that it translated to as a mini code block
                                                       `${res} \`[${formatString(get("Dislate", "DislateLangTo", "japanese"))}]\``,
@@ -165,11 +208,47 @@ const Dislate: Plugin = {
                                              content: `Modified message to ${formatString(get("Dislate", "DislateLangTo", "japanese"))}.`, 
                                              source: getIDByName('img_nitro_star')
                                           })
+
+                                          // add the message id and content to the cache to be reverted later
+                                          cachedData.unshift({
+                                             [messageId]: messageContent
+                                          })
                                        })
-                                       
+                                          
+                                       // hides the action sheet
+                                       LazyActionSheet.hideActionSheet() // function on the LazyActionSheet module
+                                    } else {
+                                       // updates the message clicked with the new content and language translated to
+                                       const editEvent = { // used for flux dispatcher to edit locally
+                                          type: "MESSAGE_UPDATE",
+                                          message: {
+                                             ...originalMessage,
+                                             content:
+                                                findExistingObject[messageId],
+                                             guild_id: ChannelStore.getChannel(
+                                                   originalMessage.channel_id
+                                             ).guild_id,
+                                          },
+                                          log_edit: false // doesnt log edit request in debug logs
+                                       };
+                                       // dispatches the event
+                                       FluxDispatcher.dispatch(editEvent);
+
+                                       // opens a toast to declare success
+                                       Toasts.open({ 
+                                          // formats the string and shows language that it has changed it to
+                                          content: `Reverted message back to original state.`, 
+                                          source: getIDByName('img_nitro_star')
+                                       })
+
+                                       // gets all elements from the cache array except the one that was just reverted (basically just removes the element from the array)
+                                       let changedArray = cachedData.filter(e => e!==findExistingObject)
+                                       cachedData=changedArray // sets it back to the original cache array
+                                       // doing it this way instead of pop() or shift() means that i can revert any message sent at any time, not just the most recent message sent ^^^
+
+                                       // hides the action sheet
+                                       LazyActionSheet.hideActionSheet() // function on the LazyActionSheet module
                                     }
-                                    // hides the action sheet
-                                    LazyActionSheet.hideActionSheet() // function on the LazyActionSheet module
                                  } catch(err) { console.log(`[Dislate Local Error ${err}]`);}
                                  
                               }} />

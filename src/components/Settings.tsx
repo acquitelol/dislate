@@ -2,14 +2,13 @@
 import { FormDivider, FormRow, ScrollView, FormSwitch, FormSection, Text, Form } from 'enmity/components';
 import { SettingsStore } from 'enmity/api/settings';
 import { getIDByName } from 'enmity/api/assets';
-import { React, Toasts, Constants, StyleSheet } from 'enmity/metro/common';
+import { React, Toasts, Constants, StyleSheet, Navigation, NavigationNative } from 'enmity/metro/common';
 import {name, version, release, plugin} from '../../manifest.json';
 import { bulk, filters} from 'enmity/metro';
-import { Navigation } from 'enmity/metro/common'
 import Page from './Page'
 import Names from './Names'
 import { get, set } from 'enmity/api/settings'
-import { formatString } from '../utils';
+import { formatString, debugInfo, clipboardToast } from '../utils';
 
 // main settingsStore interface
 interface SettingsProps {
@@ -25,7 +24,6 @@ const [
     filters.byProps('setString'),
  );
 
-
 export default ({ settings }: SettingsProps) => {
     // icon and styles
    const toastTrail = getIDByName('ic_selection_checked_24px');
@@ -38,8 +36,29 @@ export default ({ settings }: SettingsProps) => {
         }
     }); // main stylesheet
 
-   return <>
-    <ScrollView>
+
+    const [touchX, setTouchX] = React.useState() // the start x position of swiping on the screen
+    const [touchY, setTouchY] = React.useState() // the start y position of swiping on the screen
+
+    return <>
+    <ScrollView
+        onTouchStart={e=> {
+                // set them to new position
+                setTouchX(e.nativeEvent.pageX)
+                setTouchY(e.nativeEvent.pageY)
+            }
+        }
+        onTouchEnd={e => {
+            // only triggers if x is negative over 100 (moved right) and y is more than -40 but less than 40 (not much movement)
+            if (
+                touchX - e.nativeEvent.pageX < -100 
+                && touchY - e.nativeEvent.pageY < 40
+                && touchY - e.nativeEvent.pageY > -40
+            ) {
+                Navigation.pop() // removes the page from the stack
+            }
+        }}
+    >
         <FormSection title="Language">
             <FormRow
                 label='Translate From'
@@ -91,12 +110,8 @@ export default ({ settings }: SettingsProps) => {
                 leading={<FormRow.Icon style={styles.icon} source={getIDByName('ic_rulebook_16px')} />}
                 trailing={FormRow.Arrow}
                 onPress={() => {
-                    Clipboard.setString(`
-                    **[Dislate] Debug Information**
-                    > **Version:** ${version}
-                    > **Channel:** ${release}
-                    `);
-                    Toasts.open({ content: 'Copied to clipboard', source: getIDByName('pending-alert') });
+                    Clipboard.setString(debugInfo(version, release));
+                    clipboardToast('debug information')
                 }}
             />
         </FormSection>
@@ -109,7 +124,7 @@ export default ({ settings }: SettingsProps) => {
                 trailing={FormRow.Arrow}
                 onPress={() => {
                     Clipboard.setString(`${plugin[0].download}?${Math.floor(Math.random() * 1001)}.js`);
-                    Toasts.open({ content: 'Copied to clipboard', source: getIDByName('pending-alert') });
+                    clipboardToast('download link')
                 }}
             />
             <FormRow

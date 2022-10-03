@@ -1,5 +1,5 @@
 // main imports of elements and dependencies
-import { FormRow, ScrollView } from 'enmity/components';
+import { FormRow, ScrollView, View } from 'enmity/components';
 import { React, Toasts } from 'enmity/metro/common';
 import { getByName } from 'enmity/metro'
 import langNames from 'translate/src/languages/names'
@@ -10,6 +10,7 @@ import { formatString } from '../utils';
 
 // main search module
 const Search = getByName('StaticSearchBarContainer');
+const dislateArrow = FormRow.Arrow
 
 export default () => {
     // main languages and keyword search state
@@ -32,7 +33,7 @@ export default () => {
             (get("Dislate", "DislateLangFilter") && language=='detect') ? <></> :
                 <FormRow
                     label={formatString(language)}
-                    trailing={FormRow.Arrow}
+                    trailing={dislateArrow}
                     onPress={() => {
                         // sets language to either "from" or "to" based on filter
                         get("Dislate", "DislateLangFilter") ? set('Dislate', "DislateLangTo", language) : set('Dislate', "DislateLangFrom", language)

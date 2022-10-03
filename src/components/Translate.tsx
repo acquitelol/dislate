@@ -26,7 +26,7 @@ for (const [key, value] of Object.entries(langNames)) { // loops through all ent
 // and either ones broke the array, and therefore instead of 
 // returning Detect, Afar, Abkhaizan etc, it was returning D, A, A etc.
 
-const translateCmd: Command = {
+const translateCommand: Command = {
   // default command imports
   id: "translate",
 
@@ -77,8 +77,6 @@ const translateCmd: Command = {
         return {};
       } // if it doesnt return a valid string then return early
 
-      
-
       Dialog.show({
         title: "Are you sure?",
         body: `The message about to be sent is:
@@ -104,7 +102,7 @@ Are you sure you want to send this?`,
           Toasts.open({ 
             // formats the string and shows language that it has changed it to
             content: `Cancelled translated message request.`, 
-            source: getIDByName('ic_flower_star_18px')
+            source: getIDByName('ic_megaphone_nsfw_16px')
           })
         },
       })
@@ -114,4 +112,4 @@ Are you sure you want to send this?`,
   },
 };
 
-export { translateCmd };
+export { translateCommand };

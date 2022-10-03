@@ -6,7 +6,6 @@ import { Button, View } from 'enmity/components';
 export const Settings = NavigationStack.createStackNavigator();
 
 const { ThemeColorMap } = ColorMap;
-
 export default ({ name = 'Page', component = View } = {}) => {
   const styles = StyleSheet.createThemedStyleSheet({
     container: {
