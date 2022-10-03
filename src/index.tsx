@@ -133,52 +133,23 @@ const Dislate: Plugin = {
                            const messageContent = originalMessage.content // the content of the message that was long pressed (not undefined because checked above)
                            const findExistingObject = cachedData.find(o => Object.keys(o)[0] === messageId) // try to find an existing object in cache, will return undefined if nothing found
                            
+                           React.useEffect(() => {
+                              setTranslateType(findExistingObject
+                                 ? buttonType.Revert
+                                 : buttonType.Translate
+                              ) // set the button's state to whether the message has been translated or not
+                           }, setTranslateType)
+                           
+
                            const formElem = <FormRow
                               key={`1002`} // for no new items every time, 100% required
                               label={`${translateType===buttonType.Translate?"Translate":"Revert"}` /*change the label depending on the current state*/}
                               leading={<FormRow.Icon source={translateType===buttonType.Translate
                                     ?getIDByName('img_nitro_star')
                                     :getIDByName('ic_highlight')} /> /* change the icon of the button depending on the current state */}
-                              onLongPress={() => {
-                                 try {
-                                    if (!findExistingObject) { // if it cant find an object that means that the message hasnt been translated yet as its not in cache
-                                       // opens a toast to declare failure
-                                       Toasts.open({ 
-                                          // formats the string and shows language that it has changed it to
-                                          content: `Message has not been translated yet.`, 
-                                          source: getIDByName('img_nitro_star')
-                                       })
-                                       return console.log("[Dislate] Message hasn't been translated yet.")
-                                    }
-
-                                    setTranslateType(
-                                       translateType===buttonType.Translate?buttonType.Revert:buttonType.Translate
-                                    ) // toggle the state of the button using the enum made earlier
-
-                                    // opens a toast to declare success
-                                    Toasts.open({ 
-                                       // formats the string and shows language that it has changed it to
-                                       content: `Toggled to ${translateType===buttonType.Revert?"Translate":"Revert"} message.`, 
-                                       source: translateType===buttonType.Revert
-                                          ?getIDByName('img_nitro_star')
-                                          :getIDByName('ic_highlight')
-                                    })
-                                 } catch(err) { console.log(`[Dislate Local Error ${err}]`);}
-                              }}
                               onPress={() => {
                                  try{
                                     if (translateType===buttonType.Translate) { // does a different function depending on the state
-                                       if (findExistingObject) { // if it matches that means its in cache and the only possible method is to revert it.
-                                          // opens a toast to declare failure
-                                          Toasts.open({ 
-                                             // formats the string and shows language that it has changed it to
-                                             content: `Message has already been translated.`, 
-                                             source: getIDByName('img_nitro_star')
-                                          })
-                                          // hides the action sheet
-                                          LazyActionSheet.hideActionSheet() // function on the LazyActionSheet module
-                                          return console.log("[Dislate] Message has already been translated, please revert the translation to translate again.")
-                                       }
                                        // translates message into language from settings
                                        translateString( // main function based on utils/index.tsx
                                           originalMessage.content, // the valid content from the message sent
@@ -217,7 +188,7 @@ const Dislate: Plugin = {
                                           
                                        // hides the action sheet
                                        LazyActionSheet.hideActionSheet() // function on the LazyActionSheet module
-                                    } else {
+                                    } else if (translateType===buttonType.Revert) {
                                        // updates the message clicked with the new content and language translated to
                                        const editEvent = { // used for flux dispatcher to edit locally
                                           type: "MESSAGE_UPDATE",
@@ -304,3 +275,7 @@ const Dislate: Plugin = {
 };
 
 registerPlugin(Dislate);
+
+function useEffect(arg0: () => void, setTranslateType: any) {
+   throw new Error('Function not implemented.');
+}
