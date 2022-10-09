@@ -2,8 +2,8 @@
 const debugInfo = (version: string, release: string) => {
     return `
             **[Dislate] Debug Information**
-            > **Version:** ${version}
-            > **Channel:** ${release}
+> **Version:** ${version}
+> **Channel:** ${release}
             `
 }
 
