@@ -28,12 +28,14 @@ enum buttonType {
    Revert
 } // enum used as a sort of "boolean" for the message state
 
+let cachedData: object[] = [{"invalid_id": "acquite sucks"}] // used for reverting messages back
+
 const Dislate: Plugin = {
    ...manifest,
    commands: [], // start off with no commands
+   patches: [], // start off with no patches
 
    onStart() {
-      let cachedData: object[] = [{"invalid_id": "acquite sucks"}] // used for reverting messages back
       this.commands = [
          translateCommand, // translate command
          debugCommand // command to display useful debug info, sort of like /debug on enmity itself
@@ -43,7 +45,6 @@ const Dislate: Plugin = {
       const unpatchActionSheet = () => {
             try {
                attempt++; // increases attempt
-               let masterDisableBool = getBoolean("Dislate", "masterDisable", false)
                let enableToasts = getBoolean("Dislate", "toastEnable", false)
 
                const MessageStore = getByProps("getMessage", "getMessages")
@@ -260,12 +261,14 @@ const Dislate: Plugin = {
 
       setTimeout(() => {
          unpatchActionSheet(); // calls the function (code is synchronous so this will work)
+         this.patches.push(Patcher)
       }, 300); // gives flux time to init
    },
 
    onStop() {
-      // unpatches everything and clears commands
+      // unpatches everything, and clears commands
       this.commands = [];
+      this.patches = [];
       Patcher.unpatchAll();
    },
 
