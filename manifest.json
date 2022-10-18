@@ -5,14 +5,15 @@
    "release": "stable",
    "authors": [
       {
-         "name": "acquite",
+         "name": "Acquite <3",
          "id": "581573474296791211"
       }
    ],
    "plugin": [
       {
          "download": "https://raw.githubusercontent.com/acquitelol/dislate/main/dist/Dislate.js",
-         "repo": "https://github.com/acquitelol/dislate"
+         "repo": "https://github.com/acquitelol/dislate",
+         "user": "https://github.com/acquitelol/"
       }
    ],
    "color": "#ff1f84"
