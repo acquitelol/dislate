@@ -118,7 +118,7 @@ const Dislate: Plugin = {
                               }
                               // return default of 0
                               return sheetIndex(0) 
-                           }
+                         }
                            // doesnt place a new element if its already there {returns early}
                            if(finalLocation[calculateIndex()].key=='1002') { return }
                            // gets original message sent by user based on the params from the component
@@ -132,7 +132,7 @@ const Dislate: Plugin = {
                            
                            const messageId = originalMessage.id // the id of the message that was long pressed
                            const messageContent = originalMessage.content // the content of the message that was long pressed (not undefined because checked above)
-                           let findExistingObject = cachedData.find(o => Object.keys(o)[0] === messageId) // try to find an existing object in cache, will return undefined if nothing found
+                           const findExistingObject = cachedData.find(o => Object.keys(o)[0] === messageId) // try to find an existing object in cache, will return undefined if nothing found
                            
                            React.useEffect(() => {
                               setTranslateType(findExistingObject
@@ -148,63 +148,79 @@ const Dislate: Plugin = {
                               leading={<FormRow.Icon source={translateType===buttonType.Translate
                                     ?getIDByName('img_nitro_star')
                                     :getIDByName('ic_highlight')} /> /* change the icon of the button depending on the current state */}
-                              onPress={async function() {
+                              onPress={() => {
                                  try{
-                                    // does a different thing depending on the state
-                                    // translates message into language from settings
-                                    if (translateType===buttonType.Translate) {
-                                       var res = await translateString( // main function based on utils/index.tsx
+                                    if (translateType===buttonType.Translate) { // does a different function depending on the state
+                                       // translates message into language from settings
+                                       translateString( // main function based on utils/index.tsx
                                           originalMessage.content, // the valid content from the message sent
                                           get("Dislate", "DislateLangFrom", "detect"), // the language to translate from, default is detect/automatic
                                           get("Dislate", "DislateLangTo", "japanese") // the language to translate to, the default is japanese
-                                       )
-                                    }
-                                    // what to do after the message gets returned from the translate function (async)
-                                    // updates the message clicked with the new content and language translated to
+                                       ).then(res => { // what to do after the message gets returned from the translate function (async)
+                                          // updates the message clicked with the new content and language translated to
+                                          const editEvent = { // used for flux dispatcher to edit locally
+                                             type: "MESSAGE_UPDATE",
+                                             message: {
+                                                ...originalMessage,
+                                                content:
+                                                      // res is the message content, and it puts the language that it translated to as a mini code block
+                                                      `${res} \`[${formatString(get("Dislate", "DislateLangTo", "japanese"))}]\``,
+                                                guild_id: ChannelStore.getChannel(
+                                                      originalMessage.channel_id
+                                                ).guild_id,
+                                             },
+                                             log_edit: false // doesnt log edit request in debug logs
+                                          };
+                                          // dispatches the event
+                                          FluxDispatcher.dispatch(editEvent);
 
-                                    let finalMessage = translateType===buttonType.Translate
-                                       ? `${res} \`[${formatString(get("Dislate", "DislateLangTo", "japanese"))}]\``
-                                       : findExistingObject[messageId]
+                                          // opens a toast to declare success
+                                          Toasts.open({ 
+                                             // formats the string and shows language that it has changed it to
+                                             content: `Modified message to ${formatString(get("Dislate", "DislateLangTo", "japanese"))}.`, 
+                                             source: getIDByName('img_nitro_star')
+                                          })
 
-                                    const editEvent = { // used for flux dispatcher to edit locally
-                                       type: "MESSAGE_UPDATE",
-                                       message: {
-                                          ...originalMessage,
-                                          content:
-                                                // res is the message content, and it puts the language that it translated to as a mini code block
-                                                finalMessage,
-                                          guild_id: ChannelStore.getChannel(
-                                                originalMessage.channel_id
-                                          ).guild_id
-                                       },
-                                       log_edit: false, // doesnt log edit request in debug logs
-                                       
-                                    };
-                                    // dispatches the event
-                                    FluxDispatcher.dispatch(editEvent);
-
-                                    // opens a toast to declare success
-                                    Toasts.open({ 
-                                       // formats the string and shows language that it has changed it to
-                                       content: translateType===buttonType.Translate
-                                          ? `Modified message to ${formatString(get("Dislate", "DislateLangTo", "japanese"))}.`
-                                          : `Reverted message back to original state.`,
-                                       source: getIDByName('img_nitro_star')
-                                    })
-
-                                    translateType===buttonType.Translate?() => {
-                                       // add the message id and content to the cache to be reverted later
-                                       cachedData.unshift({
-                                          [messageId]: messageContent
+                                          // add the message id and content to the cache to be reverted later
+                                          cachedData.unshift({
+                                             [messageId]: messageContent
+                                          })
                                        })
-                                    }: () => {
+                                          
+                                       // hides the action sheet
+                                       LazyActionSheet.hideActionSheet() // function on the LazyActionSheet module
+                                    } else if (translateType===buttonType.Revert) {
+                                       // updates the message clicked with the new content and language translated to
+                                       const editEvent = { // used for flux dispatcher to edit locally
+                                          type: "MESSAGE_UPDATE",
+                                          message: {
+                                             ...originalMessage,
+                                             content:
+                                                findExistingObject[messageId],
+                                             guild_id: ChannelStore.getChannel(
+                                                   originalMessage.channel_id
+                                             ).guild_id,
+                                          },
+                                          log_edit: false // doesnt log edit request in debug logs
+                                       };
+                                       // dispatches the event
+                                       FluxDispatcher.dispatch(editEvent);
+
+                                       // opens a toast to declare success
+                                       Toasts.open({ 
+                                          // formats the string and shows language that it has changed it to
+                                          content: `Reverted message back to original state.`, 
+                                          source: getIDByName('img_nitro_star')
+                                       })
+
                                        // gets all elements from the cache array except the one that was just reverted (basically just removes the element from the array)
                                        let changedArray = cachedData.filter(e => e!==findExistingObject)
                                        cachedData=changedArray // sets it back to the original cache array
                                        // doing it this way instead of pop() or shift() means that i can revert any message sent at any time, not just the most recent message sent ^^^
+
+                                       // hides the action sheet
+                                       LazyActionSheet.hideActionSheet() // function on the LazyActionSheet module
                                     }
-                                    // hides the action sheet
-                                    LazyActionSheet.hideActionSheet() // function on the LazyActionSheet module
                                  } catch(err) { console.log(`[Dislate Local Error ${err}]`);}
                                  
                               }} />

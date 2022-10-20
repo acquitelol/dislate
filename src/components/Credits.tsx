@@ -24,7 +24,7 @@ export default () => {
         // main container styles with everything inside
         container: {
             paddingTop: 30,
-            paddingLeft: 15,
+            paddingLeft: 20,
             marginBottom: -5,
             flexDirection: "row"
         },

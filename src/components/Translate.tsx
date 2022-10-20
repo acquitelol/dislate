@@ -14,17 +14,13 @@ import langNames from 'translate/src/languages/names'
 import { Messages } from 'enmity/metro/common'
 
 // converts the key:value pair of languages into a format readable by the command
-let langOptions: any[] = []; // empty array which is populated by the for loop
-for (const [key, value] of Object.entries(langNames)) { // loops through all entries of the object
-    langOptions.push({
-        name: formatString(key),
-        displayName: formatString(key),
-        value: key
-    })
-} // for some reason it breaks if i dont use the undeclared "value"
-// i have tried to use Object.keys and only use key, or to use _ as a substitution of value,
-// and either ones broke the array, and therefore instead of 
-// returning Detect, Afar, Abkhaizan etc, it was returning D, A, A etc.
+let langOptions: any[] = Object.keys(langNames).map(item => {
+  return {
+    name: formatString(item),
+    displayName: formatString(item),
+    value: item
+  }
+})
 
 const translateCommand: Command = {
   // default command imports
