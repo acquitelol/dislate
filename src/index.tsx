@@ -8,7 +8,7 @@ import { create } from 'enmity/patcher';
 import manifest from '../manifest.json';
 import Settings from './components/Settings';
 import { get, getBoolean } from 'enmity/api/settings';
-import { translateString, formatString } from './utils';
+import { translateString, formatString, external_plugins } from './utils';
 import { translateCommand } from './components/Translate'
 import { debugCommand } from './components/Debug'
 
@@ -80,7 +80,10 @@ const Dislate: Plugin = {
                   if (sheet === "MessageLongPressActionSheet") { // only works for the long press on message context menu
                      component.then((instance) => { // patches the component which was fetched when the openLazy event was fired
                         Patcher.after(instance, "default", (_, message, res) => {
-                           // used to change between the two states without having to rerender the button
+                           // list of different keys for external plugins
+                           const externalPluginList = external_plugins()
+
+                           // different states used throughout the thing
                            const [translateType, setTranslateType] = React.useState<buttonType>(buttonType.Translate) 
 
                            // returns if theres no props on res
@@ -98,29 +101,20 @@ const Dislate: Plugin = {
                               &&
                               where the button is currently
                            )*/
-                           const calculateIndex = () => {
-                              // adds 1 to the index if invischat is active
-                              const sheetIndex = (invisChat: number) => {
-                                 if (finalLocation[0+invisChat]?.props?.message=='Reply') {
-                                    // its not your message but you can reply
-                                    return 1+invisChat 
-                                 } else if (finalLocation[1+invisChat]?.props?.message=='Reply') {
-                                    // its your message
-                                    return 2+invisChat 
-                                 }
-                                 // its not your message and you cant reply
-                                 return 0+invisChat 
+                           const [buttonOffset, setButtonOffset] = React.useState<number>(-1)
+                           React.useEffect(() => {
+                              Object.values(externalPluginList).forEach(index => {
+                                 if (finalLocation.find((c: any) => c.key == index)) {setButtonOffset((previous: number) => previous+1)}
+                              })
+                              if (finalLocation.find((a: any) => a.props?.message=="Reply")) {
+                                 // you can reply
+                                 setButtonOffset((previous: number) => previous+1)
                               }
-                              // main logic
-                              if (finalLocation[0].key=='420') { // only returns early if the key of the 0th element is 420 (invisCHat is active)
-                                 // return an extra 1 to the index to account for InvisChat
-                                 return sheetIndex(1) 
+                              if (finalLocation.find((a: any) => a.props?.message=="Edit Message")) {
+                                 // you can edit
+                                 setButtonOffset((previous: number) => previous+1)
                               }
-                              // return default of 0
-                              return sheetIndex(0) 
-                         }
-                           // doesnt place a new element if its already there {returns early}
-                           if(finalLocation[calculateIndex()].key=='1002') { return }
+                           }, [])
                            // gets original message sent by user based on the params from the component
                            const originalMessage = MessageStore.getMessage(
                               message[0].message.channel_id,
@@ -140,10 +134,9 @@ const Dislate: Plugin = {
                                  : buttonType.Translate
                               ) // set the button's state to whether the message has been translated or not
                            }, setTranslateType)
-                           
 
                            const formElem = <FormRow
-                              key={`1002`} // for no new items every time, 100% required
+                              key={externalPluginList.dislate} // for no new items every time, 100% required
                               label={`${translateType===buttonType.Translate?"Translate":"Revert"}` /*change the label depending on the current state*/}
                               leading={<FormRow.Icon source={translateType===buttonType.Translate
                                     ?getIDByName('img_nitro_star')
@@ -224,8 +217,12 @@ const Dislate: Plugin = {
                                  } catch(err) { console.log(`[Dislate Local Error ${err}]`);}
                                  
                               }} />
-                              // add element to the form
-                              finalLocation.splice(calculateIndex(), 0, formElem) 
+
+                              if (!finalLocation.find(c => c.key === externalPluginList.dislate)) {
+                                 // add element to the form
+                                 finalLocation.splice(buttonOffset, 0, formElem) 
+                              }
+                              
                         })
                      });
                   }
