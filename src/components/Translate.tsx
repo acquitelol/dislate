@@ -6,12 +6,12 @@ import {
   ApplicationCommandInputType,
   ApplicationCommandOptionType,
 } from "enmity/api/commands";
-import { translateString , formatString } from "../utils";
+import { translateString , formatString, Icons } from "../utils";
 import { get } from 'enmity/api/settings';
 import { React, Toasts, Dialog } from 'enmity/metro/common';
-import { getIDByName } from 'enmity/api/assets';
 import langNames from 'translate/src/languages/names'
 import { Messages } from 'enmity/metro/common'
+import {name} from '../../manifest.json';
 
 // converts the key:value pair of languages into a format readable by the command
 let langOptions: any[] = Object.keys(langNames).map(item => {
@@ -65,7 +65,7 @@ const translateCommand: Command = {
     
     translateString( // main function based on utils/index.tsx
       message, // the valid content from the command arg sent
-      get("Dislate", "DislateLangFrom", "detect"), // the language to translate from, default is detect/automatic
+      get(name, "DislateLangFrom", "detect"), // the language to translate from, default is detect/automatic
       language // the language to translate to, an argument
     ).then(res => { // what to do after the message gets returned from the translate function (async)
       if (!res) {
@@ -90,7 +90,7 @@ Are you sure you want to send this?`,
           Toasts.open({ 
             // formats the string and shows language that it has changed it to
             content: `Sent message in ${formatString(language)}.`, 
-            source: getIDByName('img_nitro_star')
+            source: Icons.Translate
           })
         },
         onCancel: () => {
@@ -98,7 +98,7 @@ Are you sure you want to send this?`,
           Toasts.open({ 
             // formats the string and shows language that it has changed it to
             content: `Cancelled translated message request.`, 
-            source: getIDByName('ic_megaphone_nsfw_16px')
+            source: Icons.Cancel
           })
         },
       })

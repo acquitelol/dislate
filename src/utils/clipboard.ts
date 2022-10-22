@@ -1,10 +1,10 @@
 // imports needed to use
-import { getIDByName } from "enmity/api/assets";
 import { Toasts } from "enmity/metro/common";
+import { Icons } from "./icons";
 
 // open a toast with whatever type is required
-const clipboardToast = (source: string) => {
-    Toasts.open({ content: `Copied ${source} to clipboard.`, source: getIDByName('pending-alert') });
+const clipboard_toast = (source: string) => {
+    Toasts.open({ content: `Copied ${source} to clipboard.`, source: Icons.Clipboard });
 }
 
-export { clipboardToast }
+export { clipboard_toast }

@@ -5,8 +5,8 @@ import { getByName } from 'enmity/metro'
 import langNames from 'translate/src/languages/names'
 import { Navigation } from 'enmity/metro/common'
 import { get, set } from 'enmity/api/settings'
-import { getIDByName } from 'enmity/api/assets';
-import { formatString } from '../utils';
+import { formatString, Icons } from '../utils';
+import {name} from '../../manifest.json';
 
 // main search module
 const Search = getByName('StaticSearchBarContainer');
@@ -36,10 +36,10 @@ export default () => {
                     trailing={dislateArrow}
                     onPress={() => {
                         // sets language to either "from" or "to" based on filter
-                        get("Dislate", "DislateLangFilter") ? set('Dislate', "DislateLangTo", language) : set('Dislate', "DislateLangFrom", language)
+                        get(name, "DislateLangFilter") ? set('Dislate', "DislateLangTo", language) : set('Dislate', "DislateLangFrom", language)
                         // announces success with a toast
                         Toasts.open({ content: `Set ${(langNames[language]).toUpperCase()} as Language to Translate ${get("Dislate", "DislateLangFilter") ? "to" : "from"}.`, 
-                            source: get("Dislate", "DislateLangFilter") ? getIDByName('ic_activity_24px') : getIDByName('ic_raised_hand')
+                            source: get("Dislate", "DislateLangFilter") ? Icons.Settings.Translate_To : Icons.Settings.Translate_From
                         })
                         // closes the page
                         Navigation.pop()

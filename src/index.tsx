@@ -1,14 +1,13 @@
 // main imports of elements and dependencies
 import { FormRow } from 'enmity/components';
 import { Plugin, registerPlugin } from 'enmity/managers/plugins';
-import { getIDByName } from 'enmity/api/assets';
 import { bulk, filters, getByProps } from 'enmity/metro'
 import { React, Toasts } from 'enmity/metro/common';
 import { create } from 'enmity/patcher';
 import manifest from '../manifest.json';
 import Settings from './components/Settings';
 import { get, getBoolean } from 'enmity/api/settings';
-import { translateString, formatString, external_plugins } from './utils';
+import { translateString, formatString, external_plugins, Icons } from './utils';
 import { translateCommand } from './components/Translate'
 import { debugCommand } from './components/Debug'
 
@@ -45,7 +44,7 @@ const Dislate: Plugin = {
       const unpatchActionSheet = () => {
             try {
                attempt++; // increases attempt
-               let enableToasts = getBoolean("Dislate", "toastEnable", false)
+               let enableToasts = getBoolean(manifest.name, "toastEnable", false)
 
                const MessageStore = getByProps("getMessage", "getMessages")
                // ^^ used to get original message with all its props
@@ -64,15 +63,15 @@ const Dislate: Plugin = {
                            type: handler,
                            message: {},
                         }); // dispatch empty event to wake up flux
-                  } catch(err) { console.log(`[Dislate Local Error ${err}]`);}
+                  } catch(err) { console.log(`[${manifest.name} Local Error ${err}]`);}
                }
 
-               console.log(`[Dislate] delayed start attempt ${attempt}/${attempts}.`);
+               console.log(`[${manifest.name}] delayed start attempt ${attempt}/${attempts}.`);
 
                enableToasts?Toasts.open({
-                    content: `[Dislate] start attempt ${attempt}/${attempts}.`,
-                    source: getIDByName('debug'),
-               }):console.log("[Dislate] Init Toasts are disabled.")
+                    content: `[${manifest.name}] start attempt ${attempt}/${attempts}.`,
+                    source: Icons.Debug,
+               }):console.log(`[${manifest.name}] Init Toasts are disabled.`)
                // ^^^ only opens a toast showing attempts if its enabled in settings
             
                // main patch of the action sheet
@@ -88,7 +87,7 @@ const Dislate: Plugin = {
 
                            // returns if theres no props on res
                            if (!res.props) {
-                              console.log(`[Dislate Local Error: Property "Props" Does not Exist on "res"]`)
+                              console.log(`[${manifest.name} Local Error: Property "Props" Does not Exist on "res"]`)
                               return res; // (dont do anything more)
                            }
 
@@ -122,7 +121,7 @@ const Dislate: Plugin = {
                            ); // this object contains all the info from the message such as author and content etc
 
                            // return if theres no content (likely an attachment or embed with no content)
-                           if (!originalMessage.content) { return console.log("[Dislate] No message content.") };
+                           if (!originalMessage.content) { return console.log(`[${manifest.name}] No message content.`) };
                            
                            const messageId = originalMessage.id // the id of the message that was long pressed
                            const messageContent = originalMessage.content // the content of the message that was long pressed (not undefined because checked above)
@@ -139,16 +138,19 @@ const Dislate: Plugin = {
                               key={externalPluginList.dislate} // for no new items every time, 100% required
                               label={`${translateType===buttonType.Translate?"Translate":"Revert"}` /*change the label depending on the current state*/}
                               leading={<FormRow.Icon source={translateType===buttonType.Translate
-                                    ?getIDByName('img_nitro_star')
-                                    :getIDByName('ic_highlight')} /> /* change the icon of the button depending on the current state */}
+                                    ?Icons.Translate
+                                    :Icons.Revert} /> /* change the icon of the button depending on the current state */}
                               onPress={() => {
                                  try{
                                     if (translateType===buttonType.Translate) { // does a different function depending on the state
+                                       const from_language = get(manifest.name, "DislateLangFrom", "detect") // language to translate from
+                                       const to_language = get(manifest.name, "DislateLangTo", "japanese") // language to translate to
+
                                        // translates message into language from settings
                                        translateString( // main function based on utils/index.tsx
                                           originalMessage.content, // the valid content from the message sent
-                                          get("Dislate", "DislateLangFrom", "detect"), // the language to translate from, default is detect/automatic
-                                          get("Dislate", "DislateLangTo", "japanese") // the language to translate to, the default is japanese
+                                          from_language, // the language to translate from, default is detect/automatic
+                                          to_language // the language to translate to, the default is japanese
                                        ).then(res => { // what to do after the message gets returned from the translate function (async)
                                           // updates the message clicked with the new content and language translated to
                                           const editEvent = { // used for flux dispatcher to edit locally
@@ -157,7 +159,7 @@ const Dislate: Plugin = {
                                                 ...originalMessage,
                                                 content:
                                                       // res is the message content, and it puts the language that it translated to as a mini code block
-                                                      `${res} \`[${formatString(get("Dislate", "DislateLangTo", "japanese"))}]\``,
+                                                      `${res} \`[${formatString(to_language)}]\``,
                                                 guild_id: ChannelStore.getChannel(
                                                       originalMessage.channel_id
                                                 ).guild_id,
@@ -170,8 +172,8 @@ const Dislate: Plugin = {
                                           // opens a toast to declare success
                                           Toasts.open({ 
                                              // formats the string and shows language that it has changed it to
-                                             content: `Modified message to ${formatString(get("Dislate", "DislateLangTo", "japanese"))}.`, 
-                                             source: getIDByName('img_nitro_star')
+                                             content: `Modified message to ${formatString(get(manifest.name, "DislateLangTo", "japanese"))}.`, 
+                                             source: Icons.Translate
                                           })
 
                                           // add the message id and content to the cache to be reverted later
@@ -203,7 +205,7 @@ const Dislate: Plugin = {
                                        Toasts.open({ 
                                           // formats the string and shows language that it has changed it to
                                           content: `Reverted message back to original state.`, 
-                                          source: getIDByName('img_nitro_star')
+                                          source: Icons.Translate
                                        })
 
                                        // gets all elements from the cache array except the one that was just reverted (basically just removes the element from the array)
@@ -230,28 +232,28 @@ const Dislate: Plugin = {
             } catch(err) {
                // log any errors that would happen
                console.log(`[Dislate Local Error ${err}]`);
-               let enableToasts = getBoolean("Dislate", "toastEnable", false) // checks if you have the init toasts setting enabled to alert you in app
+               let enableToasts = getBoolean(manifest.name, "toastEnable", false) // checks if you have the init toasts setting enabled to alert you in app
 
                 if (attempt < attempts) { // only tries again if it attempted less than 3 times
                     console.warn(
-                        `[Dislate] failed to start. Trying again in ${attempt}0s.`
+                        `[${manifest.name}] failed to start. Trying again in ${attempt}0s.`
                     );
                     enableToasts?
                     Toasts.open({
-                        content: `[Dislate] failed to start trying again in ${attempt}0s.`,
-                        source: getIDByName('ic_message_retry'),
-                    }):console.log("[Dislate] Init toasts are disabled.")
+                        content: `[${manifest.name}] failed to start trying again in ${attempt}0s.`,
+                        source: Icons.Retry,
+                    }):console.log(`[${manifest.name}] Init toasts are disabled.`)
 
                     // waits the amount of time extra each attempt to allow for init of any services
                     setTimeout(unpatchActionSheet, attempt * 10000); 
                 } else {
                      // gives up on attempting to init dislate
-                    console.error(`[Dislate] failed to start. Giving up.`);
+                    console.error(`[${manifest.name}] failed to start. Giving up.`);
                     enableToasts? // only sends if toast options are enabled
                     Toasts.open({
-                        content: `[Dislate] failed to start. Giving up.`,
-                        source: getIDByName('Small'),
-                    }):console.log("[Dislate] Init toasts are disabled.")
+                        content: `[${manifest.name}] failed to start. Giving up.`,
+                        source: Icons.Failed,
+                    }):console.log(`[${manifest.name}] Init toasts are disabled.`)
                 }
             }
       }

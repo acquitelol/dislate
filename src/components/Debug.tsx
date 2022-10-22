@@ -8,8 +8,7 @@ import {
 import { Messages } from 'enmity/metro/common'
 import { React, Toasts } from 'enmity/metro/common';
 import {name, version, release, plugin} from '../../manifest.json';
-import { getIDByName } from 'enmity/api/assets';
-import { debugInfo, formatString, clipboardToast } from '../utils'
+import { debugInfo, formatString, clipboard_toast, Icons } from '../utils'
 import { bulk, filters } from "enmity/metro";
 
 // main declaration of modules being altered by the plugin
@@ -75,12 +74,12 @@ const debugCommand: Command = {
             Toasts.open({ 
                 // formats the string and shows language that it has changed it to
                 content: `Sent debug info in current channel.`, 
-                source: getIDByName('ic_application_command_24px')
+                source: Icons.Debug_Command.Sent
             })
         },
         download: () => { // sets the plugin download link to clipboard
             Clipboard.setString(`${plugin[0].download}?${Math.floor(Math.random() * 1001)}.js`);
-            clipboardToast("download link")
+            clipboard_toast("download link")
         },
         repo: () => { // opens the repo of the plugin externally
             Router.openURL(plugin[0].repo)
@@ -88,7 +87,7 @@ const debugCommand: Command = {
     }
 
     const throwToast = () => {
-        Toasts.open({ content: 'Invalid command argument.', source: getIDByName('clock') });
+        Toasts.open({ content: 'Invalid command argument.', source: Icons.Debug_Command.Clock });
     } // toast to show error (this should never be called in theory.)
 
     // attempts to choose the correct option and falls back to a toast if the option is undefined
