@@ -31,12 +31,11 @@ const splice_item = ( obj: any, insert: any, insert_index: any, label: string) =
 
         insert_index = insert_index%array_length
 
-        let duplicate_object: any = obj
-        let removed_item = duplicate_object[insert_index]
-        duplicate_object[insert_index] = insert
+        let removed_item = obj[insert_index]
+        obj[insert_index] = insert
 
-        let array_with_everything_except = slice_item(duplicate_object, 0, insert_index+1, label)    
-        let array_with_nothing_except = slice_item(duplicate_object, insert_index+1, array_length, label)
+        let array_with_everything_except = slice_item(obj, 0, insert_index+1, label)    
+        let array_with_nothing_except = slice_item(obj, insert_index+1, array_length, label)
         
         return [
             array_with_everything_except,
