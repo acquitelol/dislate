@@ -3,12 +3,12 @@ import {name} from '../../manifest.json'
 const slice_item = (array: [], start: number, end: number, label: string) => {
     try {
         let tempArray: [] = [];
-    
+        let array_length = 0;
+        for (let i of array) {
+            array_length++;
+        }
         if(end===undefined || end > array.length) {
-            end = 0;
-            for (let i of array) {
-                end++;
-            }
+            end = array_length
         }
 
         for (let i = start; i < end; i++) {
