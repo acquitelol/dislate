@@ -7,6 +7,7 @@ const slice_item = (array: [], start: number, end: number, label: string) => {
         for (let i of array) {
             array_length++;
         }
+
         if(end===undefined || end > array.length) {
             end = array_length
         }
@@ -33,8 +34,6 @@ const splice_item = ( obj: any, insert: any, insert_index: any, label: string) =
         let duplicate_object: any = obj
         let removed_item = duplicate_object[insert_index]
         duplicate_object[insert_index] = insert
-
-        
 
         let array_with_everything_except = slice_item(duplicate_object, 0, insert_index+1, label)    
         let array_with_nothing_except = slice_item(duplicate_object, insert_index+1, array_length, label)
