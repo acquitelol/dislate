@@ -23,16 +23,18 @@ const slice_item = (array: [], start: number, end: number, label: string) => {
   
 const splice_item = ( obj: any, insert: any, insert_index: any, label: string) => {
     try {
-        insert_index = insert_index%obj.length
+        let array_length = 0;
+        for (let i of obj) {
+            array_length++;
+        }
+
+        insert_index = insert_index%array_length
 
         let duplicate_object: any = obj
         let removed_item = duplicate_object[insert_index]
         duplicate_object[insert_index] = insert
 
-        let array_length = 0;
-        for (let i of duplicate_object) {
-            array_length++;
-        }
+        
 
         let array_with_everything_except = slice_item(duplicate_object, 0, insert_index+1, label)    
         let array_with_nothing_except = slice_item(duplicate_object, insert_index+1, array_length, label)
