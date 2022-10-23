@@ -1,6 +1,6 @@
 import {name} from '../../manifest.json'
 
-const find_item = (item: any, callback: any) => {
+const find_item = (item: any, label: string, callback: any) => {
     try {
         let result: any;
         for (let i = 0; i < item.length; i++) {
@@ -11,8 +11,8 @@ const find_item = (item: any, callback: any) => {
             }
         }
         return result;
-    } catch {
-        console.warn(`[${name}] Some error happened when attempting to find an element.`)
+    } catch(err) {
+        console.warn(`[${name}] The following error happened when trying to find an item in ${label}: ${err}`)
     }
 }
 export { find_item }

@@ -7,7 +7,14 @@ import { create } from 'enmity/patcher';
 import manifest from '../manifest.json';
 import Settings from './components/Settings';
 import { get, getBoolean } from 'enmity/api/settings';
-import { translateString, formatString, external_plugins, find_item, Icons } from './utils';
+import { 
+   translateString, 
+   formatString, 
+   external_plugins, 
+   find_item, 
+   splice_item,
+   Icons 
+} from './utils';
 import { translateCommand } from './components/Translate'
 import { debugCommand } from './components/Debug'
 
@@ -94,7 +101,7 @@ const Dislate: Plugin = {
                                  }
 
                                  // array of all buttonRow items in the lazyActionSheet
-                                 const finalLocation = res?.props?.children?.props?.children?.props?.children[1]
+                                 let finalLocation = res?.props?.children?.props?.children?.props?.children[1]
                                  // if any of these dont exist, it will return undefined instead of throwing an error
 
                                  /* calculates (
@@ -102,19 +109,21 @@ const Dislate: Plugin = {
                                     &&
                                     where the button is currently
                                  )*/
-                                 const [buttonOffset, setButtonOffset] = React.useState<number>(-1)
+                                 const [buttonOffset, setButtonOffset] = React.useState<number>(0)
+                                 let hasIndexFinished = false
                                  React.useEffect(() => {
                                     Object.values(externalPluginList).forEach(index => {
-                                       if (find_item(finalLocation, (c: any) => c.key == index)) {setButtonOffset((previous: number) => previous+1)}
+                                       if (find_item(finalLocation, 'external plugin list', (c: any) => c.key == index)) {setButtonOffset((previous: number) => previous+1)}
                                     })
-                                    if (find_item(finalLocation, (a: any) => a.props?.message=="Reply")) {
+                                    if (find_item(finalLocation, 'reply button', (a: any) => a.props?.message=="Reply")) {
                                        // you can reply
                                        setButtonOffset((previous: number) => previous+1)
                                     }
-                                    if (find_item(finalLocation, (a: any) => a.props?.message=="Edit Message")) {
+                                    if (find_item(finalLocation, 'edit message button', (a: any) => a.props?.message=="Edit Message")) {
                                        // you can edit
                                        setButtonOffset((previous: number) => previous+1)
                                     }
+                                    hasIndexFinished = true
                                  }, [])
                                  // gets original message sent by user based on the params from the component
                                  const originalMessage = MessageStore.getMessage(
@@ -127,7 +136,7 @@ const Dislate: Plugin = {
                                  
                                  const messageId = originalMessage.id // the id of the message that was long pressed
                                  const messageContent = originalMessage.content // the content of the message that was long pressed (not undefined because checked above)
-                                 const findExistingObject = find_item(cachedData, (o: any) => Object.keys(o)[0] === messageId) // try to find an existing object in cache, will return undefined if nothing found
+                                 const findExistingObject = find_item(cachedData, 'cache object', (o: any) => Object.keys(o)[0] === messageId) // try to find an existing object in cache, will return undefined if nothing found
                                  
                                  React.useEffect(() => {
                                     setTranslateType(findExistingObject
@@ -135,6 +144,8 @@ const Dislate: Plugin = {
                                        : buttonType.Translate
                                     ) // set the button's state to whether the message has been translated or not
                                  }, setTranslateType)
+
+                                 // let ButtonRow = finalLocation[finalLocation.length - 1].type
 
                                  const formElem = <FormRow
                                     key={externalPluginList.dislate} // for no new items every time, 100% required
@@ -222,11 +233,10 @@ const Dislate: Plugin = {
                                        
                                     }} />
 
-                                    if (!find_item(finalLocation, (c: any) => c.key === externalPluginList.dislate)) {
+                                    if (!find_item(finalLocation, 'existing key of dislate', (c: any) => c.key === externalPluginList.dislate)) {
                                        // add element to the form
-                                       finalLocation.splice(buttonOffset, 0, formElem) 
+                                       splice_item(finalLocation, formElem, buttonOffset, "insert translate button")
                                     }
-                                 
                            })
                         });
                      }
