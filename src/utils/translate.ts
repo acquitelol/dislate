@@ -2,7 +2,7 @@ import translate from "translate";
 import langNames from 'translate/src/languages/names'
 
 // async function to translate text
-async function translateString(text: string, fromLang, toLang) {
+async function translate_string(text: string, fromLang, toLang) {
     if (!fromLang) {
         let res = await translate(text, langNames[toLang])
         return res
@@ -16,4 +16,4 @@ async function translateString(text: string, fromLang, toLang) {
     
 }
 
-export { translateString };
+export { translate_string };

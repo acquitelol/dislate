@@ -3,7 +3,7 @@ import { React, Constants, StyleSheet } from 'enmity/metro/common';
 import { bulk, filters} from 'enmity/metro';
 import {name, version, release, plugin, authors} from '../../manifest.json';
 import { TouchableOpacity, View, Image, Text} from 'enmity/components';
-import { clipboard_toast, debugInfo } from '../utils';
+import { clipboard_toast, debug_info } from '../utils';
 
 // @ts-ignore
 const Animated = window.enmity.modules.common.Components.General.Animated
@@ -130,7 +130,7 @@ export default () => {
                     <TouchableOpacity
                         style={{flexDirection: 'row'} /* display text inline */}
                         onPress={() => {
-                            Clipboard.setString(debugInfo(version, release));
+                            Clipboard.setString(debug_info(version, release));
                             clipboard_toast('debug information')
                         }} // copy the debug info from utility function to clipboard
                     >

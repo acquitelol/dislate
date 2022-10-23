@@ -5,7 +5,7 @@ import { getByName } from 'enmity/metro'
 import langNames from 'translate/src/languages/names'
 import { Navigation } from 'enmity/metro/common'
 import { get, set } from 'enmity/api/settings'
-import { formatString, Icons } from '../utils';
+import { format_string, Icons } from '../utils';
 import {name} from '../../manifest.json';
 
 // main search module
@@ -32,7 +32,7 @@ export default () => {
             {languages.filter(language => language.includes(query)).map(language => 
             (get("Dislate", "DislateLangFilter") && language=='detect') ? <></> :
                 <FormRow
-                    label={formatString(language)}
+                    label={format_string(language)}
                     trailing={dislateArrow}
                     onPress={() => {
                         // sets language to either "from" or "to" based on filter

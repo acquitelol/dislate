@@ -8,8 +8,8 @@ import manifest from '../manifest.json';
 import Settings from './components/Settings';
 import { get, getBoolean } from 'enmity/api/settings';
 import { 
-   translateString, 
-   formatString, 
+   translate_string, 
+   format_string, 
    external_plugins, 
    find_item, 
    splice_item,
@@ -160,7 +160,7 @@ const Dislate: Plugin = {
                                              const to_language = get(manifest.name, "DislateLangTo", "japanese") // language to translate to
 
                                              // translates message into language from settings
-                                             translateString( // main function based on utils/index.tsx
+                                             translate_string( // main function based on utils/index.tsx
                                                 originalMessage.content, // the valid content from the message sent
                                                 from_language, // the language to translate from, default is detect/automatic
                                                 to_language // the language to translate to, the default is japanese
@@ -172,7 +172,7 @@ const Dislate: Plugin = {
                                                       ...originalMessage,
                                                       content:
                                                             // res is the message content, and it puts the language that it translated to as a mini code block
-                                                            `${res} \`[${formatString(to_language)}]\``,
+                                                            `${res} \`[${format_string(to_language)}]\``,
                                                       guild_id: ChannelStore.getChannel(
                                                             originalMessage.channel_id
                                                       ).guild_id,
@@ -185,7 +185,7 @@ const Dislate: Plugin = {
                                                 // opens a toast to declare success
                                                 Toasts.open({ 
                                                    // formats the string and shows language that it has changed it to
-                                                   content: `Modified message to ${formatString(get(manifest.name, "DislateLangTo", "japanese"))}.`, 
+                                                   content: `Modified message to ${format_string(get(manifest.name, "DislateLangTo", "japanese"))}.`, 
                                                    source: Icons.Translate
                                                 })
 

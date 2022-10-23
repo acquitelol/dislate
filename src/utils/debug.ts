@@ -1,7 +1,7 @@
 import {name} from '../../manifest.json'
 
 // returns an interpolated string lasting multiple lines of the debug info
-const debugInfo = (version: string, release: string) => {
+const debug_info = (version: string, release: string) => {
     return `
             **[${name}] Debug Information**
 > **Version:** ${version}
@@ -9,4 +9,4 @@ const debugInfo = (version: string, release: string) => {
             `
 }
 
-export { debugInfo }
+export { debug_info }

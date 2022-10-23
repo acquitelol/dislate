@@ -8,7 +8,7 @@ import Page from './Page'
 import Names from './Names'
 import Credits from './Credits'
 import { get, set } from 'enmity/api/settings'
-import { formatString, debugInfo, clipboard_toast, Icons } from '../utils';
+import { format_string, debug_info, clipboard_toast, Icons } from '../utils';
 
 // main settingsStore interface
 interface SettingsProps {
@@ -65,7 +65,7 @@ export default ({ settings }: SettingsProps) => {
                     label='Translate From'
                     leading={<FormRow.Icon style={styles.icon} source={Icons.Settings.Translate_From} />}
                     trailing={() => <Text style={styles.item}>
-                        {formatString(get(name, "DislateLangFrom", "detect")) ?? "N/A"}
+                        {format_string(get(name, "DislateLangFrom", "detect")) ?? "N/A"}
                     </Text>}
                     onPress={()=>{
                         // selects which route the page will overwrite: "from" being false and "to" being true
@@ -78,7 +78,7 @@ export default ({ settings }: SettingsProps) => {
                     label='Translate To'
                     leading={<FormRow.Icon style={styles.icon} source={Icons.Settings.Translate_To} />}
                     trailing={() => <Text style={styles.item}>
-                        {formatString(get(name, "DislateLangTo", "japanese")) ?? "N/A"}
+                        {format_string(get(name, "DislateLangTo", "japanese")) ?? "N/A"}
                     </Text>}
                     onPress={()=>{
                         // selects which route the page will overwrite: "from" being false and "to" being true
@@ -111,7 +111,7 @@ export default ({ settings }: SettingsProps) => {
                     leading={<FormRow.Icon style={styles.icon} source={Icons.Settings.Debug} />}
                     trailing={FormRow.Arrow}
                     onPress={() => {
-                        Clipboard.setString(debugInfo(version, release));
+                        Clipboard.setString(debug_info(version, release));
                         clipboard_toast('debug information')
                     }}
                 />

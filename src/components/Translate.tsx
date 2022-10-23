@@ -6,7 +6,7 @@ import {
   ApplicationCommandInputType,
   ApplicationCommandOptionType,
 } from "enmity/api/commands";
-import { translateString , formatString, Icons } from "../utils";
+import { translate_string , format_string, Icons } from "../utils";
 import { get } from 'enmity/api/settings';
 import { React, Toasts, Dialog } from 'enmity/metro/common';
 import langNames from 'translate/src/languages/names'
@@ -16,8 +16,8 @@ import {name} from '../../manifest.json';
 // converts the key:value pair of languages into a format readable by the command
 let langOptions: any[] = Object.keys(langNames).map(item => {
   return {
-    name: formatString(item),
-    displayName: formatString(item),
+    name: format_string(item),
+    displayName: format_string(item),
     value: item
   }
 })
@@ -63,7 +63,7 @@ const translateCommand: Command = {
     let message = args.find((o) => o.name == "text").value; // main message content
     let language = args.find((o) => o.name == "language").value; // main language
     
-    translateString( // main function based on utils/index.tsx
+    translate_string( // main function based on utils/index.tsx
       message, // the valid content from the command arg sent
       get(name, "DislateLangFrom", "detect"), // the language to translate from, default is detect/automatic
       language // the language to translate to, an argument
@@ -89,7 +89,7 @@ Are you sure you want to send this?`,
           // opens a toast to declare that message has been sent
           Toasts.open({ 
             // formats the string and shows language that it has changed it to
-            content: `Sent message in ${formatString(language)}.`, 
+            content: `Sent message in ${format_string(language)}.`, 
             source: Icons.Translate
           })
         },

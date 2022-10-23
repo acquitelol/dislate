@@ -8,7 +8,7 @@ import {
 import { Messages } from 'enmity/metro/common'
 import { React, Toasts } from 'enmity/metro/common';
 import {name, version, release, plugin} from '../../manifest.json';
-import { debugInfo, formatString, clipboard_toast, Icons } from '../utils'
+import { debug_info, format_string, clipboard_toast, Icons } from '../utils'
 import { bulk, filters } from "enmity/metro";
 
 // main declaration of modules being altered by the plugin
@@ -42,18 +42,18 @@ const debugCommand: Command = {
     type: ApplicationCommandOptionType.String,
     choices: [
         {
-            name: formatString("debug"),
-            displayName: formatString("debug"),
+            name: format_string("debug"),
+            displayName: format_string("debug"),
             value: "debug"
         },
         {
-            name: formatString("download"),
-            displayName: formatString("download"),
+            name: format_string("download"),
+            displayName: format_string("download"),
             value: "download"
         },
         {
-            name: formatString("repo"),
-            displayName: formatString("repo"),
+            name: format_string("repo"),
+            displayName: format_string("repo"),
             value: "repo"
         }
     ],
@@ -67,7 +67,7 @@ const debugCommand: Command = {
     const options = {
         debug: () => { // sends useful debug info as a message
             Messages.sendMessage(context.channel.id, {
-                content: debugInfo(version, release)
+                content: debug_info(version, release)
             }); // send a message with string interpolation
             
             // opens a toast to declare that message has been sent
