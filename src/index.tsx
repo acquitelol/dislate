@@ -7,7 +7,7 @@ import { create } from 'enmity/patcher';
 import manifest from '../manifest.json';
 import Settings from './components/Settings';
 import { get, getBoolean } from 'enmity/api/settings';
-import { translateString, formatString, external_plugins, Icons } from './utils';
+import { translateString, formatString, external_plugins, find_item, Icons } from './utils';
 import { translateCommand } from './components/Translate'
 import { debugCommand } from './components/Debug'
 
@@ -105,13 +105,13 @@ const Dislate: Plugin = {
                                  const [buttonOffset, setButtonOffset] = React.useState<number>(-1)
                                  React.useEffect(() => {
                                     Object.values(externalPluginList).forEach(index => {
-                                       if (finalLocation.find((c: any) => c.key == index)) {setButtonOffset((previous: number) => previous+1)}
+                                       if (find_item(finalLocation, (c: any) => c.key == index)) {setButtonOffset((previous: number) => previous+1)}
                                     })
-                                    if (finalLocation.find((a: any) => a.props?.message=="Reply")) {
+                                    if (find_item(finalLocation, (a: any) => a.props?.message=="Reply")) {
                                        // you can reply
                                        setButtonOffset((previous: number) => previous+1)
                                     }
-                                    if (finalLocation.find((a: any) => a.props?.message=="Edit Message")) {
+                                    if (find_item(finalLocation, (a: any) => a.props?.message=="Edit Message")) {
                                        // you can edit
                                        setButtonOffset((previous: number) => previous+1)
                                     }
@@ -127,7 +127,7 @@ const Dislate: Plugin = {
                                  
                                  const messageId = originalMessage.id // the id of the message that was long pressed
                                  const messageContent = originalMessage.content // the content of the message that was long pressed (not undefined because checked above)
-                                 const findExistingObject = cachedData.find(o => Object.keys(o)[0] === messageId) // try to find an existing object in cache, will return undefined if nothing found
+                                 const findExistingObject = find_item(cachedData, (o: any) => Object.keys(o)[0] === messageId) // try to find an existing object in cache, will return undefined if nothing found
                                  
                                  React.useEffect(() => {
                                     setTranslateType(findExistingObject
@@ -222,7 +222,7 @@ const Dislate: Plugin = {
                                        
                                     }} />
 
-                                    if (!finalLocation.find(c => c.key === externalPluginList.dislate)) {
+                                    if (!find_item(finalLocation, (c: any) => c.key === externalPluginList.dislate)) {
                                        // add element to the form
                                        finalLocation.splice(buttonOffset, 0, formElem) 
                                     }
