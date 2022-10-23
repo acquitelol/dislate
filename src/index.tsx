@@ -75,170 +75,172 @@ const Dislate: Plugin = {
                // ^^^ only opens a toast showing attempts if its enabled in settings
             
                // main patch of the action sheet
-               Patcher.before(LazyActionSheet, "openLazy", (_, [component, sheet], _res) => {
-                  if (sheet === "MessageLongPressActionSheet") { // only works for the long press on message context menu
-                     component.then((instance) => { // patches the component which was fetched when the openLazy event was fired
-                        Patcher.after(instance, "default", (_, message, res) => {
-                           try {
-                           // list of different keys for external plugins
-                           const externalPluginList = external_plugins()
+               try {
+                  Patcher.before(LazyActionSheet, "openLazy", (_, [component, sheet], _res) => {
+                     if (sheet === "MessageLongPressActionSheet") { // only works for the long press on message context menu
+                        component.then((instance) => { // patches the component which was fetched when the openLazy event was fired
+                           Patcher.after(instance, "default", (_, message, res) => {
+                              
+                                 // list of different keys for external plugins
+                                 const externalPluginList = external_plugins()
 
-                           // different states used throughout the thing
-                           const [translateType, setTranslateType] = React.useState<buttonType>(buttonType.Translate) 
+                                 // different states used throughout the thing
+                                 const [translateType, setTranslateType] = React.useState<buttonType>(buttonType.Translate) 
 
-                           // returns if theres no props on res
-                           if (!res.props) {
-                              console.log(`[${manifest.name} Local Error: Property "Props" Does not Exist on "res"]`)
-                              return res; // (dont do anything more)
-                           }
+                                 // returns if theres no props on res
+                                 if (!res.props) {
+                                    console.log(`[${manifest.name} Local Error: Property "Props" Does not Exist on "res"]`)
+                                    return res; // (dont do anything more)
+                                 }
 
-                           // array of all buttonRow items in the lazyActionSheet
-                           const finalLocation = res?.props?.children?.props?.children?.props?.children[1]
-                           // if any of these dont exist, it will return undefined instead of throwing an error
+                                 // array of all buttonRow items in the lazyActionSheet
+                                 const finalLocation = res?.props?.children?.props?.children?.props?.children[1]
+                                 // if any of these dont exist, it will return undefined instead of throwing an error
 
-                           /* calculates (
-                              where it would put the translate button 
-                              &&
-                              where the button is currently
-                           )*/
-                           const [buttonOffset, setButtonOffset] = React.useState<number>(-1)
-                           React.useEffect(() => {
-                              Object.values(externalPluginList).forEach(index => {
-                                 if (finalLocation.find((c: any) => c.key == index)) {setButtonOffset((previous: number) => previous+1)}
-                              })
-                              if (finalLocation.find((a: any) => a.props?.message=="Reply")) {
-                                 // you can reply
-                                 setButtonOffset((previous: number) => previous+1)
-                              }
-                              if (finalLocation.find((a: any) => a.props?.message=="Edit Message")) {
-                                 // you can edit
-                                 setButtonOffset((previous: number) => previous+1)
-                              }
-                           }, [])
-                           // gets original message sent by user based on the params from the component
-                           const originalMessage = MessageStore.getMessage(
-                              message[0].message.channel_id,
-                              message[0].message.id
-                           ); // this object contains all the info from the message such as author and content etc
-
-                           // return if theres no content (likely an attachment or embed with no content)
-                           if (!originalMessage.content) { return console.log(`[${manifest.name}] No message content.`) };
-                           
-                           const messageId = originalMessage.id // the id of the message that was long pressed
-                           const messageContent = originalMessage.content // the content of the message that was long pressed (not undefined because checked above)
-                           const findExistingObject = cachedData.find(o => Object.keys(o)[0] === messageId) // try to find an existing object in cache, will return undefined if nothing found
-                           
-                           React.useEffect(() => {
-                              setTranslateType(findExistingObject
-                                 ? buttonType.Revert
-                                 : buttonType.Translate
-                              ) // set the button's state to whether the message has been translated or not
-                           }, setTranslateType)
-
-                           const formElem = <FormRow
-                              key={externalPluginList.dislate} // for no new items every time, 100% required
-                              label={`${translateType===buttonType.Translate?"Translate":"Revert"}` /*change the label depending on the current state*/}
-                              leading={<FormRow.Icon source={translateType===buttonType.Translate
-                                    ?Icons.Translate
-                                    :Icons.Revert} /> /* change the icon of the button depending on the current state */}
-                              onPress={() => {
-                                 try{
-                                    if (translateType===buttonType.Translate) { // does a different function depending on the state
-                                       const from_language = get(manifest.name, "DislateLangFrom", "detect") // language to translate from
-                                       const to_language = get(manifest.name, "DislateLangTo", "japanese") // language to translate to
-
-                                       // translates message into language from settings
-                                       translateString( // main function based on utils/index.tsx
-                                          originalMessage.content, // the valid content from the message sent
-                                          from_language, // the language to translate from, default is detect/automatic
-                                          to_language // the language to translate to, the default is japanese
-                                       ).then(res => { // what to do after the message gets returned from the translate function (async)
-                                          // updates the message clicked with the new content and language translated to
-                                          const editEvent = { // used for flux dispatcher to edit locally
-                                             type: "MESSAGE_UPDATE",
-                                             message: {
-                                                ...originalMessage,
-                                                content:
-                                                      // res is the message content, and it puts the language that it translated to as a mini code block
-                                                      `${res} \`[${formatString(to_language)}]\``,
-                                                guild_id: ChannelStore.getChannel(
-                                                      originalMessage.channel_id
-                                                ).guild_id,
-                                             },
-                                             log_edit: false // doesnt log edit request in debug logs
-                                          };
-                                          // dispatches the event
-                                          FluxDispatcher.dispatch(editEvent);
-
-                                          // opens a toast to declare success
-                                          Toasts.open({ 
-                                             // formats the string and shows language that it has changed it to
-                                             content: `Modified message to ${formatString(get(manifest.name, "DislateLangTo", "japanese"))}.`, 
-                                             source: Icons.Translate
-                                          })
-
-                                          // add the message id and content to the cache to be reverted later
-                                          cachedData.unshift({
-                                             [messageId]: messageContent
-                                          })
-                                       })
-                                          
-                                       // hides the action sheet
-                                       LazyActionSheet.hideActionSheet() // function on the LazyActionSheet module
-                                    } else if (translateType===buttonType.Revert) {
-                                       // updates the message clicked with the new content and language translated to
-                                       const editEvent = { // used for flux dispatcher to edit locally
-                                          type: "MESSAGE_UPDATE",
-                                          message: {
-                                             ...originalMessage,
-                                             content:
-                                                findExistingObject[messageId],
-                                             guild_id: ChannelStore.getChannel(
-                                                   originalMessage.channel_id
-                                             ).guild_id,
-                                          },
-                                          log_edit: false // doesnt log edit request in debug logs
-                                       };
-                                       // dispatches the event
-                                       FluxDispatcher.dispatch(editEvent);
-
-                                       // opens a toast to declare success
-                                       Toasts.open({ 
-                                          // formats the string and shows language that it has changed it to
-                                          content: `Reverted message back to original state.`, 
-                                          source: Icons.Translate
-                                       })
-
-                                       // gets all elements from the cache array except the one that was just reverted (basically just removes the element from the array)
-                                       let changedArray = cachedData.filter(e => e!==findExistingObject)
-                                       cachedData=changedArray // sets it back to the original cache array
-                                       // doing it this way instead of pop() or shift() means that i can revert any message sent at any time, not just the most recent message sent ^^^
-
-                                       // hides the action sheet
-                                       LazyActionSheet.hideActionSheet() // function on the LazyActionSheet module
+                                 /* calculates (
+                                    where it would put the translate button 
+                                    &&
+                                    where the button is currently
+                                 )*/
+                                 const [buttonOffset, setButtonOffset] = React.useState<number>(-1)
+                                 React.useEffect(() => {
+                                    Object.values(externalPluginList).forEach(index => {
+                                       if (finalLocation.find((c: any) => c.key == index)) {setButtonOffset((previous: number) => previous+1)}
+                                    })
+                                    if (finalLocation.find((a: any) => a.props?.message=="Reply")) {
+                                       // you can reply
+                                       setButtonOffset((previous: number) => previous+1)
                                     }
-                                 } catch(err) { console.log(`[Dislate Local Error ${err}]`);}
-                                 
-                              }} />
+                                    if (finalLocation.find((a: any) => a.props?.message=="Edit Message")) {
+                                       // you can edit
+                                       setButtonOffset((previous: number) => previous+1)
+                                    }
+                                 }, [])
+                                 // gets original message sent by user based on the params from the component
+                                 const originalMessage = MessageStore.getMessage(
+                                    message[0].message.channel_id,
+                                    message[0].message.id
+                                 ); // this object contains all the info from the message such as author and content etc
 
-                              if (!finalLocation.find(c => c.key === externalPluginList.dislate)) {
-                                 // add element to the form
-                                 finalLocation.splice(buttonOffset, 0, formElem) 
-                              }
-                           } catch(err) {
-                              // log any errors that would happen
-                              console.log(`[${manifest.name} Local Error ${err}]`);
-                              let enableToasts = getBoolean(manifest.name, "toastEnable", false) // checks if you have the init toasts setting enabled to alert you in app
-                              enableToasts?
-                              Toasts.open({
-                                  content: `[${manifest.name}] failed to open action sheet.`,
-                                  source: Icons.Retry,
-                              }):console.log(`[${manifest.name}] Init toasts are disabled.`)
-                           }
-                        })
-                     });
-                  }
-               })
+                                 // return if theres no content (likely an attachment or embed with no content)
+                                 if (!originalMessage.content) { return console.log(`[${manifest.name}] No message content.`) };
+                                 
+                                 const messageId = originalMessage.id // the id of the message that was long pressed
+                                 const messageContent = originalMessage.content // the content of the message that was long pressed (not undefined because checked above)
+                                 const findExistingObject = cachedData.find(o => Object.keys(o)[0] === messageId) // try to find an existing object in cache, will return undefined if nothing found
+                                 
+                                 React.useEffect(() => {
+                                    setTranslateType(findExistingObject
+                                       ? buttonType.Revert
+                                       : buttonType.Translate
+                                    ) // set the button's state to whether the message has been translated or not
+                                 }, setTranslateType)
+
+                                 const formElem = <FormRow
+                                    key={externalPluginList.dislate} // for no new items every time, 100% required
+                                    label={`${translateType===buttonType.Translate?"Translate":"Revert"}` /*change the label depending on the current state*/}
+                                    leading={<FormRow.Icon source={translateType===buttonType.Translate
+                                          ?Icons.Translate
+                                          :Icons.Revert} /> /* change the icon of the button depending on the current state */}
+                                    onPress={() => {
+                                       try{
+                                          if (translateType===buttonType.Translate) { // does a different function depending on the state
+                                             const from_language = get(manifest.name, "DislateLangFrom", "detect") // language to translate from
+                                             const to_language = get(manifest.name, "DislateLangTo", "japanese") // language to translate to
+
+                                             // translates message into language from settings
+                                             translateString( // main function based on utils/index.tsx
+                                                originalMessage.content, // the valid content from the message sent
+                                                from_language, // the language to translate from, default is detect/automatic
+                                                to_language // the language to translate to, the default is japanese
+                                             ).then(res => { // what to do after the message gets returned from the translate function (async)
+                                                // updates the message clicked with the new content and language translated to
+                                                const editEvent = { // used for flux dispatcher to edit locally
+                                                   type: "MESSAGE_UPDATE",
+                                                   message: {
+                                                      ...originalMessage,
+                                                      content:
+                                                            // res is the message content, and it puts the language that it translated to as a mini code block
+                                                            `${res} \`[${formatString(to_language)}]\``,
+                                                      guild_id: ChannelStore.getChannel(
+                                                            originalMessage.channel_id
+                                                      ).guild_id,
+                                                   },
+                                                   log_edit: false // doesnt log edit request in debug logs
+                                                };
+                                                // dispatches the event
+                                                FluxDispatcher.dispatch(editEvent);
+
+                                                // opens a toast to declare success
+                                                Toasts.open({ 
+                                                   // formats the string and shows language that it has changed it to
+                                                   content: `Modified message to ${formatString(get(manifest.name, "DislateLangTo", "japanese"))}.`, 
+                                                   source: Icons.Translate
+                                                })
+
+                                                // add the message id and content to the cache to be reverted later
+                                                cachedData.unshift({
+                                                   [messageId]: messageContent
+                                                })
+                                             })
+                                                
+                                             // hides the action sheet
+                                             LazyActionSheet.hideActionSheet() // function on the LazyActionSheet module
+                                          } else if (translateType===buttonType.Revert) {
+                                             // updates the message clicked with the new content and language translated to
+                                             const editEvent = { // used for flux dispatcher to edit locally
+                                                type: "MESSAGE_UPDATE",
+                                                message: {
+                                                   ...originalMessage,
+                                                   content:
+                                                      findExistingObject[messageId],
+                                                   guild_id: ChannelStore.getChannel(
+                                                         originalMessage.channel_id
+                                                   ).guild_id,
+                                                },
+                                                log_edit: false // doesnt log edit request in debug logs
+                                             };
+                                             // dispatches the event
+                                             FluxDispatcher.dispatch(editEvent);
+
+                                             // opens a toast to declare success
+                                             Toasts.open({ 
+                                                // formats the string and shows language that it has changed it to
+                                                content: `Reverted message back to original state.`, 
+                                                source: Icons.Translate
+                                             })
+
+                                             // gets all elements from the cache array except the one that was just reverted (basically just removes the element from the array)
+                                             let changedArray = cachedData.filter(e => e!==findExistingObject)
+                                             cachedData=changedArray // sets it back to the original cache array
+                                             // doing it this way instead of pop() or shift() means that i can revert any message sent at any time, not just the most recent message sent ^^^
+
+                                             // hides the action sheet
+                                             LazyActionSheet.hideActionSheet() // function on the LazyActionSheet module
+                                          }
+                                       } catch(err) { console.log(`[Dislate Local Error ${err}]`);}
+                                       
+                                    }} />
+
+                                    if (!finalLocation.find(c => c.key === externalPluginList.dislate)) {
+                                       // add element to the form
+                                       finalLocation.splice(buttonOffset, 0, formElem) 
+                                    }
+                                 
+                           })
+                        });
+                     }
+                  })
+               } catch(err) {
+                  // log any errors that would happen
+                  console.log(`[${manifest.name} Local Error ${err}]`);
+                  let enableToasts = getBoolean(manifest.name, "toastEnable", false) // checks if you have the init toasts setting enabled to alert you in app
+                  enableToasts?
+                  Toasts.open({
+                     content: `[${manifest.name}] failed to open action sheet.`,
+                     source: Icons.Retry,
+                  }):console.log(`[${manifest.name}] Init toasts are disabled.`)
+               }
             } catch(err) {
                // log any errors that would happen
                console.log(`[${manifest.name} Local Error ${err}]`);
