@@ -79,6 +79,7 @@ const Dislate: Plugin = {
                   if (sheet === "MessageLongPressActionSheet") { // only works for the long press on message context menu
                      component.then((instance) => { // patches the component which was fetched when the openLazy event was fired
                         Patcher.after(instance, "default", (_, message, res) => {
+                           try {
                            // list of different keys for external plugins
                            const externalPluginList = external_plugins()
 
@@ -224,14 +225,23 @@ const Dislate: Plugin = {
                                  // add element to the form
                                  finalLocation.splice(buttonOffset, 0, formElem) 
                               }
-                              
+                           } catch(err) {
+                              // log any errors that would happen
+                              console.log(`[${manifest.name} Local Error ${err}]`);
+                              let enableToasts = getBoolean(manifest.name, "toastEnable", false) // checks if you have the init toasts setting enabled to alert you in app
+                              enableToasts?
+                              Toasts.open({
+                                  content: `[${manifest.name}] failed to open action sheet.`,
+                                  source: Icons.Retry,
+                              }):console.log(`[${manifest.name}] Init toasts are disabled.`)
+                           }
                         })
                      });
                   }
                })
             } catch(err) {
                // log any errors that would happen
-               console.log(`[Dislate Local Error ${err}]`);
+               console.log(`[${manifest.name} Local Error ${err}]`);
                let enableToasts = getBoolean(manifest.name, "toastEnable", false) // checks if you have the init toasts setting enabled to alert you in app
 
                 if (attempt < attempts) { // only tries again if it attempted less than 3 times
@@ -240,7 +250,7 @@ const Dislate: Plugin = {
                     );
                     enableToasts?
                     Toasts.open({
-                        content: `[${manifest.name}] failed to start trying again in ${attempt}0s.`,
+                        content: `[${manifest.name}] failed to start. Trying again in ${attempt}0s.`,
                         source: Icons.Retry,
                     }):console.log(`[${manifest.name}] Init toasts are disabled.`)
 
