@@ -3,7 +3,11 @@ import {name} from '../../manifest.json'
 const find_item = (item: any, label: string, callback: any) => {
     try {
         let result: any;
-        for (let i = 0; i < item.length; i++) {
+        let array_length = 0;
+        for (let i of item) {
+            array_length++;
+        }
+        for (let i = 0; i < array_length; i++) {
             let is_found = callback(item[i], i, callback)
             if (is_found) {
                 result = item[i]

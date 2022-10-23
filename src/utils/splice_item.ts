@@ -4,11 +4,15 @@ const slice_item = (array: [], start: number, end: number, label: string) => {
     try {
         let tempArray: [] = [];
     
-        if(end===undefined || end > array.length)
-        end = array.length;
-    
+        if(end===undefined || end > array.length) {
+            end = 0;
+            for (let i of array) {
+                end++;
+            }
+        }
+
         for (let i = start; i < end; i++) {
-        tempArray.push(array[i]);
+            tempArray.push(array[i]);
         }
         return tempArray;
     } catch(err) {
@@ -25,8 +29,13 @@ const splice_item = ( obj: any, insert: any, insert_index: any, label: string) =
         let removed_item = duplicate_object[insert_index]
         duplicate_object[insert_index] = insert
 
+        let array_length = 0;
+        for (let i of duplicate_object) {
+            array_length++;
+        }
+
         let array_with_everything_except = slice_item(duplicate_object, 0, insert_index+1, label)    
-        let array_with_nothing_except = slice_item(duplicate_object, insert_index+1, duplicate_object.length, label)
+        let array_with_nothing_except = slice_item(duplicate_object, insert_index+1, array_length, label)
         
         return [
             array_with_everything_except,
