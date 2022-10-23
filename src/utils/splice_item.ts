@@ -8,7 +8,7 @@ const slice_item = (array: [], start: number, end: number, label: string) => {
             array_length++;
         }
 
-        if(end===undefined || end > array.length) {
+        if(end===undefined || end > array_length) {
             end = array_length
         }
 
