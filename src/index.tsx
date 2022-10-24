@@ -111,8 +111,9 @@ const Dislate: Plugin = {
 
                               // array of all buttonRow items in the lazyActionSheet
                               // let finalLocation = original?.props?.children?.props?.children?.props?.children[1]
-                              let full = findInReactTree(original, r => Array.isArray(r), { walkable: ['props', 'type', 'children'] });
-                              let finalLocation = full[1]
+                              console.log(original)
+
+                              let finalLocation;
                               console.log(JSON.stringify(finalLocation))
                               if (!finalLocation) {
                                  // console.log(`[${manifest.name} Local Error: 'finalLocation' seems to be undefined!]`)
