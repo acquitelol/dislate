@@ -111,7 +111,7 @@ const Dislate: Plugin = {
 
                               // array of all buttonRow items in the lazyActionSheet
                               // let finalLocation = original?.props?.children?.props?.children?.props?.children[1]
-                              console.log(original)
+                              console.log(JSON.stringify(original))
 
                               let finalLocation;
                               console.log(JSON.stringify(finalLocation))
