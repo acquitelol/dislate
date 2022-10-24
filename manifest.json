@@ -2,7 +2,7 @@
    "name": "Dislate",
    "version": "1.1.4",
    "description": "Translates text into a desired language.",
-   "release": "development",
+   "release": "stable",
    "authors": [
       {
          "name": "Acquite <3",

@@ -1,14 +1,14 @@
 import {name} from '../../manifest.json'
+import { array_length } from './array_length'
 
 const find_item = (item: any, label: string, callback: any) => {
     try {
         if (!item) return undefined
-        let array_length = 0;
-        for (let i of item) {
-            array_length++;
-        }
 
-        for (let i = 0; i < array_length; i++) { 
+        // length of item/array
+        let arr_length = array_length(item)
+
+        for (let i = 0; i < arr_length; i++) { 
             if (callback(item[i], i, callback)) {
                 return item[i]
             }

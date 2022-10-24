@@ -4,7 +4,8 @@ import { debug_info } from './debug'
 import { clipboard_toast } from "./clipboard";
 import { external_plugins } from './external'
 import { find_item } from './find_item' 
-import { slice_item, splice_item } from "./splice_item";
+import { splice_item } from "./splice_item";
+import { array_length } from './array_length'
 
 import { Icons } from "./icons";
 
@@ -15,7 +16,7 @@ export {
     clipboard_toast, 
     external_plugins, 
     find_item, 
-    slice_item,
     splice_item,
+    array_length,
     Icons 
 };

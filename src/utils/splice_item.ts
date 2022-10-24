@@ -1,52 +1,35 @@
 import {name} from '../../manifest.json'
+import { array_length } from './array_length';
 
-const slice_item = (array: [], start: number, end: number, label: string) => {
+const splice_item = ( original_array: any, insert: any, insert_index: any, label: any) => {
     try {
-        let tempArray: [] = [];
-        let array_length = 0;
-        for (let i of array) {
-            array_length++;
+        if (!original_array) return undefined
+
+        // length of the array
+        let arr_length = array_length(original_array)
+
+        // element to be inserted
+        let element_to_insert = insert
+    
+        // position at which element
+        // is to be inserted
+        let position_to_insert = insert_index
+    
+        // increase the size by 1
+        arr_length++
+        position_to_insert++;
+
+        // shift elements forward
+        for (let i = arr_length - 1; i >= position_to_insert; i--) {
+            original_array[i] = original_array[i - 1];
         }
-
-        if(end===undefined || end > array_length) {
-            end = array_length
-        }
-
-        for (let i = start; i < end; i++) {
-            tempArray.push(array[i]);
-        }
-        return tempArray;
-    } catch(err) {
-        console.warn(`[${name}] The following error happened when trying to use the slice method at ${label}: ${err}`)
-    }
-}
-  
-  
-const splice_item = ( obj: any, insert: any, insert_index: any, label: string) => {
-    try {
-        if (!obj) return undefined
-
-        let array_length = 0;
-        for (let i of obj) {
-            array_length++;
-        }
-
-        insert_index = insert_index%array_length
-
-        let removed_item = obj[insert_index]
-        obj[insert_index] = insert
-
-        let array_with_everything_except = slice_item(obj, 0, insert_index+1, label)    
-        let array_with_nothing_except = slice_item(obj, insert_index+1, array_length, label)
-        
-        return [
-            array_with_everything_except,
-            removed_item,
-            array_with_nothing_except
-        ]
+        // insert x at pos
+        original_array[position_to_insert - 1] = element_to_insert;
+        return
     } catch(err) {
         console.warn(`[${name}] The following error happened when trying to use the insert method at ${label}: ${err}`)
+        return
     }
 };
 
-export { slice_item, splice_item }
+export { splice_item }
