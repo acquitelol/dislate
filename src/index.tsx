@@ -7,6 +7,7 @@ import { create } from 'enmity/patcher';
 import manifest from '../manifest.json';
 import Settings from './components/Settings';
 import { get, getBoolean } from 'enmity/api/settings';
+import { findInReactTree } from 'enmity/utilities'
 import { 
    translate_string, 
    format_string, 
@@ -105,14 +106,16 @@ const Dislate: Plugin = {
                               // returns if theres no props on res
                               if (!original.props) {
                                  console.log(`[${manifest.name} Local Error: Property "Props" Does not Exist on "res"]`)
-                                 return; // (dont do anything more)
+                                 return original; // (dont do anything more)
                               }
 
                               // array of all buttonRow items in the lazyActionSheet
-                              let finalLocation = original?.props?.children?.props?.children?.props?.children[1]
+                              // let finalLocation = original?.props?.children?.props?.children?.props?.children[1]
+                              let full = findInReactTree(original, r => Array.isArray(r), { walkable: ['props', 'type', 'children'] });
+                              let finalLocation = full[1]
                               if (!finalLocation) {
-                                 console.log(`[${manifest.name} Local Error: 'finalLocation' seems to be undefined!]`)
-                                 return; // (dont do anything more)
+                                 // console.log(`[${manifest.name} Local Error: 'finalLocation' seems to be undefined!]`)
+                                 return original; // (dont do anything more)
                               }
                               // if any of these dont exist, it will return undefined instead of throwing an error
 
@@ -146,7 +149,10 @@ const Dislate: Plugin = {
                               ); // this object contains all the info from the message such as author and content etc
 
                               // return if theres no content (likely an attachment or embed with no content)
-                              if (!originalMessage.content) { return console.log(`[${manifest.name}] No message content.`) };
+                              if (!originalMessage.content) { 
+                                 console.log(`[${manifest.name}] No message content.`)
+                                 return original
+                              };
                               
                               const messageId = originalMessage.id // the id of the message that was long pressed
                               const messageContent = originalMessage.content // the content of the message that was long pressed (not undefined because checked above)
