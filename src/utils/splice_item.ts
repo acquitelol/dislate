@@ -24,6 +24,8 @@ const slice_item = (array: [], start: number, end: number, label: string) => {
   
 const splice_item = ( obj: any, insert: any, insert_index: any, label: string) => {
     try {
+        if (!obj) return undefined
+
         let array_length = 0;
         for (let i of obj) {
             array_length++;

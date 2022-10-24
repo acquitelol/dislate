@@ -97,11 +97,15 @@ const Dislate: Plugin = {
                                  // returns if theres no props on res
                                  if (!res.props) {
                                     console.log(`[${manifest.name} Local Error: Property "Props" Does not Exist on "res"]`)
-                                    return res; // (dont do anything more)
+                                    return; // (dont do anything more)
                                  }
 
                                  // array of all buttonRow items in the lazyActionSheet
                                  let finalLocation = res?.props?.children?.props?.children?.props?.children[1]
+                                 if (!finalLocation) {
+                                    console.log(`[${manifest.name} Local Error: 'finalLocation' seems to be undefined!]`)
+                                    return res; // (dont do anything more)
+                                 }
                                  // if any of these dont exist, it will return undefined instead of throwing an error
 
                                  /* calculates (
@@ -110,20 +114,18 @@ const Dislate: Plugin = {
                                     where the button is currently
                                  )*/
                                  const [buttonOffset, setButtonOffset] = React.useState<number>(0)
-                                 let hasIndexFinished = false
                                  React.useEffect(() => {
                                     Object.values(externalPluginList).forEach(index => {
-                                       if (find_item(finalLocation, 'external plugin list', (c: any) => c.key == index)) {setButtonOffset((previous: number) => previous+1)}
+                                       if (find_item(finalLocation, 'external plugin list', (c: any) => c.key === index)) {setButtonOffset((previous: number) => previous+1)}
                                     })
-                                    if (find_item(finalLocation, 'reply button', (a: any) => a.props?.message=="Reply")) {
+                                    if (find_item(finalLocation, 'reply button', (a: any) => a.props?.message==="Reply")) {
                                        // you can reply
                                        setButtonOffset((previous: number) => previous+1)
                                     }
-                                    if (find_item(finalLocation, 'edit message button', (a: any) => a.props?.message=="Edit Message")) {
+                                    if (find_item(finalLocation, 'edit message button', (a: any) => a.props?.message==="Edit Message")) {
                                        // you can edit
                                        setButtonOffset((previous: number) => previous+1)
                                     }
-                                    hasIndexFinished = true
                                  }, [])
                                  // gets original message sent by user based on the params from the component
                                  const originalMessage = MessageStore.getMessage(

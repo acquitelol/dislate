@@ -2,6 +2,7 @@ import {name} from '../../manifest.json'
 
 const find_item = (item: any, label: string, callback: any) => {
     try {
+        if (!item) return undefined
         let array_length = 0;
         for (let i of item) {
             array_length++;
