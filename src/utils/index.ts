@@ -6,6 +6,7 @@ import { external_plugins } from './external'
 import { find_item } from './find_item' 
 import { splice_item } from "./splice_item";
 import { array_length } from './array_length'
+import { devices } from "./devices";
 
 import { Icons } from "./icons";
 
@@ -18,5 +19,6 @@ export {
     find_item, 
     splice_item,
     array_length,
+    devices,
     Icons 
 };

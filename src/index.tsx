@@ -2,7 +2,7 @@
 import { FormRow } from 'enmity/components';
 import { Plugin, registerPlugin } from 'enmity/managers/plugins';
 import { bulk, filters, getByProps } from 'enmity/metro'
-import { React, Toasts } from 'enmity/metro/common';
+import { Dialog, React, Toasts } from 'enmity/metro/common';
 import { create } from 'enmity/patcher';
 import manifest from '../manifest.json';
 import Settings from './components/Settings';
@@ -14,10 +14,12 @@ import {
    external_plugins, 
    find_item, 
    splice_item,
+   devices,
    Icons 
 } from './utils';
 import { translateCommand } from './components/Translate'
 import { debugCommand } from './components/Debug'
+import { Native } from 'enmity/metro/common';
 
 // main declaration of modules being altered by the plugin
 const [
@@ -54,6 +56,19 @@ const Dislate: Plugin = {
                attempt++; // increases attempt
                let enableToasts = getBoolean(manifest.name, "toastEnable", false)
 
+               let device = Native.DCDDeviceManager.device;
+               if (device.includes("iPhone")) { 
+                  device.replace('iPhone', '')
+                  if (device.match(/\d+\,?\d*/)) device.replace(',', '.')
+                  if (parseFloat(device)<10.5) {
+                     Dialog.show({
+                        title: "Incompatible iPhone",
+                        body: `Please note that you're on an ${devices[Native.DCDDeviceManager.device]}.
+Some features of ${manifest.name} may behave in an unexpected manner.`,
+                        confirmText: "I understand",
+                     })
+                  }
+               }
                const MessageStore = getByProps("getMessage", "getMessages")
                // ^^ used to get original message with all its props
 
@@ -81,7 +96,7 @@ const Dislate: Plugin = {
                     source: Icons.Debug,
                }):console.log(`[${manifest.name}] Init Toasts are disabled.`)
                // ^^^ only opens a toast showing attempts if its enabled in settings
-            
+
                // main patch of the action sheet
                try {
                   Patcher.before(LazyActionSheet, "openLazy", (_, [component, sheet], _res) => {
@@ -110,11 +125,10 @@ const Dislate: Plugin = {
                               }
 
                               // array of all buttonRow items in the lazyActionSheet
-                              // let finalLocation = original?.props?.children?.props?.children?.props?.children[1]
-                              let full = findInReactTree(original, r => Array.isArray(r), { walkable: ['props', 'type', 'children'] });
-                              let finalLocation = full[1]
+                              let finalLocation = original?.props?.children?.props?.children?.props?.children[1]
+                              
                               if (!finalLocation) {
-                                 // console.log(`[${manifest.name} Local Error: 'finalLocation' seems to be undefined!]`)
+                                 console.log(`[${manifest.name} Local Error: 'finalLocation' seems to be undefined!]`)
                                  return original; // (dont do anything more)
                               }
                               // if any of these dont exist, it will return undefined instead of throwing an error
