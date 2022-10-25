@@ -65,9 +65,9 @@ const debugCommand: Command = {
 
     // object of all options and their corresponding functions
     const options = {
-        debug: () => { // sends useful debug info as a message
+        debug: async function() { // sends useful debug info as a message
             Messages.sendMessage(context.channel.id, {
-                content: debug_info(version, release)
+                content: await debug_info(version, release)
             }); // send a message with string interpolation
             
             // opens a toast to declare that message has been sent

@@ -110,8 +110,8 @@ export default ({ settings }: SettingsProps) => {
                     subLabel={`Copy useful debug information of ${name} to clipboard.`}
                     leading={<FormRow.Icon style={styles.icon} source={Icons.Settings.Debug} />}
                     trailing={FormRow.Arrow}
-                    onPress={() => {
-                        Clipboard.setString(debug_info(version, release));
+                    onPress={async function() {
+                        Clipboard.setString(await debug_info(version, release));
                         clipboard_toast('debug information')
                     }}
                 />

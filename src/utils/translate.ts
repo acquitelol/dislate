@@ -1,15 +1,15 @@
 import translate from "translate";
-import langNames from 'translate/src/languages/names'
+import lang_names from 'translate/src/languages/names'
 
 // async function to translate text
 async function translate_string(text: string, fromLang, toLang) {
     if (!fromLang) {
-        let res = await translate(text, langNames[toLang])
+        let res = await translate(text, lang_names[toLang])
         return res
     } else {
         let res = await translate(text, { 
-            from: langNames[fromLang],
-            to: langNames[toLang]
+            from: lang_names[fromLang],
+            to: lang_names[toLang]
         })
         return res
     }

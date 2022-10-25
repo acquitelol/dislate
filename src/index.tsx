@@ -7,15 +7,15 @@ import { create } from 'enmity/patcher';
 import manifest from '../manifest.json';
 import Settings from './components/Settings';
 import { get, getBoolean } from 'enmity/api/settings';
-import { findInReactTree } from 'enmity/utilities'
 import { 
    translate_string, 
    format_string, 
    external_plugins, 
    find_item, 
    splice_item,
-   devices,
-   Icons 
+   for_item,
+   Icons, 
+   check_if_compatible_device
 } from './utils';
 import { translateCommand } from './components/Translate'
 import { debugCommand } from './components/Debug'
@@ -51,26 +51,15 @@ const Dislate: Plugin = {
       ]; // add the translate and debug command to the list
       let attempt = 0; // starts at attempt 0
       let attempts = 3; // max 3 attempts
-      const unpatchActionSheet = () => {
+      async function unpatchActionSheet () {
             try {
                attempt++; // increases attempt
                let enableToasts = getBoolean(manifest.name, "toastEnable", false)
-
-               let device = Native.DCDDeviceManager.device;
-               if (device.includes("iPhone")) { 
-                  device.replace('iPhone', '')
-                  if (device.match(/\d+\,?\d*/)) device.replace(',', '.')
-                  if (parseFloat(device)<10.5) {
-                     Dialog.show({
-                        title: "Incompatible iPhone",
-                        body: `Please note that you're on an ${devices[Native.DCDDeviceManager.device]}.
-Some features of ${manifest.name} may behave in an unexpected manner.`,
-                        confirmText: "I understand",
-                     })
-                  }
-               }
                const MessageStore = getByProps("getMessage", "getMessages")
                // ^^ used to get original message with all its props
+
+               // open a dialog if the device is old
+               await check_if_compatible_device()
 
                const FluxDispatcher = getByProps(
                   "_currentDispatchActionType", 
@@ -140,7 +129,7 @@ Some features of ${manifest.name} may behave in an unexpected manner.`,
                               )*/
                               const [buttonOffset, setButtonOffset] = React.useState<number>(0)
                               React.useEffect(() => {
-                                 Object.values(externalPluginList).forEach(index => {
+                                 for_item(Object.values(externalPluginList), (index) => {
                                     if (find_item(finalLocation, 'external plugin list', (c: any) => {
                                        if (c.key!==externalPluginList.dislate) {
                                           return c.key === index
@@ -316,11 +305,10 @@ Some features of ${manifest.name} may behave in an unexpected manner.`,
                 }
             }
       }
-
       setTimeout(() => {
          unpatchActionSheet(); // calls the function (code is synchronous so this will work)
          this.patches.push(Patcher)
-      }, 300); // gives flux time to init
+      }, 500); // gives flux and storage set time to init
    },
 
    onStop() {

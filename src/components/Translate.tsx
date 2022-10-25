@@ -6,7 +6,7 @@ import {
   ApplicationCommandInputType,
   ApplicationCommandOptionType,
 } from "enmity/api/commands";
-import { translate_string , format_string, Icons } from "../utils";
+import { translate_string , format_string, map_item, Icons, find_item } from "../utils";
 import { get } from 'enmity/api/settings';
 import { React, Toasts, Dialog } from 'enmity/metro/common';
 import langNames from 'translate/src/languages/names'
@@ -14,7 +14,7 @@ import { Messages } from 'enmity/metro/common'
 import {name} from '../../manifest.json';
 
 // converts the key:value pair of languages into a format readable by the command
-let langOptions: any[] = Object.keys(langNames).map(item => {
+let langOptions: any[] = map_item(Object.keys(langNames), item => {
   return {
     name: format_string(item),
     displayName: format_string(item),
@@ -60,8 +60,8 @@ const translateCommand: Command = {
   ],
 
   execute: async function (args, context) {
-    let message = args.find((o) => o.name == "text").value; // main message content
-    let language = args.find((o) => o.name == "language").value; // main language
+    let message = find_item(args, 'translate text',(o) => o.name == "text").value; // main message content
+    let language = find_item(args, 'translate language', (o) => o.name == "language").value; // main language
     
     translate_string( // main function based on utils/index.tsx
       message, // the valid content from the command arg sent
