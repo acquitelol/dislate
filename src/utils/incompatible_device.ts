@@ -10,7 +10,11 @@ async function check_if_compatible_device () {
     if (device.includes("iPhone")) { 
         device = device.replace('iPhone', '')
         device = device.replace(',', '.')
-        if (parseFloat(device)<10.5) {
+        if (
+            (parseFloat(device)<10.6&&parseFloat(device)!=10.3)
+            || parseFloat(device)==14.6
+            || parseFloat(device)==12.8
+        ) {
             Dialog.show({
                 title: "Incompatible iPhone",
                 body: `Please note that you're on an${devices[Native.DCDDeviceManager.device]}.
