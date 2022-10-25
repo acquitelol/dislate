@@ -83,7 +83,7 @@ const Dislate: Plugin = {
                enableToasts?Toasts.open({
                     content: `[${manifest.name}] start attempt ${attempt}/${attempts}.`,
                     source: Icons.Debug,
-               }):console.log(`[${manifest.name}] Init Toasts are disabled.`)
+               }):"acquite is a girl"
                // ^^^ only opens a toast showing attempts if its enabled in settings
 
                // main patch of the action sheet
@@ -275,7 +275,7 @@ const Dislate: Plugin = {
                   Toasts.open({
                      content: `[${manifest.name}] failed to open action sheet.`,
                      source: Icons.Retry,
-                  }):console.log(`[${manifest.name}] Init toasts are disabled.`)
+                  }):"acquite is a girl"
                }
             } catch(err) {
                // log any errors that would happen
@@ -290,7 +290,7 @@ const Dislate: Plugin = {
                     Toasts.open({
                         content: `[${manifest.name}] failed to start. Trying again in ${attempt}0s.`,
                         source: Icons.Retry,
-                    }):console.log(`[${manifest.name}] Init toasts are disabled.`)
+                    }):"acquite is a girl"
 
                     // waits the amount of time extra each attempt to allow for init of any services
                     setTimeout(unpatchActionSheet, attempt * 10000); 
@@ -301,14 +301,14 @@ const Dislate: Plugin = {
                     Toasts.open({
                         content: `[${manifest.name}] failed to start. Giving up.`,
                         source: Icons.Failed,
-                    }):console.log(`[${manifest.name}] Init toasts are disabled.`)
+                    }):"acquite is a girl"
                 }
             }
       }
       setTimeout(() => {
          unpatchActionSheet(); // calls the function (code is synchronous so this will work)
          this.patches.push(Patcher)
-      }, 500); // gives flux and storage set time to init
+      }, 500); // gives flux time to init
    },
 
    onStop() {
