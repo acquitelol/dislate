@@ -1,7 +1,7 @@
 // main imports of elements and dependencies
 import { FormDivider, FormRow, ScrollView, FormSwitch, FormSection, Text } from 'enmity/components';
 import { SettingsStore } from 'enmity/api/settings';
-import { React, Toasts, Constants, StyleSheet, Navigation } from 'enmity/metro/common';
+import { React, Toasts, Constants, StyleSheet, Navigation, Storage } from 'enmity/metro/common';
 import {name, version, release, plugin} from '../../manifest.json';
 import { bulk, filters} from 'enmity/metro';
 import Page from './Page'
@@ -26,7 +26,6 @@ const [
 
 export default ({ settings }: SettingsProps) => {
     // icon and styles
-    const toastTrail = Icons.Settings.Toasts.Settings;
 
     const styles = StyleSheet.createThemedStyleSheet({
         icon: {
@@ -98,7 +97,10 @@ export default ({ settings }: SettingsProps) => {
                             value={settings.getBoolean('toastEnable', false)} // main toast function function
                             onValueChange={() => {
                                     settings.toggle('toastEnable', false)
-                                    Toasts.open({ content: `Successfully ${settings.getBoolean('toastEnable', false) ? 'enabled' : 'disabled'} Load Toasts.`, source: toastTrail }); // overwrites it with the opposite
+                                    Toasts.open({ 
+                                        content: `Successfully ${settings.getBoolean('toastEnable', false) ? 'enabled' : 'disabled'} Load Toasts.`, 
+                                        source: Icons.Settings.Toasts.Settings 
+                                    }); // overwrites it with the opposite
                                 }
                             }
                         />
@@ -113,6 +115,20 @@ export default ({ settings }: SettingsProps) => {
                     onPress={async function() {
                         Clipboard.setString(await debug_info(version, release));
                         clipboard_toast('debug information')
+                    }}
+                />
+                <FormDivider />
+                <FormRow
+                    label='Clear Device Cache'
+                    subLabel={`Void the fetched device list storage.`}
+                    leading={<FormRow.Icon style={styles.icon} source={Icons.Delete} />}
+                    trailing={FormRow.Arrow}
+                    onPress={async function() {
+                        await Storage.removeItem('device_list') // removes the item and waits for promise resolve
+                        Toasts.open({ 
+                            content: `Cleared device list storage.`, 
+                            source: Icons.Settings.Toasts.Settings 
+                        }); // declares success
                     }}
                 />
             </FormSection>

@@ -15,8 +15,8 @@ async function get_device_list() {
         // this function is just a whole bunch of formatting the text into a js object format
         let final = format_object(encoded)
 
-        // set the item to storage
-        Storage.setItem("device_list", final)
+        // set the item to storage and wait for it to resolve
+        await Storage.setItem("device_list", final)
 
         // fetch the list it just set to storage
         let device_list = await Storage.getItem("device_list")
