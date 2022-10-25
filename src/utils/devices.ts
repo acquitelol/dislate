@@ -2,9 +2,9 @@ import { REST, Storage } from "enmity/metro/common";
 import { name } from '../../manifest.json'
 import { format_object } from "./format_object";
 
-async function init_device_list() {
+async function get_device_list() {
     try {
-        // try to get the device list already
+        // try to get the device list already from storage
         let existing = await Storage.getItem("device_list")
         if (existing) return JSON.parse(existing); // if it exists already then just return that
 
@@ -18,14 +18,14 @@ async function init_device_list() {
         // set the item to storage
         Storage.setItem("device_list", final)
 
-        // fetch the list it just set
+        // fetch the list it just set to storage
         let device_list = await Storage.getItem("device_list")
         return JSON.parse(device_list)
     } catch(err) {
         console.warn(`[${name} Local Error — Issue when getting devices: ${err}]`)
-        return
+        return // makes sure all code paths actually return something
     }
 }
 
 
-export {init_device_list}
+export {get_device_list}

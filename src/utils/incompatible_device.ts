@@ -1,20 +1,23 @@
 import { Dialog, Native } from "enmity/metro/common";
 import { name } from '../../manifest.json'
-import { init_device_list } from "./devices";
+import { get_device_list } from "./devices";
 
 async function check_if_compatible_device () {
-    let device = Native.DCDDeviceManager.device;
-    let devices = await init_device_list()
+    let device = Native.DCDDeviceManager.device; // current device
+    let devices = await get_device_list() // list of devices
     
-    console.log(devices)
+    // first check if the device is an iPhone as this issue only occurs on iPhone models
     if (device.includes("iPhone")) { 
-        device = device.replace('iPhone', '')
-        device = device.replace(',', '.')
+        device = device.replace('iPhone', '') // remove the word iPhone (iPhone12,8) -> (12,8)
+        device = device.replace(',', '.') // replace the comma (,) with a dot (.) to make the number formattable as a float
         if (
+            // checks all iphones under iPhone X which arent "iPhone X Global"
             (parseFloat(device)<10.6&&parseFloat(device)!=10.3)
+            // triggers if the device is iPhone SE 3rd Gen or 2nd Gen
             || parseFloat(device)==14.6
             || parseFloat(device)==12.8
         ) {
+            // opens a dialog showing the message that the iPhone model in question may cause issues.
             Dialog.show({
                 title: "Incompatible iPhone",
                 body: `Please note that you're on an${devices[Native.DCDDeviceManager.device]}.

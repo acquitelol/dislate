@@ -12,7 +12,7 @@ import {
    format_string, 
    external_plugins, 
    find_item, 
-   splice_item,
+   insert_item,
    for_item,
    Icons, 
    check_if_compatible_device
@@ -258,7 +258,7 @@ const Dislate: Plugin = {
 
                                  if (!find_item(finalLocation, 'existing key of dislate', (c: any) => c.key === externalPluginList.dislate)) {
                                     // add element to the form
-                                    splice_item(finalLocation, formElem, buttonOffset, "insert translate button")
+                                    insert_item(finalLocation, formElem, buttonOffset, "insert translate button")
                                  }
 
                                  return original
