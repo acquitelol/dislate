@@ -86,7 +86,6 @@ export default ({ settings }: SettingsProps) => {
                     }}
                 />
             </FormSection>
-            <FormDivider />
             <FormSection title="Utility">
                 <FormRow
                     label='Initialisation Toasts'
@@ -132,7 +131,6 @@ export default ({ settings }: SettingsProps) => {
                     }}
                 />
             </FormSection>
-            <FormDivider />
             <FormSection title="Source">
                 <FormRow
                     label="Download"
@@ -144,6 +142,7 @@ export default ({ settings }: SettingsProps) => {
                         clipboard_toast('download link')
                     }}
                 />
+                <FormDivider />
                 <FormRow
                     label="Source"
                     subLabel={`Open the Repo of ${name} Externally`}
