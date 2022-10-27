@@ -77,7 +77,7 @@ export default ({ settings }: SettingsProps) => {
                     label='Translate To'
                     leading={<FormRow.Icon style={styles.icon} source={Icons.Settings.Translate_To} />}
                     trailing={() => <Text style={styles.item}>
-                        {format_string(get(name, "DislateLangTo", "japanese")) ?? "N/A"}
+                        {format_string(get(name, "DislateLangTo", "english")) ?? "N/A"}
                     </Text>}
                     onPress={()=>{
                         // selects which route the page will overwrite: "from" being false and "to" being true
