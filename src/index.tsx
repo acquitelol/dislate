@@ -19,7 +19,6 @@ import {
 } from './utils';
 import { translateCommand } from './components/Translate'
 import { debugCommand } from './components/Debug'
-import { Native } from 'enmity/metro/common';
 
 // main declaration of modules being altered by the plugin
 const [

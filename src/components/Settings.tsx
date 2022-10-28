@@ -9,6 +9,7 @@ import Names from './Names'
 import Credits from './Credits'
 import { get, set } from 'enmity/api/settings'
 import { format_string, debug_info, clipboard_toast, Icons } from '../utils';
+import { check_for_updates } from '../utils/update';
 
 // main settingsStore interface
 interface SettingsProps {
@@ -133,13 +134,12 @@ export default ({ settings }: SettingsProps) => {
             </FormSection>
             <FormSection title="Source">
                 <FormRow
-                    label="Download"
-                    subLabel={`Copy the link of ${name} to Clipboard`}
+                    label="Check for Updates"
+                    subLabel={`Filter for any ${name} updates`}
                     leading={<FormRow.Icon style={styles.icon} source={Icons.Copy} />}
                     trailing={FormRow.Arrow}
                     onPress={() => {
-                        Clipboard.setString(`${plugin[0].download}?${Math.floor(Math.random() * 1001)}.js`);
-                        clipboard_toast('download link')
+                        check_for_updates()
                     }}
                 />
                 <FormDivider />
