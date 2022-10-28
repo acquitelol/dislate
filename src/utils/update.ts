@@ -36,8 +36,7 @@ const show_update_dialog = (url: string, version: string) => {
     // open a dialog to show that a new version is available
     Dialog.show({
         title: "Update found",
-        body: `A newer version is available for ${name}.
-Would you like to install version ${version} now?`,
+        body: `A newer version is available for ${name}.\nWould you like to install version ${version} now?`,
         confirmText: "Update",
         cancelText: "Not now",
         
@@ -59,8 +58,7 @@ async function install_plugin(url: string, version: string) {
         // before showing the dialog to reload discord
         data=="installed-plugin" || data=="overriden-plugin" ? Dialog.show({
             title: `Updated ${name}`,
-            body: `Successfully updated to version ${version}. 
-Would you like to reload Discord now?`,
+            body: `Successfully updated to version ${version}. \nWould you like to reload Discord now?`,
             confirmText: "Reload",
             cancelText: "Not now",
             // reload discord from native function
