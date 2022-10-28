@@ -33,7 +33,7 @@ Would you like to install version ${version} now?`,
 
 const no_updates = (name: string, version: string) => {
     console.log(`${name} is on the latest version, which is version ${version}`)
-    Toasts.open({ content: `${name} is on latest version, ${version}`, source: Icons.Clipboard });
+    Toasts.open({ content: `${name} is on latest version (${version})`, source: Icons.Clipboard });
 }
 
 async function install_plugin(url: string, version: string) {
