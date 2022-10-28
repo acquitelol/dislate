@@ -1,6 +1,7 @@
 import { name, plugin, version } from "../../manifest.json";
-import { Dialog, REST } from "enmity/metro/common";
+import { Dialog, REST, Toasts } from "enmity/metro/common";
 import { reload } from "enmity/api/native";
+import { Icons } from './icons';
 
 async function check_for_updates() {
     // get the plugin source
@@ -15,7 +16,7 @@ async function check_for_updates() {
 
     // format the remote version
     external_version = external_version[0].replaceAll('"', "");
-    external_version != version ? show_update_dialog(url, external_version) : console.log(`[${name}] No updates found.`)
+    external_version != version ? show_update_dialog(url, external_version) : no_updates(name, version)
     return
 }
 
@@ -28,6 +29,11 @@ Would you like to install version ${version} now?`,
         cancelText: "Not now",
         onConfirm: () => install_plugin(url, version),
     });
+}
+
+const no_updates = (name: string, version: string) => {
+    console.log(`${name} is on the latest version, which is version ${version}`)
+    Toasts.open({ content: `${name} is on latest version, ${version}`, source: Icons.Clipboard });
 }
 
 async function install_plugin(url: string, version: string) {
