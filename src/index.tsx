@@ -2,7 +2,7 @@
 import { FormRow } from 'enmity/components';
 import { Plugin, registerPlugin } from 'enmity/managers/plugins';
 import { bulk, filters, getByProps } from 'enmity/metro'
-import { Dialog, React, Toasts } from 'enmity/metro/common';
+import { React, Toasts } from 'enmity/metro/common';
 import { create } from 'enmity/patcher';
 import manifest from '../manifest.json';
 import Settings from './components/Settings';
@@ -179,13 +179,13 @@ const Dislate: Plugin = {
                                     try{
                                        if (translateType===buttonType.Translate) { // does a different function depending on the state
                                           const from_language = get(manifest.name, "DislateLangFrom", "detect") // language to translate from
-                                          const to_language = get(manifest.name, "DislateLangTo", "japanese") // language to translate to
+                                          const to_language = get(manifest.name, "DislateLangTo", "english") // language to translate to
 
                                           // translates message into language from settings
                                           translate_string( // main function based on utils/index.tsx
                                              originalMessage.content, // the valid content from the message sent
                                              from_language, // the language to translate from, default is detect/automatic
-                                             to_language // the language to translate to, the default is japanese
+                                             to_language // the language to translate to, the default is english
                                           ).then(res => { // what to do after the message gets returned from the translate function (async)
                                              // updates the message clicked with the new content and language translated to
                                              const editEvent = { // used for flux dispatcher to edit locally
@@ -207,7 +207,7 @@ const Dislate: Plugin = {
                                              // opens a toast to declare success
                                              Toasts.open({ 
                                                 // formats the string and shows language that it has changed it to
-                                                content: `Modified message to ${format_string(get(manifest.name, "DislateLangTo", "japanese"))}.`, 
+                                                content: `Modified message to ${format_string(get(manifest.name, "DislateLangTo", "english"))}.`, 
                                                 source: Icons.Translate
                                              })
 
