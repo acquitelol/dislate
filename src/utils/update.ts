@@ -12,7 +12,7 @@ async function check_for_updates() {
     const content = await res.text;
 
     // get the version from the source
-    let external_version = content.match(/\d\.\d\.\d(\d)?/g);
+    let external_version = content.match(/\d\.\d\.\d\d?/g);
     if (!external_version) return;
 
     /* 
