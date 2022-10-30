@@ -135,7 +135,7 @@ export default ({ settings }: SettingsProps) => {
             <FormSection title="Source">
                 <FormRow
                     label="Check for Updates"
-                    subLabel={`Filter for any ${name} updates`}
+                    subLabel={`Search for any ${name} updates`}
                     leading={<FormRow.Icon style={styles.icon} source={Icons.Copy} />}
                     trailing={FormRow.Arrow}
                     onPress={() => {
