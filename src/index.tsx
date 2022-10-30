@@ -82,7 +82,7 @@ const Dislate: Plugin = {
                enableToasts?Toasts.open({
                     content: `[${manifest.name}] start attempt ${attempt}/${attempts}.`,
                     source: Icons.Debug,
-               }):"acquite is a girl"
+               }):null
                // ^^^ only opens a toast showing attempts if its enabled in settings
 
                // main patch of the action sheet
@@ -274,7 +274,7 @@ const Dislate: Plugin = {
                   Toasts.open({
                      content: `[${manifest.name}] failed to open action sheet.`,
                      source: Icons.Retry,
-                  }):"acquite is a girl"
+                  }):null
                }
             } catch(err) {
                // log any errors that would happen
@@ -289,7 +289,7 @@ const Dislate: Plugin = {
                     Toasts.open({
                         content: `[${manifest.name}] failed to start. Trying again in ${attempt}0s.`,
                         source: Icons.Retry,
-                    }):"acquite is a girl"
+                    }):null
 
                     // waits the amount of time extra each attempt to allow for init of any services
                     setTimeout(unpatchActionSheet, attempt * 10000); 
@@ -300,7 +300,7 @@ const Dislate: Plugin = {
                     Toasts.open({
                         content: `[${manifest.name}] failed to start. Giving up.`,
                         source: Icons.Failed,
-                    }):"acquite is a girl"
+                    }):null
                 }
             }
       }
