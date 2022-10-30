@@ -48,11 +48,11 @@ const Dislate: Plugin = {
          translateCommand, // translate command
          debugCommand // command to display useful debug info, sort of like /debug on enmity itself
       ]; // add the translate and debug command to the list
-      let attempt = 0; // starts at attempt 0
-      let attempts = 3; // max 3 attempts
+      const [attempt, setAttempt] = React.useState(0)
+      const max_attempts = 3;
       async function unpatchActionSheet () {
             try {
-               attempt++; // increases attempt
+               setAttempt(previous => previous++); // increases attempt
                let enableToasts = getBoolean(manifest.name, "toastEnable", false)
                const MessageStore = getByProps("getMessage", "getMessages")
                // ^^ used to get original message with all its props
@@ -77,10 +77,10 @@ const Dislate: Plugin = {
                   } catch(err) { console.log(`[${manifest.name} Local Error ${err}]`);}
                }
 
-               console.log(`[${manifest.name}] delayed start attempt ${attempt}/${attempts}.`);
+               console.log(`[${manifest.name}] delayed start attempt ${attempt}/${max_attempts}.`);
 
                enableToasts?Toasts.open({
-                    content: `[${manifest.name}] start attempt ${attempt}/${attempts}.`,
+                    content: `[${manifest.name}] start attempt ${attempt}/${max_attempts}.`,
                     source: Icons.Debug,
                }):null
                // ^^^ only opens a toast showing attempts if its enabled in settings
@@ -281,7 +281,7 @@ const Dislate: Plugin = {
                console.log(`[${manifest.name} Local Error ${err}]`);
                let enableToasts = getBoolean(manifest.name, "toastEnable", false) // checks if you have the init toasts setting enabled to alert you in app
 
-                if (attempt < attempts) { // only tries again if it attempted less than 3 times
+                if (attempt < max_attempts) { // only tries again if it attempted less than 3 times
                     console.warn(
                         `[${manifest.name}] failed to start. Trying again in ${attempt}0s.`
                     );
