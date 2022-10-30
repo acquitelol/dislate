@@ -49,13 +49,13 @@ const show_update_dialog = (url: string, version: string, build: string, is_ghos
     });
 }
 
-const no_updates = (name: string, version: string) => {
+const no_updates = (name: string, type: string) => {
     // logs the fact that youre on the latest version with both a toast a
-    console.log(`[${name}] Plugin is on the latest version, which is ${version}`)
-    Toasts.open({ content: `${name} is on latest version (${version})`, source: Icons.Clipboard });
+    console.log(`[${name}] Plugin is on the latest version, which is ${type}`)
+    Toasts.open({ content: `${name} is on latest version (${type})`, source: Icons.Translate });
 }
 
-async function install_plugin(url: string, version: string, is_ghost_patch: boolean) {
+async function install_plugin(url: string, type: string, is_ghost_patch: boolean) {
     //@ts-ignore
     window.enmity.plugins.installPlugin(url, ({ data }) => {
         // as a callback, waits for a success of "installed-plugin" or "overriden-plugin"
@@ -63,13 +63,13 @@ async function install_plugin(url: string, version: string, is_ghost_patch: bool
         data=="installed_plugin" || data=="overridden_plugin" 
             ? Dialog.show({
                 title: `Updated ${name}`,
-                body: `Successfully updated to ${is_ghost_patch ? `build` : `version` } \`${version}\`. \nWould you like to reload Discord now?`,
+                body: `Successfully updated to ${is_ghost_patch ? `build` : `version` } \`${type}\`. \nWould you like to reload Discord now?`,
                 confirmText: "Reload",
                 cancelText: "Not now",
                 // reload discord from native function
                 onConfirm: () => {reload()},
             }) 
-            : console.log(`[Dislate] Plugin failed to update to ${is_ghost_patch ? `build` : `version`} ${version}.`)
+            : console.log(`[Dislate] Plugin failed to update to ${is_ghost_patch ? `build` : `version`} ${type}.`)
         // otherwise log an issue when updating to console ^^^
     })
 }
