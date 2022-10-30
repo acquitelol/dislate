@@ -40,7 +40,7 @@ const show_update_dialog = (url: string, version: string, build: string, is_ghos
     const type = is_ghost_patch?build:version
     Dialog.show({
         title: "Update found",
-        body: `A newer ${is_ghost_patch?"build":"version"} is available for ${name}. ${is_ghost_patch?`\nThe version will remain at \`${version}\`, but the build will update to \`${build}\`.`:""}\nWould you like to install ${is_ghost_patch ? `build \`${build}\`` : `version \`${version}\``}  now?`,
+        body: `A newer ${is_ghost_patch?"build":"version"} is available for ${name}. ${is_ghost_patch?`\nThe version will remain at ${version}, but the build will update to ${build}.`:""}\nWould you like to install ${is_ghost_patch ? `build \`${build}\`` : `version \`${version}\``}  now?`,
         confirmText: "Update",
         cancelText: "Not now",
         
