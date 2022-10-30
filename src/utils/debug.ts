@@ -1,4 +1,4 @@
-import { name } from '../../manifest.json'
+import { name, plugin } from '../../manifest.json'
 import { Native } from 'enmity/metro/common'
 import { get_device_list } from './devices'
 
@@ -8,6 +8,7 @@ async function debug_info (version: string, release: string) {
     
     return `**[${name}] Debug Information**
 > **Plugin Version:** ${version}
+> **Plugin Build:** ${plugin.build}
 > **Release Channel:** ${release}
 > **Software Version:** ${Native.DCDDeviceManager.systemVersion}
 > **Device:** ${devices[Native.DCDDeviceManager.device]}`
