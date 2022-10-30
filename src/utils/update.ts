@@ -56,7 +56,7 @@ async function install_plugin(url: string, version: string) {
     window.enmity.plugins.installPlugin(url, ({ data }) => {
         // as a callback, waits for a success of "installed-plugin" or "overriden-plugin"
         // before showing the dialog to reload discord
-        data=="installed-plugin" || data=="overriden-plugin" ? Dialog.show({
+        data=="installed_plugin" || data=="overridden_plugin" ? Dialog.show({
             title: `Updated ${name}`,
             body: `Successfully updated to version ${version}. \nWould you like to reload Discord now?`,
             confirmText: "Reload",
