@@ -40,7 +40,7 @@ const show_update_dialog = (url: string, version: string, build: string, is_ghos
     const type = is_ghost_patch?build:version
     Dialog.show({
         title: "Update found",
-        body: `A newer ${!is_ghost_patch?"version":"build"} is available for ${name}. ${is_ghost_patch?`The version will remain at \`${version}\`, but the build will update to \`${build}\`.`:""}\nWould you like to install ${!is_ghost_patch ? `version \`${version}\`` : `build \`${version}\``} now?`,
+        body: `A newer ${is_ghost_patch?"build":"version"} is available for ${name}. ${is_ghost_patch?`The version will remain at \`${version}\`, but the build will update to \`${build}\`.`:""}\nWould you like to install ${is_ghost_patch ? `build` : 'version'} \`${version}\` now?`,
         confirmText: "Update",
         cancelText: "Not now",
         
@@ -51,7 +51,7 @@ const show_update_dialog = (url: string, version: string, build: string, is_ghos
 
 const no_updates = (name: string, version: string) => {
     // logs the fact that youre on the latest version with both a toast a
-    console.log(`[${name}] Plugin is on the latest version, which is version ${version}`)
+    console.log(`[${name}] Plugin is on the latest version, which is ${version}`)
     Toasts.open({ content: `${name} is on latest version (${version})`, source: Icons.Clipboard });
 }
 
@@ -69,7 +69,7 @@ async function install_plugin(url: string, version: string, is_ghost_patch: bool
                 // reload discord from native function
                 onConfirm: () => {reload()},
             }) 
-            : console.log(`[Dislate] Plugin failed to update to ${!is_ghost_patch ? `version ${version}` : `build ${version}`}.`)
+            : console.log(`[Dislate] Plugin failed to update to ${is_ghost_patch ? `build` : `version`} ${version}.`)
         // otherwise log an issue when updating to console ^^^
     })
 }
