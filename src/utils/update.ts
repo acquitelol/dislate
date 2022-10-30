@@ -12,11 +12,8 @@ async function check_for_updates() {
     const content = await res.text;
 
     // get the version from the source
-    let external_version = content.match(/^(\d+\.)?(\d+\.)?(\*|\d+)$/g);
+    let external_version = content.match(/\d\.\d\.\d(\d)?/g);
     if (!external_version) return;
-
-    // format the remote version
-    external_version = external_version[0].replaceAll('"', ""); // make the string into a plain version (1.1.6 etc)
 
     /* 
     i dont need to match specific parts of the version, here are some tests~
