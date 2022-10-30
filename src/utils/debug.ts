@@ -8,7 +8,7 @@ async function debug_info (version: string, release: string) {
     
     return `**[${name}] Debug Information**
 > **Plugin Version:** ${version}
-> **Plugin Build:** ${plugin.build}
+> **Plugin Build:** ${(plugin.build).split('-')[1]}
 > **Release Channel:** ${release}
 > **Software Version:** ${Native.DCDDeviceManager.systemVersion}
 > **Device:** ${devices[Native.DCDDeviceManager.device]}`
