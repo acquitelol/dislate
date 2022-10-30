@@ -3,6 +3,7 @@ const external_plugins = () => {
         message_spoofer: "69",
         copy_embed: "1337",
         invis_chat: "420",
+        cut_message: "512",
         dislate: "1002"
     }
 }
