@@ -48,11 +48,11 @@ const Dislate: Plugin = {
          translateCommand, // translate command
          debugCommand // command to display useful debug info, sort of like /debug on enmity itself
       ]; // add the translate and debug command to the list
-      const [attempt, setAttempt] = React.useState(0)
+      let attempt = 0
       const max_attempts = 3;
       async function unpatchActionSheet () {
             try {
-               setAttempt(previous => previous++); // increases attempt
+               attempt++; // increases attempt
                let enableToasts = getBoolean(manifest.name, "toastEnable", false)
                const MessageStore = getByProps("getMessage", "getMessages")
                // ^^ used to get original message with all its props
