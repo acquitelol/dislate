@@ -78,11 +78,11 @@ const debugCommand: Command = {
             })
         },
         download: () => { // sets the plugin download link to clipboard
-            Clipboard.setString(`${plugin[0].download}?${Math.floor(Math.random() * 1001)}.js`);
+            Clipboard.setString(`${plugin.download}?${Math.floor(Math.random() * 1001)}.js`);
             clipboard_toast("download link")
         },
         repo: () => { // opens the repo of the plugin externally
-            Router.openURL(plugin[0].repo)
+            Router.openURL(plugin.repo)
         }
     }
 

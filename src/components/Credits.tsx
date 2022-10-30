@@ -83,7 +83,7 @@ export default () => {
     };
 
     // opens the repo of the plugin externally
-    const onPress = () => {Router.openURL(plugin[0].repo)};
+    const onPress = () => {Router.openURL(plugin.repo)};
     const animatedScaleStyle = {transform: [{scale: animatedButtonScale}]} // main actual styling for the scale
     
     return <>
@@ -105,7 +105,7 @@ export default () => {
                 </Animated.View>
             </TouchableOpacity>
             <View style={styles.text_container /* text only container */}>
-                <TouchableOpacity onPress={() => {Router.openURL(plugin[0].repo)}}>
+                <TouchableOpacity onPress={() => {Router.openURL(plugin.repo)}}>
                     <Text style={[styles.main_text, styles.header]} /* main title text, in this case its "Dislate" */>
                         {name} {/* the plugin name in manifest.json */}
                     </Text>
@@ -114,7 +114,7 @@ export default () => {
                     <Text style={[styles.main_text, styles.sub_header]}>
                         A project by 
                     </Text>
-                    <TouchableOpacity onPress={() => {Router.openURL(plugin[0].user)}}>
+                    <TouchableOpacity onPress={() => {Router.openURL(plugin.user)}}>
                         <Text 
                             // opens my github account externally when you click on my name
                             style={[styles.main_text, styles.sub_header, {

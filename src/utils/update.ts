@@ -6,14 +6,18 @@ import { Icons } from './icons';
 
 async function check_for_updates() {
     // get the plugin source
-    const url = `${plugin[0].download}?${Math.floor(Math.random() * 1001)}.js`
+    const url = `${plugin.download}?${Math.floor(Math.random() * 1001)}.js`
 
     const res = await REST.get(url);
     const content = await res.text;
 
     // get the version from the source
-    let external_version = content.match(/\d\.\d\.\d\d?/g);
+    let external_version = content.match(/\d\.\d\.\d+/g);
     if (!external_version) return;
+    
+    // get the build from the source
+    let external_build = content.match(/patch\-\d+/g)
+    if (!external_build) return;
 
     /* 
     i dont need to match specific parts of the version, here are some tests~
@@ -25,20 +29,21 @@ async function check_for_updates() {
     */
 
     // if the version is not the current one, that means its newer, otherwise run the no update function
-    external_version != version ? show_update_dialog(url, external_version) : no_updates(name, version)
-    return // finish the function
+    if (external_version != version) return show_update_dialog(url, external_version, false)
+    if (external_build != plugin.build) return show_update_dialog(url, external_build, true)
+    return no_updates(name, version)
 }
 
-const show_update_dialog = (url: string, version: string) => {
+const show_update_dialog = (url: string, version: string, is_ghost_patch: boolean) => {
     // open a dialog to show that a new version is available
     Dialog.show({
         title: "Update found",
-        body: `A newer version is available for ${name}.\nWould you like to install version ${version} now?`,
+        body: `A ${is_ghost_patch?"newer version":"patch"} is available for ${name}.\nWould you like to install ${is_ghost_patch ? `version ${version}` : `this patch`} now?`,
         confirmText: "Update",
         cancelText: "Not now",
         
         // run the install function
-        onConfirm: () => install_plugin(url, version),
+        onConfirm: () => install_plugin(url, version, is_ghost_patch),
     });
 }
 
@@ -48,19 +53,21 @@ const no_updates = (name: string, version: string) => {
     Toasts.open({ content: `${name} is on latest version (${version})`, source: Icons.Clipboard });
 }
 
-async function install_plugin(url: string, version: string) {
+async function install_plugin(url: string, version: string, is_ghost_patch: boolean) {
     //@ts-ignore
     window.enmity.plugins.installPlugin(url, ({ data }) => {
         // as a callback, waits for a success of "installed-plugin" or "overriden-plugin"
         // before showing the dialog to reload discord
-        data=="installed_plugin" || data=="overridden_plugin" ? Dialog.show({
-            title: `Updated ${name}`,
-            body: `Successfully updated to version ${version}. \nWould you like to reload Discord now?`,
-            confirmText: "Reload",
-            cancelText: "Not now",
-            // reload discord from native function
-            onConfirm: () => {reload()},
-        }) : console.log(`[Dislate] Plugin failed to update to version ${version}.`)
+        data=="installed_plugin" || data=="overridden_plugin" 
+            ? Dialog.show({
+                title: `Updated ${name}`,
+                body: `Successfully updated to ${is_ghost_patch ? `version ${version}` : "latest patch" }. \nWould you like to reload Discord now?`,
+                confirmText: "Reload",
+                cancelText: "Not now",
+                // reload discord from native function
+                onConfirm: () => {reload()},
+            }) 
+            : console.log(`[Dislate] Plugin failed to update to ${is_ghost_patch ? `version ${version}` : "latest patch"}.`)
         // otherwise log an issue when updating to console ^^^
     })
 }

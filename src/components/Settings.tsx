@@ -149,7 +149,7 @@ export default ({ settings }: SettingsProps) => {
                     leading={<FormRow.Icon style={styles.icon} source={Icons.Open} />}
                     trailing={FormRow.Arrow}
                     onPress={() => {
-                        Router.openURL(plugin[0].repo)
+                        Router.openURL(plugin.repo)
                     }}
                 />
             </FormSection>

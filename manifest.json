@@ -1,6 +1,6 @@
 {
    "name": "Dislate",
-   "version": "1.1.64",
+   "version": "1.1.6",
    "description": "Translates text into a desired language.",
    "release": "stable",
    "authors": [
@@ -9,12 +9,11 @@
          "id": "581573474296791211"
       }
    ],
-   "plugin": [
-      {
-         "download": "https://raw.githubusercontent.com/acquitelol/dislate/main/dist/Dislate.js",
-         "repo": "https://github.com/acquitelol/dislate",
-         "user": "https://github.com/acquitelol/"
-      }
-   ],
+   "plugin": {
+      "download": "https://raw.githubusercontent.com/acquitelol/dislate/main/dist/Dislate.js",
+      "repo": "https://github.com/acquitelol/dislate",
+      "user": "https://github.com/acquitelol/",
+      "build": "patch-1"
+   },
    "color": "#ff1f84"
 }
