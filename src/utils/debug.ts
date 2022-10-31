@@ -10,9 +10,9 @@ async function debug_info (version: string, release: string) {
 > **Plugin Version:** ${version}
 > **Plugin Build:** ${(plugin.build).split('-')[1]}
 > **Release Channel:** ${release}
-> **Discord Build:** ${Native.InfoDictionaryManager.Version}
+> **Discord Build:** ${Native.InfoDictionaryManager.Version} (${Native.InfoDictionaryManager.Build})
 > **Software Version:** ${Native.DCDDeviceManager.systemVersion}
-> **Device:** ${devices[Native.DCDDeviceManager.device]}`
+> **Device:** ${devices[Native.DCDDeviceManager.device]} (${Native.DCDDeviceManager.device})`
 }
 
 export { debug_info }
