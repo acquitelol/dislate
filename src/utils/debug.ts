@@ -12,7 +12,7 @@ async function debug_info (version: string, release: string) {
 > **Release Channel:** ${release}
 > **Discord Build:** ${Native.InfoDictionaryManager.Version} (${Native.InfoDictionaryManager.Build})
 > **Software Version:** ${Native.DCDDeviceManager.systemVersion}
-> **Device:** ${devices[Native.DCDDeviceManager.device]} (${Native.DCDDeviceManager.device})`
+> **Device:** ${devices[Native.DCDDeviceManager.device]}`
 }
 
 export { debug_info }
