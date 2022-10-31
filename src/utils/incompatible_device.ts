@@ -1,4 +1,4 @@
-import { Dialog, Native } from "enmity/metro/common";
+import { Dialog, Native, Storage } from "enmity/metro/common";
 import { name } from '../../manifest.json'
 import { get_device_list } from "./devices";
 
@@ -17,12 +17,14 @@ async function check_if_compatible_device () {
             || parseFloat(device)==14.6
             || parseFloat(device)==12.8
         ) {
+            const shown_already = Storage.getItem("__dislate_incompatible_dialog__")
             // opens a dialog showing the message that the iPhone model in question may cause issues.
-            Dialog.show({
+            shown_already ?? Dialog.show({
                 title: "Incompatible iPhone",
                 body: `Please note that you're on an${devices[Native.DCDDeviceManager.device]}.
 Some features of ${name} may behave in an unexpected manner.`,
                 confirmText: "I understand",
+                onConfirm: Storage.setItem("__dislate_incompatible_dialog__", true)
             })
         }
     }
