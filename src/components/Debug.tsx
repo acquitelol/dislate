@@ -5,7 +5,7 @@ import {
   ApplicationCommandInputType,
   ApplicationCommandOptionType
 } from "enmity/api/commands";
-import { Dialog, Messages, Navigation } from 'enmity/metro/common'
+import { Dialog, Messages, Navigation, Storage } from 'enmity/metro/common'
 import { React, Toasts } from 'enmity/metro/common';
 import {name, version, release, plugin} from '../../manifest.json';
 import { debug_info, format_string, clipboard_toast, Icons, fetch_debug_arguments } from '../utils'
@@ -67,18 +67,16 @@ const debugCommand: Command = {
 
     // object of all options and their corresponding functions
     const options = {
-        debug: async function() {
+        debug: () => {
             Dialog.show({
                 title: "Choose extra options",
-                body: "You can customize the information sent with this command. If you dont want to customize the debug log, press \"\`Ignore and send\`\" instead to send the full log.",
+                body: "You can customize the information sent with this command. If you dont want to customize the debug log, press \"\`Ignore\`\" instead to send the full log.",
                 confirmText: "Customize",
                 cancelText: "Ignore",
-                onConfirm: () => {
+                onConfirm: async function() {
                     // wraps the info component as a function to pass the channel id without errors
-                    const wrapper = () => {
-                        return <Info channel_id={context.channel.id} />
-                    }
-
+                    const wrapper = () => <Info channel_id={context.channel.id} />
+    
                     // push the new page with the channel id as a prop to the navigation
                     Navigation.push(Page, { component: wrapper, name: "Dislate: Customize"}) // opens custom page with languages
                 },
@@ -95,7 +93,7 @@ const debugCommand: Command = {
                     Toasts.open({ 
                         // formats the string and shows language that it has changed it to
                         content: `Sent debug info in current channel.`, 
-                        source: Icons.Debug_Command.Sent
+                        source: Icons.Settings.Toasts.Settings
                     })                    
                 },
             })

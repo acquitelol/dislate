@@ -23,6 +23,16 @@ export default () => {
       setLanguages(names)
    }, [])
 
+    const set_language = (language) => {
+        // sets language to either "from" or "to" based on filter
+        get(name, "DislateLangFilter") ? set(name, "DislateLangTo", language) : set(name, "DislateLangFrom", language)
+        // announces success with a toast
+        Toasts.open({ content: `Set ${(langNames[language]).toUpperCase()} as Language to Translate ${get("Dislate", "DislateLangFilter") ? "to" : "from"}.`, 
+            source: get(name, "DislateLangFilter") ? Icons.Settings.Translate_To : Icons.Settings.Translate_From
+        })
+        // closes the page
+        Navigation.pop()
+    }
     return <>
         <Search
             placeholder="Search Language"
@@ -34,16 +44,8 @@ export default () => {
                 <FormRow
                     label={format_string(language)}
                     trailing={dislate_arrow}
-                    onPress={() => {
-                        // sets language to either "from" or "to" based on filter
-                        get(name, "DislateLangFilter") ? set(name, "DislateLangTo", language) : set(name, "DislateLangFrom", language)
-                        // announces success with a toast
-                        Toasts.open({ content: `Set ${(langNames[language]).toUpperCase()} as Language to Translate ${get("Dislate", "DislateLangFilter") ? "to" : "from"}.`, 
-                            source: get(name, "DislateLangFilter") ? Icons.Settings.Translate_To : Icons.Settings.Translate_From
-                        })
-                        // closes the page
-                        Navigation.pop()
-                    }}
+                    onPress={() => set_language(language)}
+                    onLongPress={() => set_language(language)}
                 />
             )}
         </ScrollView>  

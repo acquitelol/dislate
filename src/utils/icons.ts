@@ -15,7 +15,6 @@ export const Icons = {
     Clipboard: getIDByName('pending-alert'),
 
     Debug_Command: {
-        Sent: getIDByName('ic_application_command_24px'),
         Clock: getIDByName('clock')
     },
 

@@ -49,15 +49,16 @@ export default ({ settings }: SettingsProps) => {
                 }
             }
             onTouchEnd={e => {
-                // only triggers if x is negative over 100 (moved right) and y is more than -40 but less than 40 (not much movement)
-                if (
-                    touchX - e.nativeEvent.pageX < -100 
-                    && touchY - e.nativeEvent.pageY < 40
-                    && touchY - e.nativeEvent.pageY > -40
-                ) {
-                    Navigation.pop() // removes the page from the stack
+                    // only triggers if x is negative over 100 (moved right) and y is more than -40 but less than 40 (not much movement)
+                    if (
+                        touchX - e.nativeEvent.pageX < -100 
+                        && touchY - e.nativeEvent.pageY < 40
+                        && touchY - e.nativeEvent.pageY > -40
+                    ) {
+                        Navigation.pop() // removes the page from the stack
+                    }
                 }
-            }}
+            }
         >
             <Credits /* main credits gui, created from scratch exclusively for dislate *//> 
             <FormSection title="Language">
