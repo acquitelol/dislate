@@ -1,6 +1,6 @@
 import { translate_string } from "./translate";
 import { format_string } from './format_text'
-import { debug_info } from './debug'
+import { debug_info, fetch_debug_arguments } from './debug'
 import { clipboard_toast } from "./clipboard";
 import { external_plugins } from './external'
 import { 
@@ -21,6 +21,7 @@ export {
     translate_string, 
     format_string, 
     debug_info, 
+    fetch_debug_arguments,
     clipboard_toast, 
     external_plugins, 
     find_item, 

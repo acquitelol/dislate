@@ -8,9 +8,9 @@ import { get, set } from 'enmity/api/settings'
 import { format_string, Icons } from '../utils';
 import {name} from '../../manifest.json';
 
-// main search module
+// main search module and arrow
 const Search = getByName('StaticSearchBarContainer');
-const dislateArrow = FormRow.Arrow
+const dislate_arrow = FormRow.Arrow
 
 export default () => {
     // main languages and keyword search state
@@ -30,16 +30,16 @@ export default () => {
         />
         <ScrollView>
             {languages.filter(language => language.includes(query)).map(language => 
-            (get("Dislate", "DislateLangFilter") && language=='detect') ? <></> :
+            (get(name, "DislateLangFilter") && language=='detect') ? <></> :
                 <FormRow
                     label={format_string(language)}
-                    trailing={dislateArrow}
+                    trailing={dislate_arrow}
                     onPress={() => {
                         // sets language to either "from" or "to" based on filter
-                        get(name, "DislateLangFilter") ? set('Dislate', "DislateLangTo", language) : set('Dislate', "DislateLangFrom", language)
+                        get(name, "DislateLangFilter") ? set(name, "DislateLangTo", language) : set(name, "DislateLangFrom", language)
                         // announces success with a toast
                         Toasts.open({ content: `Set ${(langNames[language]).toUpperCase()} as Language to Translate ${get("Dislate", "DislateLangFilter") ? "to" : "from"}.`, 
-                            source: get("Dislate", "DislateLangFilter") ? Icons.Settings.Translate_To : Icons.Settings.Translate_From
+                            source: get(name, "DislateLangFilter") ? Icons.Settings.Translate_To : Icons.Settings.Translate_From
                         })
                         // closes the page
                         Navigation.pop()

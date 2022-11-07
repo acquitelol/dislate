@@ -22,7 +22,8 @@ export const Icons = {
     Settings: {
         Toasts: {
             Context: getIDByName('toast_image_saved'),
-            Settings: getIDByName('ic_selection_checked_24px')
+            Settings: getIDByName('ic_selection_checked_24px'),
+            Failed: getIDByName('ic_close_circle_24px')
         },
         Translate_From: getIDByName('ic_raised_hand'),
         Translate_To: getIDByName('ic_activity_24px'),

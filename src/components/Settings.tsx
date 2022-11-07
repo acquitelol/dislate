@@ -2,13 +2,13 @@
 import { FormDivider, FormRow, ScrollView, FormSwitch, FormSection, Text } from 'enmity/components';
 import { SettingsStore } from 'enmity/api/settings';
 import { React, Toasts, Constants, StyleSheet, Navigation, Storage } from 'enmity/metro/common';
-import {name, version, release, plugin} from '../../manifest.json';
+import { name, version, release, plugin } from '../../manifest.json';
 import { bulk, filters} from 'enmity/metro';
 import Page from './Page'
 import Names from './Names'
 import Credits from './Credits'
 import { get, set } from 'enmity/api/settings'
-import { format_string, debug_info, clipboard_toast, Icons } from '../utils';
+import { format_string, debug_info, clipboard_toast, Icons, fetch_debug_arguments } from '../utils';
 import { check_for_updates } from '../utils/update';
 
 // main settingsStore interface
@@ -70,7 +70,7 @@ export default ({ settings }: SettingsProps) => {
                     onPress={()=>{
                         // selects which route the page will overwrite: "from" being false and "to" being true
                         set(name, "DislateLangFilter", false) // selects "from" route to be overwritten
-                        Navigation.push(Page, { component: Names, name: "Dislate: Language From" }) // opens custom page with languages
+                        Navigation.push(Page, { component: Names, name: `${name}: Language From` }) // opens custom page with languages
                     }}
                 />
                 <FormDivider/>
@@ -113,7 +113,8 @@ export default ({ settings }: SettingsProps) => {
                     leading={<FormRow.Icon style={styles.icon} source={Icons.Settings.Debug} />}
                     trailing={FormRow.Arrow}
                     onPress={async function() {
-                        Clipboard.setString(await debug_info(version, release));
+                        const options = await fetch_debug_arguments()
+                        Clipboard.setString(await debug_info(Object.keys(options)));
                         clipboard_toast('debug information')
                     }}
                 />
@@ -153,7 +154,7 @@ export default ({ settings }: SettingsProps) => {
                     }}
                 />
             </FormSection>
-            <FormRow label={`Plugin Version: ${version}
+            <FormRow label={`[Plugin] Version: ${version}; Build: ${(plugin.build).split('-')[1]}
 Release Channel: ${release}`} /> 
         </ScrollView>
    </>

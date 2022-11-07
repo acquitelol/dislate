@@ -5,11 +5,13 @@ import {
   ApplicationCommandInputType,
   ApplicationCommandOptionType
 } from "enmity/api/commands";
-import { Messages } from 'enmity/metro/common'
+import { Dialog, Messages, Navigation } from 'enmity/metro/common'
 import { React, Toasts } from 'enmity/metro/common';
 import {name, version, release, plugin} from '../../manifest.json';
-import { debug_info, format_string, clipboard_toast, Icons } from '../utils'
+import { debug_info, format_string, clipboard_toast, Icons, fetch_debug_arguments } from '../utils'
 import { bulk, filters } from "enmity/metro";
+import Info from "./Info";
+import Page from "./Page";
 
 // main declaration of modules being altered by the plugin
 const [
@@ -65,16 +67,32 @@ const debugCommand: Command = {
 
     // object of all options and their corresponding functions
     const options = {
-        debug: async function() { // sends useful debug info as a message
-            Messages.sendMessage(context.channel.id, {
-                content: await debug_info(version, release)
-            }); // send a message with string interpolation
-            
-            // opens a toast to declare that message has been sent
-            Toasts.open({ 
-                // formats the string and shows language that it has changed it to
-                content: `Sent debug info in current channel.`, 
-                source: Icons.Debug_Command.Sent
+        debug: async function() {
+            Dialog.show({
+                title: "Choose extra options",
+                body: "You can customize the information sent with this command. If you dont want to customize the debug log, press \"\`Ignore and send\`\" instead to send the full log.",
+                confirmText: "Customize",
+                cancelText: "Ignore",
+                onConfirm: () => {
+                    // sends useful debug info as a message
+                    const wrapper = () => {
+                        return <Info channel_id={context.channel.id} />
+                    }
+                    Navigation.push(Page, { component: wrapper, name: "Dislate: Choose Information"}) // opens custom page with languages
+                },
+                onCancel: async function() {
+                    const debug_options = await fetch_debug_arguments()
+                    Messages.sendMessage(context.channel.id, {
+                        content: await debug_info(Object.keys(debug_options))
+                    }); // send a message with string interpolation
+
+                    // opens a toast to declare success
+                    Toasts.open({ 
+                        // formats the string and shows language that it has changed it to
+                        content: `Sent debug info in current channel.`, 
+                        source: Icons.Debug_Command.Sent
+                    })                    
+                },
             })
         },
         download: () => { // sets the plugin download link to clipboard

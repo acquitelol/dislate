@@ -6,7 +6,16 @@ import { Button, View } from 'enmity/components';
 export const Settings = NavigationStack.createStackNavigator();
 
 const { ThemeColorMap } = ColorMap;
-export default ({ name = 'Page', component = View } = {}) => {
+export default ({ 
+  name = 'Page', 
+  component = View, 
+  close_button = { 
+    name: "Close", 
+    functionality: (): void => {
+      Navigation.pop()
+    }
+  },
+} = {}) => {
   const styles = StyleSheet.createThemedStyleSheet({
     container: {
       backgroundColor: ThemeColorMap.BACKGROUND_MOBILE_SECONDARY,
@@ -49,19 +58,13 @@ export default ({ name = 'Page', component = View } = {}) => {
         name={name}
         component={component}
         options={{
-
           headerTitleStyle: {
             color: 'white',
           },
           headerLeft: () => (<Button
             color={styles.close.color}
-            title='Close'
-            onPress={
-                (): void => {
-                    // closes page
-                    Navigation.pop()
-                }
-            }
+            title={close_button.name}
+            onPress={close_button.functionality}
           />),
           ...NavigationStack.TransitionPresets.ModalSlideFromBottomIOS
         }}
