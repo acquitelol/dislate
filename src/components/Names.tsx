@@ -1,5 +1,5 @@
 // main imports of elements and dependencies
-import { FormRow, ScrollView, View } from 'enmity/components';
+import { FormRow, ScrollView } from 'enmity/components';
 import { React, Toasts } from 'enmity/metro/common';
 import { getByName } from 'enmity/metro'
 import langNames from 'translate/src/languages/names'

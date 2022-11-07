@@ -74,14 +74,19 @@ const debugCommand: Command = {
                 confirmText: "Customize",
                 cancelText: "Ignore",
                 onConfirm: () => {
-                    // sends useful debug info as a message
+                    // wraps the info component as a function to pass the channel id without errors
                     const wrapper = () => {
                         return <Info channel_id={context.channel.id} />
                     }
-                    Navigation.push(Page, { component: wrapper, name: "Dislate: Choose Information"}) // opens custom page with languages
+
+                    // push the new page with the channel id as a prop to the navigation
+                    Navigation.push(Page, { component: wrapper, name: "Dislate: Customize"}) // opens custom page with languages
                 },
                 onCancel: async function() {
+                    // get list of debug options
                     const debug_options = await fetch_debug_arguments()
+
+                    // pass all of them to the debug info command, which works the same as send all in the page
                     Messages.sendMessage(context.channel.id, {
                         content: await debug_info(Object.keys(debug_options))
                     }); // send a message with string interpolation

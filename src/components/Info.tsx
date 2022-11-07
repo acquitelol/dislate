@@ -1,23 +1,28 @@
 // main dependencies and components
 import { React, Constants, StyleSheet, Toasts, Messages } from 'enmity/metro/common';
 import { name } from '../../manifest.json';
-import { Text, FormRow, ScrollView, FormSection, TouchableOpacity, FormDivider} from 'enmity/components';
+import { Text, ScrollView, FormSection, TouchableOpacity, FormDivider} from 'enmity/components';
 import { fetch_debug_arguments, Icons, debug_info } from '../utils';
-import { getBoolean, set, toggle } from 'enmity/api/settings';
-import { Storage, Navigation } from "enmity/metro/common";
+import { getBoolean } from 'enmity/api/settings';
+import { Navigation } from "enmity/metro/common";
 import DebugItem from './DebugItem';
 import { getByName } from 'enmity/metro';
 
+// use the search module
 const Search = getByName('StaticSearchBarContainer');
 
+// channel id is a property passed from the main debug command
 export default ({ channel_id }) => {
+    // set the react states
     const [options, setOptions] = React.useState<string[]>([])
     const [query, setQuery] = React.useState([])
 
+    // set the debug options into the state on mount
     React.useEffect(async function() {
         setOptions(Object.keys(await fetch_debug_arguments()))
     }, [])
 
+    // create the stylesheet of styles used for the buttons
     const styles = StyleSheet.createThemedStyleSheet({
         button: {
             width: '90%',
@@ -53,7 +58,12 @@ export default ({ channel_id }) => {
             <TouchableOpacity
                     style={styles.button}
                     onPress={async function() {
+                        // *** SENDS FULL LOG ***
+
+                        // close the page
                         Navigation.pop()
+
+                        // send the message with all the options as argument
                         Messages.sendMessage(channel_id, {
                             content: await debug_info(options)
                         }); // send a message with string interpolation
@@ -71,8 +81,15 @@ export default ({ channel_id }) => {
             <TouchableOpacity
                     style={styles.button}
                     onPress={async function() {
+                        // **SEND PARTIAL LOG**
+
+                        // close the page
                         Navigation.pop()
+
+                        // sort through the options and only select the ones which are set to true
                         let debug_options = options.map(option => {if (getBoolean(name, option, false)) return option})
+
+                        // sends the message with the options selected true
                         Messages.sendMessage(channel_id, {
                             content: await debug_info(debug_options)
                         }); // send a message with string interpolation
