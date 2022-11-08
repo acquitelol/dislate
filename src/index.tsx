@@ -151,13 +151,13 @@ const Dislate: Plugin = {
                               ); // this object contains all the info from the message such as author and content etc
 
                               // return if theres no content (likely an attachment or embed with no content)
-                              if (!originalMessage.content) { 
+                              if (!originalMessage?.content && !message?.content) { 
                                  console.log(`[${manifest.name}] No message content.`)
                                  return original
                               };
                               
-                              const messageId = originalMessage.id // the id of the message that was long pressed
-                              const messageContent = originalMessage.content // the content of the message that was long pressed (not undefined because checked above)
+                              const messageId = originalMessage?.id ?? message?.id // the id of the message that was long pressed
+                              const messageContent = originalMessage?.content ?? message?.content // the content of the message that was long pressed (not undefined because checked above)
                               const findExistingObject = find_item(cachedData, 'cache object', (o: any) => Object.keys(o)[0] === messageId) // try to find an existing object in cache, will return undefined if nothing found
                               
                               React.useEffect(() => {
