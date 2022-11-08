@@ -20,7 +20,7 @@ async function debug_info(options: string[]) {
     const debug_list: { [key: string]: any; } = await fetch_debug_arguments()
     options.forEach((option: string) => {
         debug_list[option] 
-            ? final_debug.push(`**${option}**: ${debug_list[option]}`)
+            ? final_debug.push(`> **${option}**: ${debug_list[option]}`)
             : null
     })
     return final_debug.join('\n')
