@@ -121,14 +121,15 @@ export default ({ settings }: SettingsProps) => {
                 />
                 <FormDivider />
                 <FormRow
-                    label='Clear Device Cache'
-                    subLabel={`Void the fetched device list storage.`}
+                    label='Clear Stores'
+                    subLabel={`Void all of the stores used throughout ${name}.`}
                     leading={<FormRow.Icon style={styles.icon} source={Icons.Delete} />}
                     trailing={FormRow.Arrow}
                     onPress={async function() {
                         await Storage.removeItem('device_list') // removes the item and waits for promise resolve
+                        await Storage.removeItem('dislate_incompatible_dialog') // removes the item and waits for promise resolve
                         Toasts.open({ 
-                            content: `Cleared device list storage.`, 
+                            content: `Cleared all ${name} stores.`, 
                             source: Icons.Settings.Toasts.Settings 
                         }); // declares success
                     }}

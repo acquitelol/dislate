@@ -13,18 +13,19 @@ async function check_if_compatible_device () {
         if (
             // checks all iphones under iPhone X which arent "iPhone X Global"
             (parseFloat(device)<10.6&&parseFloat(device)!=10.3)
-            // triggers if the device is iPhone SE 3rd Gen or 2nd Gen
+            // also triggers if the device is iPhone SE 3rd Gen or 2nd Gen
             || parseFloat(device)==14.6
             || parseFloat(device)==12.8
         ) {
-            const shown_already = Storage.getItem("__dislate_incompatible_dialog__")
+            const shown_already = await Storage.getItem('dislate_incompatible_dialog')
+
             // opens a dialog showing the message that the iPhone model in question may cause issues.
             shown_already ?? Dialog.show({
                 title: "Incompatible iPhone",
                 body: `Please note that you're on an${devices[Native.DCDDeviceManager.device]}.
 Some features of ${name} may behave in an unexpected manner.`,
                 confirmText: "I understand",
-                onConfirm: Storage.setItem("__dislate_incompatible_dialog__", true)
+                onConfirm: await Storage.setItem('dislate_incompatible_dialog', 'never showing again until cleared store')
             })
         }
     }

@@ -14,9 +14,9 @@ async function check_for_updates() {
     // get the version and build from the source
     let external_version = content.match(/\d\.\d\.\d+/g);
     let external_build = content.match(/patch\-\d\.\d\.\d+/g)
-    if (!external_version || !external_build) return no_updates(name, version);
+    if (!external_version || !external_build) return no_updates(name, [version, plugin.build]);
 
-    // set the versions to their index
+    // set the versions to 0th index to omit it being a regex match array
     external_version = external_version[0]
     external_build = external_build[0]
 
@@ -29,10 +29,11 @@ async function check_for_updates() {
       because the latest will always be larger or equal to the current version
     */
 
-    // if the version is not the current one, that means its newer, otherwise run the no update function
+    // if the version and build are not the current one, that means one is newer, otherwise run the no update function
+    // the dialog shown when a new build is available is different to a new version, and the boolean `is_ghost_patch` reflects that.
     if (external_version != version) return show_update_dialog(url, external_version, external_build.split('-')[1], false)
     if (external_build != plugin.build) return show_update_dialog(url, external_version, external_build.split('-')[1], true)
-    return no_updates(name, version)
+    return no_updates(name, [version, plugin.build])
 }
 
 const show_update_dialog = (url: string, version: string, build: string, is_ghost_patch: boolean) => {
@@ -49,10 +50,14 @@ const show_update_dialog = (url: string, version: string, build: string, is_ghos
     });
 }
 
-const no_updates = (name: string, type: string) => {
+const no_updates = (name: string, type: string[]) => {
     // logs the fact that youre on the latest version with both a toast a
-    console.log(`[${name}] Plugin is on the latest version, which is ${type}`)
-    Toasts.open({ content: `${name} is on latest version (${type})`, source: Icons.Translate });
+    console.log(`[${name}] Plugin is on the latest update, which is version ${type[0]} and build ${type[1]}`)
+    Dialog.show({
+        title: "Already on latest",
+        body: `${name} is already on the updated to the latest version, which is ${type[0]}, and latest build, which is ${type[1]}`,
+        confirmText: "Okay",
+    });
 }
 
 async function install_plugin(url: string, type: string, is_ghost_patch: boolean) {
