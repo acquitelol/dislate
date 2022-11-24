@@ -22,7 +22,7 @@ describe("translate.js", () => {
     expect(details.size).toBeLessThan(20000);
   });
 
-  it("accepts full language names", async () => {
+  it("accepts full language names", async function() {
     const es = await translate("Hello world", {
       from: "English",
       to: "Spanish"
@@ -36,7 +36,7 @@ describe("translate.js", () => {
     expect(jp).toBe("こんにちは世界");
   });
 
-  it("accepts weird casing for language names", async () => {
+  it("accepts weird casing for language names", async function() {
     const es = await translate("Hello world", {
       from: "english",
       to: "spaNish"
@@ -66,7 +66,7 @@ describe("Independent", () => {
     expect(inst.from).toBe("en");
   });
 
-  it.skip("fixed the bug #5", async () => {
+  it.skip("fixed the bug #5", async function() {
     // translate.keys = { google: 'abc' };
     const options = { to: "ja", keys: { yandex: "def" }, engine: "google" };
 

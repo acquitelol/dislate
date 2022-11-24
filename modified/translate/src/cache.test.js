@@ -11,7 +11,7 @@ describe("cache", () => {
 
   const delay = time => new Promise(done => setTimeout(done, time));
 
-  it("caches", async () => {
+  it("caches", async function() {
     const before = new Date();
     await translate("Is this cached?", "es");
     const mid = new Date();
@@ -23,7 +23,7 @@ describe("cache", () => {
     expect(after - mid).toBeGreaterThanOrEqual(0);
   });
 
-  it("removes cache after the time is out", async () => {
+  it("removes cache after the time is out", async function() {
     const before = new Date();
     await translate("Is this also cached?", { to: "es", cache: 1000 });
     const mid = new Date();

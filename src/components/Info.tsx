@@ -1,29 +1,63 @@
-// main dependencies and components
-import { React, Constants, StyleSheet, Toasts, Messages } from 'enmity/metro/common';
-import { name } from '../../manifest.json';
-import { Text, ScrollView, FormSection, TouchableOpacity, FormDivider} from 'enmity/components';
-import { fetch_debug_arguments, Icons, debug_info } from '../utils';
+/**
+ * Imports
+ * @param getBoolean: Fetches a boolean setting from a file.
+ * @param {FormDivider, FormSection}: Used to render Form Items on the screen.
+ * @param Text: Used to render styleable text on the screen.
+ * @param TouchableOpacity: Used to render a component child inside of this component, but adds a small opacity effect upon press.
+ * @param getByName: Allows you to fetch a component from Discord.
+ * @param StyleSheet: Used to create React Native StyleSheeets, for styling components.
+ * @param Constants: Used for constant values which may differ between themes like colors and font weights.
+ * @param name: The name of the plugin, from @arg manifest.json
+ * @param {* from utils}: Utility functions used throughout the component.
+ * @param DebugItem: A component to render a toggleable option state. This is its own component so that it can have independent state.
+ * @param ExitWrapper: A component to wrap the rest of the components into a ScrollView with capibility to close the page upon swiping right. Used by passing the TSX to render inside the Component prop. Can be a single component or a Fragment <>.
+ */
 import { getBoolean } from 'enmity/api/settings';
-import { Navigation } from "enmity/metro/common";
-import DebugItem from './DebugItem';
+import { FormDivider, FormSection, Text, TouchableOpacity, View } from 'enmity/components';
 import { getByName } from 'enmity/metro';
+import { Constants, React, StyleSheet } from 'enmity/metro/common';
+import { name } from '../../manifest.json';
+import { fetch_debug_arguments, filter_array, filter_color, map_item, send_debug_log } from '../utils';
+import InfoItem from './InfoItem';
+import Dialog from './Dialog';
+import ExitWrapper from './ExitWrapper';
 
-// use the search module
+/**
+ * The main Search module, used to input text and store it. This is easy to make from scratch, but because Discord already made one I might aswell use it.
+ * @param Search: The main Search Bar component
+ */
 const Search = getByName('StaticSearchBarContainer');
 
-// channel id is a property passed from the main debug command
-export default ({ channel_id }) => {
-    // set the react states
+/**
+ * Main Info Page Component
+ * @param channel_id: The main channel ID, passed as a string from the Debug command/component.
+ * @param channel_name: The name of the channel, used to display it in the toast if the message is sent.
+ */
+export default ({ channel_id, channel_name }) => {
+    /**
+     * Main states used throughout the component to declare re-rendering easier
+     * @param {Getter, Setter} options: The list of available options, populated by the @arg React.useEffect
+     * @param {Getter, Setter} query: The query that has been searched with the Search module.
+     */
     const [options, setOptions] = React.useState<string[]>([])
     const [query, setQuery] = React.useState([])
 
-    // set the debug options into the state on mount
+    /**
+     * Use an asynchronous call to fetch the available debug arguments, on the first mount of the component to not cause any refetching on re-renders.
+     * @param fetch_debug_arguments: Gets a list of debug arguments.
+     */
     React.useEffect(async function() {
         setOptions(Object.keys(await fetch_debug_arguments()))
     }, [])
 
-    // create the stylesheet of styles used for the buttons
+    /**
+     * @param styles: StyleSheet of generic styles used throughout the component.
+     */
     const styles = StyleSheet.createThemedStyleSheet({
+        /**
+         * @param button: The main button styling, to make it look cute and pretty :D
+         * The values for @arg width, @arg marginLeft, and @arg marginRight may seem quite random, but the margins are just (100 (%) - @arg width) / 2 each. This evenly splits the available space on each side of the button.
+         */
         button: {
             width: '90%',
             height: 50,
@@ -35,8 +69,14 @@ export default ({ channel_id }) => {
             marginRight: '5%',
             marginTop: 20
         },
+        /**
+         * @param text: The main styling for the text component
+         * 
+         * @func filter_color: Takes an @arg input color and a @arg light and @arg dark color, and calculates whether the color should be the light color or dark color based on the @arg boundary provided as a multiplier (0.8 -> 80% contrast).
+                * @arg Note: The boundary value provided for this function is based on theory, and not 50%, as that will cause weird side effects.
+         */
         text: {
-            color: '#fff',
+            color: filter_color(Constants.ThemeColorMap.HEADER_PRIMARY[0], '#FFF', "#000", 0.8, 'buttons in debug info menu'),
             textAlign: 'center',
             paddingLeft : 10,
             paddingRight : 10,
@@ -45,74 +85,88 @@ export default ({ channel_id }) => {
             fontFamily: Constants.Fonts.PRIMARY_BOLD
         },
     })
-
-    const send_debug_log = async function(debug_options) {
-        // **SEND LOG**
-
-        // close the page
-        Navigation.pop()
-
-        // sends the message with the options selected true
-        Messages.sendMessage(channel_id, {
-            content: await debug_info(debug_options)
-        }); // send a message with string interpolation
-
-        // opens a toast to declare that message has been sent
-        Toasts.open({ 
-            // formats the string and shows language that it has changed it to
-            content: `Sent debug info in current channel.`, 
-            source: Icons.Settings.Toasts.Settings
-        })
-    }
-
-    const [touchX, setTouchX] = React.useState() // the start x position of swiping on the screen
-    const [touchY, setTouchY] = React.useState() // the start y position of swiping on the screen;
-
+    
+    /**
+     * Main return element of the Component.
+     * @returns {~ TSX Page}
+     */
     return <>
+        {/**
+         * The main search container. Any text that is inputted into this, will be stored into the query state, and filtered on re-render.
+         */}
         <Search
             placeholder="Search Options"
-            onChangeText={text => setQuery(text)}
+            onChangeText={(text: string) => setQuery(text)}
         />
-        <ScrollView
-            onTouchStart={e=> {
-                // set them to new position
-                setTouchX(e.nativeEvent.pageX)
-                setTouchY(e.nativeEvent.pageY)
+        {/**
+         * The main part of the component, showing available options to toggle.
+         * This is wrapped in an @arg ExitWrapper component to allow the user to close out the page by swiping to the right.
+         */}
+        <ExitWrapper Component={<View
+            style={{
+                marginBottom: 100
             }}
-            onTouchEnd={e => {
-                    // only triggers if x is negative over 100 (moved right) and y is more than -40 but less than 40 (not much movement)
-                    if (
-                        touchX - e.nativeEvent.pageX < -100 
-                        && touchY - e.nativeEvent.pageY < 40
-                        && touchY - e.nativeEvent.pageY > -40
-                    ) {
-                        Navigation.pop() // removes the page from the stack
-                    }
-                }
-            }
         >
+            {/**
+             * The main section of available options to be selected by the User.
+             */}
             <FormSection title='Options'>
-                {options.filter(option => option.includes(query)).map((option) => <DebugItem option={option} channel={channel_id} />)}
+                {/**
+                 * Maps through the list of filtered available items, and returns a @arg DebugItem component for each one.
+                 * @param options: The list of available options.
+                 * @param query: Any possible text that has been typed in the search box.
+                 * @param DebugItem: Component to render toggleable options, with independent state.
+                 */}
+                {map_item(
+                    filter_array(options, (option: string) => option.toLowerCase().includes(query)), 
+                    (option) => <InfoItem option={option} channel_id={channel_id} channel_name={channel_name} />,
+                    'list of debug information options'
+                )}
                 <FormDivider />
             </FormSection>
+            {/**
+             * Button to send the Full Debug log, hence the text @arg Send_All
+             */}
             <TouchableOpacity
-                    style={styles.button}
-                    onPress={async function() {
-                        await send_debug_log(options)
-                    }}
-                    underlayColor='#fff'>
-                    <Text style={styles.text}>Send All</Text>
+                style={styles.button}
+                onPress={async function() {
+                    /**
+                     * Send a full log in the current channel.
+                     */
+                    await send_debug_log(
+                        options, 
+                        {channel_id: channel_id, channel_name: channel_name}, 
+                        'full', 
+                        'full log in Info Component.'
+                    )
+            }}>
+                <Text style={styles.text}>Send All</Text>
             </TouchableOpacity>
+            {/**
+             * Button to send the Partial Debug log, hence the text @arg Send_Message instead.
+             */}
             <TouchableOpacity
-                    style={styles.button}
-                    onPress={async function() {
-                        // sort through the options and only select the ones which are set to true
-                        let debug_options = options.map(option => {if (getBoolean(name, option, false)) return option})
-                        await send_debug_log(debug_options)
-                    }}
-                    underlayColor='#fff'>
-                    <Text style={styles.text}>Send Message</Text>
+                style={styles.button}
+                onPress={async function() {
+                    // sort through the options and only select the ones which are set to true
+                    let debug_options = options.map(option => {if (getBoolean(name, option, false)) return option})
+                    await send_debug_log(
+                        debug_options, 
+                        {channel_id: channel_id, channel_name: channel_name}, 
+                        'partial', 
+                        'partial log in Info Component.'
+                    )
+            }}>
+                <Text style={styles.text}>Send Message</Text>
             </TouchableOpacity>
-        </ScrollView>  
+            {/**
+             * Renders a custom Dialog implementation to display a tip to help you navigate the page.
+             */}
+            <Dialog 
+                label="Information" 
+                content={`You can either tap on each item to toggle it and press "Send Message", or you can long-press on an item to only send that item.\n\nTo close this dialog, press on it.`} 
+                type={'standard'}
+            />
+        </View>} />
     </>;
 }

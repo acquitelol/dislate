@@ -1,0 +1,178 @@
+/**
+ * Imports
+ * @param {get, set}: Allows you to @arg store and @arg retrieve Settings from your plugin file.
+ * @param FormRow: Allows you to render a custom @arg Form_Item on the screen.
+ * @param Constants: Module for many @arg constant values such as Theme colors etc. 
+ * @param Navigation: Used to @arg close (pop) the current page from the Navigation Stack.
+ * @param React: The main React implementation to do functions such as @arg React.useState or @arg React.useEffect
+ * @param Toasts: Used to open a little @arg notification at the top of your Enmity.
+ * @param name: The name of the plugin from @arg manifest.json. In this case, it's Dislate.
+ * @param language_names: The full list of available full @arg {language names}, which can be mapped over and manipulated
+ * @param format_string: Used to replace @arg underscores with @arg spaces, and add a capital letter to the first character of a string.
+ * @param Icons: Used as a module to store icons easier.
+ */
+ import { get, set } from 'enmity/api/settings';
+ import { FormRow, TouchableOpacity } from 'enmity/components';
+ import { Constants, Navigation, React, Toasts } from 'enmity/metro/common';
+ import { name } from '../../manifest.json';
+ import language_names from '../../modified/translate/src/languages/names';
+ import language_names_short from '../../modified/translate/src/languages/iso2';
+ import { format_string, Icons, for_item } from '../utils';
+
+ 
+ /** This is the main 'Animated' component of React Native, but for some reason its not exported in Enmity's dependencies so I'm importing it manually.
+  * @param Animated: The main 'Animated' component of React Native.import { TouchableOpacity } from 'enmity/components';
+ 
+  * @ts-ignore */
+  const Animated = window.enmity.modules.common.Components.General.Animated
+ 
+ /**
+  * Main Languages Page Item Component.
+  */
+ export default ({language}) => { 
+     /** Use React to create a new Ref with @arg Animated
+      * @param animated_button_scale
+      */
+      const animated_button_scale = React.useRef(new Animated.Value(1)).current
+ 
+      /**
+       * Move @param animated_button_scale to @arg {1.1}, in @arg {250ms} with the @arg spring easing type.
+       * @returns {void}
+       */
+      const onPressIn = (): void => Animated.spring(animated_button_scale, {
+              toValue: 1.05,
+              duration: 250,
+              useNativeDriver: true,
+      }).start();
+  
+      /**
+       * Move @param animated_button_scale back to @arg {1}, in @arg {250ms} with the @arg spring easing type.
+       * @returns {void}
+       */
+      const onPressOut = (): void => Animated.spring(animated_button_scale, {
+              toValue: 1,
+              duration: 250,
+              useNativeDriver: true,
+      }).start();
+ 
+     
+      /** The main animated style, which is going to be modified by the Animated property.
+      * @param animated_scale_style: The main scale style applied to the element which has the scale.
+      */
+     const animated_scale_style = {
+         transform: [
+             {
+                 scale: animated_button_scale
+             }
+         ]
+     }
+ 
+     /**
+      * Takes a language as an argument and sets the current language based on the page which was opened to the one that was pressed.
+      * @param language: The language to set.
+      * @returns {void}
+      */
+    const set_language = (language: string): void => {
+    /**
+     * Sets the language as the one to translate to or from depending on which page was opened.
+     * @param {set, get}: Store and retrieve settings from the plugin.
+     */
+    set(name, `DislateLang${get(name, "DislateLangFilter")?"To":"From"}`, language) 
+
+    /**
+     * Afterwards, open a toast stating that the language chosen has been set as the language to translate to or from.
+     * @param language_names: The full list of languages.
+     * @param language: The language that this component is representing. This is the language that a user would press on.
+     */
+        Toasts.open({ content: `Set ${(language_names[language]).toUpperCase()} as Language to Translate ${get("Dislate", "DislateLangFilter") ? "to" : "from"}.`, 
+            source: get(name, "DislateLangFilter") ? Icons.Settings.Translate_To : Icons.Settings.Translate_From
+        })
+
+        /**
+         * Finally, close the page.
+         */
+        Navigation.pop()
+    }
+
+    /**
+     * Reverses each key and value pair of an object
+     * @param object: The object's keys and values to reverse.
+     * @returns {object}
+     */
+    const reverse_object = (object: any): any => {
+        /**
+         * Maps over the object's keys and returns the value as the key and the key as the value for each iteration in the Array
+         * @param new_object: The new object which will be populated with the keys as the values and the values as the keys
+         */
+        const new_object: any = {}
+
+        /**
+         * Loops through the keys of the object. The values of the object arent required, as they're already accessible by using @arg {object[key]}
+         * This uses a custom for loop implementation. It is identical in functionality to @arg Array.prototype.forEach, but i can assign labels to it.
+         */
+        for_item(Object.keys(object), (key: string) => {
+            Object.assign(new_object, {[object[key]]: key})
+        }, 'reversing object')
+
+        /**
+         * Finally, return the new object.
+         * @returns {~ new object}
+         */
+        return new_object
+    }
+ 
+    return <>
+        {/**
+         * The main Touchable opacity. This would override the FormRow effects, and also is what controls the animation.
+         */}
+         <>
+            <TouchableOpacity
+                /**
+                 * @arg onPress: Set the language pressed as the chosen language to translate to or from.
+                 * @arg onLongPress: Set the language pressed as the chosen language to translate to or from.
+                 * @arg onPressIn: Scale in the component to @arg {1.05} scale.
+                 * @arg onPressIn: Scale in the component back to @arg {1} scale.
+                 */
+                onPress={() => set_language(language)}
+                onLongPress={() => set_language(language)}
+                onPressIn={onPressIn}
+                onPressOut={onPressOut}
+            >
+                {/**
+                 * The main view. This is what the scale style is actually applied to.
+                 * @param animated_scale_style: The current transform scale value. This will change depending on the Ref.
+                 */}
+                <Animated.View style={animated_scale_style}>
+                    <FormRow
+                        label={format_string(language)}
+
+                        /**
+                         * Fetches the shorter names of each language. As the ISO's are all directly linked to the names, this will never return undefined.
+                         * @param language_names[language]: Shorter implementation of the language
+                         * @func reverse_object: Reverses the keys and values of an object
+                         */
+                        subLabel={`Aliases: ${language_names[language]}, ${reverse_object(language_names_short)[language_names[language]]}`}
+                        trailing={FormRow.Arrow}
+                        leading={<FormRow.Icon style={{color: Constants.ThemeColorMap.INTERACTIVE_NORMAL}} source={
+                            /**
+                             * Either set the Icon to ✓ or + depending on whether @arg DislateLangFilter is true or false, and then further whether the current @arg language is the same as the current language stored in @arg DislateLang*.
+                             * @param Icons.Settings.Toasts: Part of the icon dependency to display icons for Toasts, can also be used in this scenario.
+                             * 
+                             * @if {(@arg DislateLangFilter) evaluates to true} ->
+                                    * @if {(@arg language) is equal to (@arg DislateLangTo)} -> Show ✓ Icon
+                                    * @else {()} -> Show + Icon
+                             * @else {()} ->
+                                    * @if {(@arg language) is equal to (@arg DislateLangFrom)} -> Show ✓ Icon
+                                    * @else {()} -> Show + Icon
+                             */
+                            language == get(name, `DislateLang${get(name, "DislateLangFilter") ? "To" : "From"}`)
+                                ?   Icons.Settings.Toasts.Settings
+                                :   Icons.Add
+                            } 
+                        />}
+                    />
+                </Animated.View>
+            </TouchableOpacity>
+         </>
+     </>;
+ };
