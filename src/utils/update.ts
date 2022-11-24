@@ -103,7 +103,7 @@ const no_updates = (name: string, types: string[]) => {
     console.log(`[${name}] Plugin is on the latest update, which is version ${types[0]} and build ${types[1]}`)
     Dialog.show({
         title: "Already on latest",
-        body: `${name} is already on the updated to the latest version, which is \`${types[0]}\`, and latest build, which is \`${types[1].split('-')[1]}\``,
+        body: `${name} is already updated to the latest version, which is \`${types[0]}\`, and latest build, which is \`${types[1].split('-')[1]}\``,
         confirmText: "Okay",
     });
 }
