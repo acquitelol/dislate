@@ -17,7 +17,7 @@ import { FormDivider, FormSection, Text, TouchableOpacity, View } from 'enmity/c
 import { getByName } from 'enmity/metro';
 import { Constants, React, StyleSheet } from 'enmity/metro/common';
 import { name } from '../../manifest.json';
-import { fetch_debug_arguments, filter_array, filter_color, map_item, send_debug_log } from '../utils';
+import { fetch_debug_arguments, filter_item, filter_color, map_item, send_debug_log } from '../utils';
 import InfoItem from './InfoItem';
 import Dialog from './Dialog';
 import ExitWrapper from './ExitWrapper';
@@ -31,11 +31,11 @@ const Search = getByName('StaticSearchBarContainer');
 /**
  * Main Info Page Component
  * @param channel_id: The main channel ID, passed as a string from the Debug command/component.
- * @param channel_name: The name of the channel, used to display it in the toast if the message is sent.
+ * @param channel_name: The name of the channel, used to display in the toast if the message is sent.
  */
 export default ({ channel_id, channel_name }) => {
     /**
-     * Main states used throughout the component to declare re-rendering easier
+     * Main states used throughout the component to allow storing options and the possible search query.
      * @param {Getter, Setter} options: The list of available options, populated by the @arg React.useEffect
      * @param {Getter, Setter} query: The query that has been searched with the Search module.
      */
@@ -118,7 +118,7 @@ export default ({ channel_id, channel_name }) => {
                  * @param DebugItem: Component to render toggleable options, with independent state.
                  */}
                 {map_item(
-                    filter_array(options, (option: string) => option.toLowerCase().includes(query)), 
+                    filter_item(options, (option: string) => option.toLowerCase().includes(query)), 
                     (option) => <InfoItem option={option} channel_id={channel_id} channel_name={channel_name} />,
                     'list of debug information options'
                 )}
@@ -148,8 +148,14 @@ export default ({ channel_id, channel_name }) => {
             <TouchableOpacity
                 style={styles.button}
                 onPress={async function() {
-                    // sort through the options and only select the ones which are set to true
-                    let debug_options = options.map(option => {if (getBoolean(name, option, false)) return option})
+                    /**
+                     * @param debug_options: Filtered list of options which only includes ones that the user has chosen to be true.
+                     */
+                    const debug_options = filter_item(options, (item: string) => getBoolean(name, item, false), 'filtering chosen debug options')
+
+                    /**
+                     * Send the debug log with the filtered list.
+                     */
                     await send_debug_log(
                         debug_options, 
                         {channel_id: channel_id, channel_name: channel_name}, 

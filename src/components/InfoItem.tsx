@@ -15,7 +15,8 @@ import { Constants, React, StyleSheet } from "enmity/metro/common"
 import { Icons, send_debug_log, fetch_debug_arguments } from "../utils"
 import { name } from '../../manifest.json';
 
-/** This is the main 'Animated' component of React Native, but for some reason its not exported in Enmity's dependencies so I'm importing it manually.
+/** 
+ * This is the main 'Animated' component of React Native, but for some reason its not exported in Enmity's dependencies so I'm importing it manually.
  * @param Animated: The main 'Animated' component of React Native.import { TouchableOpacity } from 'enmity/components';
 
  * @ts-ignore */
@@ -69,7 +70,8 @@ export default ({ option, channel_id, channel_name }) => {
 
     const scale_values = [1, 1.01]
 
-    /** Use React to create a new Ref with @arg Animated
+    /**
+     * Use React to create a new Ref with @arg Animated
      * @param animated_button_scale
      */
      const animated_button_scale = React.useRef(new Animated.Value(scale_values[getBoolean(name, option, false) ? 1 : 0])).current
@@ -95,7 +97,8 @@ export default ({ option, channel_id, channel_name }) => {
      }).start();
 
     
-     /** The main animated style, which is going to be modified by the Animated property.
+     /** 
+      * The main animated style, which is going to be modified by the Animated property.
      * @param animated_scale_style: The main scale style applied to the element which has the scale.
      */
     const animated_scale_style = {
@@ -111,7 +114,8 @@ export default ({ option, channel_id, channel_name }) => {
      * @returns {TSX Component}
      */
     return <TouchableOpacity
-        /** Main events which can be fired from the image.
+        /** 
+         * Main events which can be fired from the image.
          * @param {onPress} onPress: Opens the repo of @arg Dislate externally
          * @param {onPressIn} onPressIn: Triggers when the @arg Image is held down, and scales in the image to @arg {1.1} times its normal scale.
          * @param {onPressOut} onPressOut: Triggers when the @arg Image is has stopped being pressed, and scales out the image back to its normal scale (@arg {1}).
@@ -148,6 +152,9 @@ export default ({ option, channel_id, channel_name }) => {
         onPressIn={onPressIn}
         onPressOut={onPressOut}
     >
+        {/**
+         * The main animated view, which will be affected by the Animation variable.
+         */}
         <Animated.View style={animated_scale_style}>
             <FormRow
                 key={option}

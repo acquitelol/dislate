@@ -20,7 +20,8 @@ import ExitWrapper from './ExitWrapper';
 import Languages from './Languages';
 import Page from './Page';
 
-/** Main modules being fetched by the plugin to open links externally and copy text to clipboard
+/** 
+ * Main modules being fetched by the plugin to open links externally and copy text to clipboard
  * @param Router: This is used to open a url externally with @arg Router.openURL ~
  * @param Clipboard: This is used to copy any string to clipboard with @arg Clipboard.setString ~
  */
@@ -162,7 +163,7 @@ export default ({ settings, manifest: { name, version, plugin, authors, release 
                 <FormRow
                     label='Abbreviate Language'
                     leading={<FormRow.Icon style={styles.icon} source={Icons.Retry} />}
-                    subLabel={`Label language in a shorter form (English > EN)`}
+                    subLabel={`Label language in a shorter form (English ➝ EN)`}
                     trailing={
                         <FormSwitch
                             /**
@@ -209,7 +210,7 @@ export default ({ settings, manifest: { name, version, plugin, authors, release 
                 <FormRow
                     label='Initialisation Toasts'
                     leading={<FormRow.Icon style={styles.icon} source={Icons.Settings.Initial} />}
-                    subLabel={`Toogle Toasts to display initialisation state of ${name}.`}
+                    subLabel={`Toogle initialisation state of ${name}.`}
                     trailing={
                         <FormSwitch
                             /**
@@ -277,7 +278,7 @@ export default ({ settings, manifest: { name, version, plugin, authors, release 
                  */}
                 <FormRow
                     label='Clear Stores'
-                    subLabel={`Void most of the settings and stores used throughout ${name}.`}
+                    subLabel={`Void most of the stores used throughout ${name}.`}
                     leading={<FormRow.Icon style={styles.icon} source={Icons.Delete} />}
                     trailing={FormRow.Arrow}
                     onPress={async function() {

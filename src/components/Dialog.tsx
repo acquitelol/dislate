@@ -19,7 +19,8 @@ import { filter_color, find_item, store_item } from "../utils"
 import {name} from '../../manifest.json'
 import { get, set } from "enmity/api/settings"
 
-/** This is the main 'Animated' component of React Native, but for some reason its not exported in Enmity's dependencies so I'm importing it manually.
+/** 
+ * This is the main 'Animated' component of React Native, but for some reason its not exported in Enmity's dependencies so I'm importing it manually.
  * @param Animated: The main 'Animated' component of React Native.
  * @ts-ignore */
 const Animated = window.enmity.modules.common.Components.General.Animated
@@ -84,7 +85,8 @@ export default ({ label, content, type }) => {
         },
     })
 
-    /** Use React to create a new Ref with @arg Animated
+    /** 
+     * Use React to create a new Ref with @arg Animated
      * @param animated_button_scale
      */
     const animated_button_scale = React.useRef(new Animated.Value(1)).current
@@ -161,7 +163,8 @@ export default ({ label, content, type }) => {
             backgroundColor: "rgba(0, 0, 0, 0.8)"
         },
     }
-    /** The main animated style, which is going to be modified by the Animated property.
+    /** 
+     * The main animated style, which is going to be modified by the Animated property.
      * @param animated_scale_style: The main scale style applied to the element which has the scale.
      */
      const animated_scale_style = {

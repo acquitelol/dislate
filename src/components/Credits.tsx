@@ -1,4 +1,5 @@
-/** Imports
+/** 
+ * Imports
  * @param React: The main React implementation to do functions such as @arg React.useState or @arg React.useEffect
  * @param Constants: Used for colors and font weight etc...
  * @param StyleSheet: Used to create style sheets for React components
@@ -14,12 +15,14 @@ import { bulk, filters} from 'enmity/metro';
 import { TouchableOpacity, View, Image, Text} from 'enmity/components';
 import { clipboard_toast, debug_info, fetch_debug_arguments, map_item } from '../utils';
 
-/** This is the main 'Animated' component of React Native, but for some reason its not exported in Enmity's dependencies so I'm importing it manually.
+/** 
+ * This is the main 'Animated' component of React Native, but for some reason its not exported in Enmity's dependencies so I'm importing it manually.
  * @param Animated: The main 'Animated' component of React Native.
  * @ts-ignore */
 const Animated = window.enmity.modules.common.Components.General.Animated
 
-/** Main modules being fetched by the plugin to open links externally and copy text to clipboard
+/** 
+ * Main modules being fetched by the plugin to open links externally and copy text to clipboard
  * @param Router: This is used to open a url externally with @arg Router.openURL ~
  * @param Clipboard: This is used to copy any string to clipboard with @arg Clipboard.setString ~
  */
@@ -31,7 +34,8 @@ const [
     filters.byProps('setString'),
  );
 
- /** Main credits component.
+ /** 
+  * Main credits component.
   * @returns {TSX ~ Fragmented View}
   */
 export default ({name, version, plugin, authors}): void => {
@@ -93,7 +97,8 @@ export default ({name, version, plugin, authors}): void => {
         }
     });
 
-    /** Use React to create a new Ref with @arg Animated
+    /** 
+     * Use React to create a new Ref with @arg Animated
      * @param animated_button_scale
      */
     const animated_button_scale = React.useRef(new Animated.Value(1)).current
@@ -124,7 +129,8 @@ export default ({name, version, plugin, authors}): void => {
      */
     const onPress = (): void => Router.openURL(plugin.repo);
 
-    /** The main animated style, which is going to be modified by the Animated property.
+    /** 
+     * The main animated style, which is going to be modified by the Animated property.
      * @param animated_scale_style: The main scale style applied to the element which has the scale.
      */
     const animated_scale_style = {
@@ -135,7 +141,8 @@ export default ({name, version, plugin, authors}): void => {
         ]
     }
     
-    /** Main component
+    /** 
+     * Main component
      * @returns {~ fragment closure}
      */
     return <>
@@ -149,7 +156,8 @@ export default ({name, version, plugin, authors}): void => {
              * @uses @arg {uri https://i.imgur.com/rl1ga06.png}
              */}
             <TouchableOpacity 
-                /** Main events which can be fired from the image.
+                /** 
+                 * Main events which can be fired from the image.
                  * @param {onPress} onPress: Opens the repo of @arg Dislate externally
                  * @param {onPressIn} onPressIn: Triggers when the @arg Image is held down, and scales in the image to @arg {1.1} times its normal scale.
                  * @param {onPressOut} onPressOut: Triggers when the @arg Image is has stopped being pressed, and scales out the image back to its normal scale (@arg {1}).

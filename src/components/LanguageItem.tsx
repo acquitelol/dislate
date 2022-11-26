@@ -17,10 +17,11 @@
  import { name } from '../../manifest.json';
  import language_names from '../../modified/translate/src/languages/names';
  import language_names_short from '../../modified/translate/src/languages/iso2';
- import { format_string, Icons, for_item } from '../utils';
+ import { format_string, Icons, reverse_object } from '../utils';
 
  
- /** This is the main 'Animated' component of React Native, but for some reason its not exported in Enmity's dependencies so I'm importing it manually.
+ /** 
+  * This is the main 'Animated' component of React Native, but for some reason its not exported in Enmity's dependencies so I'm importing it manually.
   * @param Animated: The main 'Animated' component of React Native.import { TouchableOpacity } from 'enmity/components';
  
   * @ts-ignore */
@@ -30,7 +31,8 @@
   * Main Languages Page Item Component.
   */
  export default ({language}) => { 
-     /** Use React to create a new Ref with @arg Animated
+     /** 
+      * Use React to create a new Ref with @arg Animated
       * @param animated_button_scale
       */
       const animated_button_scale = React.useRef(new Animated.Value(1)).current
@@ -56,7 +58,8 @@
       }).start();
  
      
-      /** The main animated style, which is going to be modified by the Animated property.
+      /** 
+      * The main animated style, which is going to be modified by the Animated property.
       * @param animated_scale_style: The main scale style applied to the element which has the scale.
       */
      const animated_scale_style = {
@@ -93,33 +96,6 @@
          */
         Navigation.pop()
     }
-
-    /**
-     * Reverses each key and value pair of an object
-     * @param object: The object's keys and values to reverse.
-     * @returns {object}
-     */
-    const reverse_object = (object: any): any => {
-        /**
-         * Maps over the object's keys and returns the value as the key and the key as the value for each iteration in the Array
-         * @param new_object: The new object which will be populated with the keys as the values and the values as the keys
-         */
-        const new_object: any = {}
-
-        /**
-         * Loops through the keys of the object. The values of the object arent required, as they're already accessible by using @arg {object[key]}
-         * This uses a custom for loop implementation. It is identical in functionality to @arg Array.prototype.forEach, but i can assign labels to it.
-         */
-        for_item(Object.keys(object), (key: string) => {
-            Object.assign(new_object, {[object[key]]: key})
-        }, 'reversing object')
-
-        /**
-         * Finally, return the new object.
-         * @returns {~ new object}
-         */
-        return new_object
-    }
  
     return <>
         {/**
@@ -151,7 +127,7 @@
                          * @param language_names[language]: Shorter implementation of the language
                          * @func reverse_object: Reverses the keys and values of an object
                          */
-                        subLabel={`Aliases: ${language_names[language]}, ${reverse_object(language_names_short)[language_names[language]]}`}
+                        subLabel={`Aliases: ${language_names[language]}, ${reverse_object(language_names_short, 'creating aliases for language names')[language_names[language]]}`}
                         trailing={FormRow.Arrow}
                         leading={<FormRow.Icon style={{color: Constants.ThemeColorMap.INTERACTIVE_NORMAL}} source={
                             /**

@@ -1,4 +1,5 @@
-/** Imports
+/** 
+ * Imports
  * @param {* as commands}: Types and methods required for creating Enmity Commands.
  * @param {Dialog, Navigation}: Functions used to @arg {open a Dialog/Pop-up}, and @arg {open a custom Page.}
  * @param React: The main React implementation to do functions such as @arg React.useState or @arg React.useEffect
@@ -20,13 +21,14 @@ import {
 import { Dialog, Navigation } from 'enmity/metro/common'
 import { React, Toasts, Storage } from 'enmity/metro/common';
 import { name, plugin } from '../../manifest.json';
-import { format_string, clipboard_toast, Icons, fetch_debug_arguments, map_item, send_debug_log, for_item } from '../utils'
+import { format_string, clipboard_toast, Icons, fetch_debug_arguments, map_item, send_debug_log, for_item, find_item } from '../utils'
 import { bulk, filters } from "enmity/metro";
 import Info from "./Info";
 import Page from "./Page";
 import { set } from "enmity/api/settings";
 
-/** Main modules being fetched by the plugin to open links externally and copy text to clipboard
+/** 
+ * Main modules being fetched by the plugin to open links externally and copy text to clipboard
  * @param Router: This is used to open a url externally with @arg Router.openURL ~
  * @param Clipboard: This is used to copy any string to clipboard with @arg Clipboard.setString ~
  */
@@ -234,7 +236,7 @@ const debug_command: Command = {
         /**
          * @param command_type: The main option chosen by the user when they ran the command.
          */
-        const command_type = args.find((o) => o.name == "type").value;
+        const command_type = find_item(args, (o: any) => o.name == "type").value;
 
         /**
          * @param available_options: The main "@arg hash_map" or @arg object of defined functions that the debug command will execute. If an argument is passed at the top level and isn't added here, a Toast will display showing an error.

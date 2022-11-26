@@ -1,4 +1,5 @@
-/** Imports
+/** 
+ * Imports
  * @param FormRow: The main component which will be @arg patched into the LazyActionSheet module
  * @param { Plugin, registerPlugin }: These are used to register an Enmity plugin, and @arg Plugin in particular is also used as a type.
  * @param { bulk, filters, getByProps }: These are used to fetch modules from the Discord API.
@@ -28,14 +29,15 @@ import {
    for_item,
    Icons, 
    check_if_compatible_device,
-   filter_array
+   filter_item
 } from './utils';
 import { translate_command } from './components/Translate'
 import { debug_command } from './components/Debug'
 import Settings from './components/Settings';
 import lang_names from '../modified/translate/src/languages/names';
 
-/**  Top Level Bulk-Filter Variable Declaration --
+/**  
+ * Top Level Bulk-Filter Variable Declaration --
  * @param {any} LazyActionSheet: The main ActionSheet which I would patch into
  * @param {any} ChannelStore: Allows you to get the current channel
 */
@@ -47,7 +49,8 @@ const [
    filters.byProps("getChannel", "getDMFromUserId"),
 );
 
-/** Top Level Global Variables --
+/** 
+ * Top Level Global Variables --
  * @param {any} Patcher: The main patcher which is used for Instead, Before, and After patches of Modules
  * @param {enum} buttonType: This enumerator is used almost like a {Boolean}, in the sense that it toggles between {buttonType.Translate} and {buttonType.Revert}
  */
@@ -57,16 +60,19 @@ enum buttonType {
    Revert
 }
 
-/** Top Level Cache Variables --
+/** 
+ * Top Level Cache Variables --
  * @param {object} cached_data: The main object which holds cached data. This data persists for only each instance of Enmity, so if you restart the app it will clear. It stores this data so that it can detect if a message has been translated yet and change the button (based on {buttonType}) to Revert.
  */
 let cached_data: object[] = [{"invalid_id": "acquite sucks"}]
 
-/** Main Dislate Plugin Source
+/** 
+ * Main Dislate Plugin Source --
  * @param {Plugin} Dislate: The main plugin constructor, rolled up later into a build
  */
 const Dislate: Plugin = {
-   /** Spreads (creates a copy of) {manifest}, imported in the Top-Level
+   /** 
+    * Spreads (creates a copy of) {manifest}, imported in the Top-Level --
     * @param {object} manifest: The main manifest used in the Plugin, containing important information.
     * @param {Array} commands: The array of commands that the plugin will export. Starts off empty
     * @param {Array} patches: The array of patches that the plugin will export. Starts off empty
@@ -76,7 +82,8 @@ const Dislate: Plugin = {
    patches: [],
 
    onStart() {
-      /** Sets/Concatenates the commands used in the plugin to @param this.commands
+      /** 
+       * Sets/Concatenates the commands used in the plugin to @param this.commands --
        * @param {Command} translate_command: The main command of </translate:1> which allows you to send translated messages with the following format:
             * @param {string} text: The text you want to translate.
             * @param {string[]} language: The language you want to translate to (array).
@@ -90,25 +97,29 @@ const Dislate: Plugin = {
          debug_command
       ];
 
-      /** Attempts to patch the ActionSheet
+      /** 
+       * Attempts to patch the ActionSheet --
        * @param {(mutable)number} attempt: The current attempt that the Patcher is on, the default is 0 obviously
        * @param {(constant)number} max_attempts: The maximum amount of attempts before giving up. This is set to 3.
        */
       let attempt = 0
       const max_attempts = 3;
 
-      /** Main Patcher function to attempt and patch into the ActionSheet
+      /** 
+       * Main Patcher function to attempt and patch into the ActionSheet --
        * @function patch_action_sheet: Tries to patch Dislate based on @var max_attempts;
        * @returns {void}, as nothing is required to be returned
        */
-      async function patch_action_sheet() {
+      async function patch_action_sheet(): Promise<void> {
             try {
-               /** Increases the count of attempts;
+               /** 
+                * Increases the count of attempts;
                 * @param {(mutable)number} attempt
                 */
                attempt++;
 
-               /** Fetched dynamically
+               /** 
+                * Modules which are fetched dynamically --
                 * @param {(constant)any} MessageStore: The main store used to fetch messages and get OOP content from them like content and id.
                 * @param {(constant)any} FluxDispatcher: The main dispatcher of message edit and delete events, this is used later to edit messages client side with the translated content.
                 */
@@ -120,18 +131,21 @@ const Dislate: Plugin = {
                   "_waitQueue"
                )
 
-               /** Multiple use Boolean
+               /** 
+                * Option in settings to check whether the user has enabled init toasts.
                 * @param {boolean} enable_toasts: Whether the user has checked "initialisation toasts" in Plugin Settings.
                 */
                let enable_toasts = getBoolean(manifest.name, "toastEnable", false)
 
-               /** Runs a simple check to see if a device is compatible for Dislate to be used.
+               /** 
+                * Runs a simple check to see if a device is compatible for Dislate to be used.
                 * @function check_if_compatible_device: Opens a dialog if incompatible
                 * @returns {void}
                 */
                await check_if_compatible_device()
 
-               /** Attempts to wake up FluxDispatcher in case it is sleeping.
+               /** 
+                * Attempts to wake up FluxDispatcher in case it is sleeping.
                 * @throws if theres an error when waking up @var FluxDispatcher
                 * @returns {void}
                 */
@@ -144,7 +158,8 @@ const Dislate: Plugin = {
                   } catch(err) { console.log(`[${manifest.name} Local Error ${err}]`);}
                }
 
-               /** Simple log in the console showing the current attempt and max attempts
+               /** 
+                * Simple log in the console showing the current attempt and max attempts
                 * @param {string} manifest.name: The name of the plugin. In this case, its "Dislate"
                 * @param {number} attempt: The current attempt.
                 * @param {number} max_attempts: The maximum amount of attempts
@@ -160,30 +175,35 @@ const Dislate: Plugin = {
                      })
                   :  null;
 
-               /** The main patching of the ActionSheet. This is in a try/catch incase there are any unprepared errors, although it still crashes Enmity if there are.
+               /** 
+                * The main patching of the ActionSheet. This is in a try/catch incase there are any unprepared errors, although it still crashes Enmity if there are.
                 * @param {any} LazyActionSheet: The main module being patched
                 * @param {string} openLazy: The function being patched by the function in the form of a string (for some reason)
                 * @param {callback}: The main callback of what the Patcher is meant to do with this function 
                 */
                try {
                   Patcher.before(LazyActionSheet, "openLazy", (_, [component, sheet], _res) => {
-                     /** Checks if the sheet is speficically "MessageLongPressActionSheet"
+                     /** 
+                      * Checks if the sheet is speficically "MessageLongPressActionSheet"
                       * @if {(@param {string} sheet) is identical to (@param {string} MessageLongPressActionSheet)} -> Only executes the patch if this condition is met.
                       */
                      if (sheet === "MessageLongPressActionSheet") {
                         component.then((instance) => {
-                           /** Patching into the "before" state of the ActionSheet's instance
+                           /** 
+                            * Patching into the "before" state of the ActionSheet's instance
                              * @param {any} instance: The instance of the ActionSheet
                              * @param {string} default: The default function of the ActionSheet
                              * @param {callback}: The things that the Patcher is meant to do to patch the @param {string} default function
                              */
                            Patcher.after(instance, "default", (_, message, res) => {
-                              /** Fetching the list of external plugins' keys which also patch the ActionSheet.
+                              /** 
+                               * Fetching the list of external plugins' keys which also patch the ActionSheet.
                                * @param {(constant)object} external_plugin_list: The main list of keys which will be looped over later. Fetched from ./utils/index.ts
                                */
                               const external_plugin_list = external_plugins
 
-                              /** Uses a React UseState Hook to toggle between the Translate and Revert state and re-render the component based on it.
+                              /** 
+                               * Uses a React UseState Hook to toggle between the Translate and Revert state and re-render the component based on it.
                                * @param {[Setter, Getter]} TranslateType: The main state of whether the button is in the @param {enum} Translate or @param {enum} Revert state.
                                * @param {[Setter, Getter]} ButtonOffset: This starts off at 0 and increases by 1 for each time a FormRow with an external key is found. This would be then added on to the index of where to place the button. This deals with issues of interfering plugins.
                                * 
@@ -194,7 +214,8 @@ const Dislate: Plugin = {
                               const [translateType, setTranslateType] = React.useState<buttonType>(buttonType.Translate) 
                               const [buttonOffset, setButtonOffset] = React.useState<number>(0)
 
-                              /** Checks if @param {object} res has a "props" property as its required for the rest of the code to function
+                              /** 
+                               * Checks if @param {object} res has a "props" property as its required for the rest of the code to function
                                * @if {(@param {(nullable)unknown} res.props) is falsey} -> Return early and log an error to console.
                                * @param {string} manifest.name: The name of the plugin in manifest. This would be Dislate in this case.
                                */
@@ -203,12 +224,14 @@ const Dislate: Plugin = {
                                  return res;
                               }
 
-                              /** This would be classified as the final location of the actionSheet. This is an array of all the ButtonRow items (and any FormRow items from other plugins)
+                              /** 
+                               * This would be classified as the final location of the actionSheet. This is an array of all the ButtonRow items (and any FormRow items from other plugins)
                                * @param {any[]} final_location: The final location of items that Dislate modifies later.
                                */
                               let final_location = res?.props?.children?.props?.children?.props?.children[1]
                               
-                              /** Checks if @param {object} final_location exists as its required to prevent a crash
+                              /** 
+                               * Checks if @param {object} final_location exists as its required to prevent a crash
                                * @if {(@param {(nullable)unknown} final_location) is falsey} -> Return early and log an error to console.
                                * @param {string} manifest.name: The name of the plugin in manifest. This would be Dislate in this case.
                                */
@@ -217,7 +240,8 @@ const Dislate: Plugin = {
                                  return res;
                               }
                               
-                              /** Uses a single useEffect hook this render to check whether any external plugins are installed through the keys of them which were fetched earlier.
+                              /** 
+                               * Uses a single useEffect hook this render to check whether any external plugins are installed through the keys of them which were fetched earlier.
                                * @function for_item: Loops through a list with a callback as the second argument. Custom implementation of forEach, imported from ./utils/index.ts
                                     * @arg {Array}: The array which the function would loop through.
                                     * @arg {callback}: This would run on each iteration of the loop.
@@ -225,7 +249,8 @@ const Dislate: Plugin = {
                                */
                               React.useEffect(() => {
                                  for_item(Object.values(external_plugin_list), (index: number) => {
-                                    /** Checks if it can find an index in this list which isn't the one used for Dislate.
+                                    /** 
+                                     * Checks if it can find an index in this list which isn't the one used for Dislate.
                                      * @if {(@function find_item) is not falsey} -> Increment @param {number} ButtonOffset   
                                      * 
                                      * @function find_item: Tries to find a specified item in a list
@@ -234,7 +259,8 @@ const Dislate: Plugin = {
                                      * @returns {any || undefined}: an item which was found or undefined if it didn't find anything
                                      */
                                     if (find_item(final_location, (item: any) => {
-                                       /** Requires that any items which match are not the key used for Dislate.
+                                       /** 
+                                        * Requires that any items which match are not the key used for Dislate.
                                         * @if ((@param {string} item.key) is not (@param {string} external_plugin_list.dislate)) -> Filter it to only ones which aren't Dislate's key
                                         * @returns {any} keys which don't equal the one used in Dislate but match the keys used in other plugins.
                                        */
@@ -243,7 +269,8 @@ const Dislate: Plugin = {
                                        }
                                     }, 'external plugin list')) setButtonOffset((previous: number) => previous+1)
                                  }, "looping through external plugin keys")
-                                 /** Check if a Reply and Edit Message button exists, and increment the counter based on which are @param {boolean} true.
+                                 /** 
+                                  * Check if a Reply and Edit Message button exists, and increment the counter based on which are @param {boolean} true.
                                   * @if {(@function find_item) is not falsey} -> Increment @param {number} ButtonOffset
                                   * 
                                   * @function find_item: Searches for whether there's a Reply or Edit Message Button.
@@ -256,7 +283,8 @@ const Dislate: Plugin = {
                                  if (find_item(final_location, (item: any) => item.props?.message==="Edit Message", 'edit message button')) setButtonOffset((previous: number) => previous + 1)
                               }, [])
 
-                              /** Fetch the proprietary original message from the MessageStore
+                              /** 
+                               * Fetch the proprietary original message from the MessageStore
                                * @param {object} original_message: The original message with properties such as @arg content or @arg id
                                * 
                                * @function MessageStore.getMessage: Fetches a message based on its Message ID and Channel ID.
@@ -269,7 +297,8 @@ const Dislate: Plugin = {
                                  message[0]?.message?.id
                               );
 
-                              /** Return early if it cannot find any content in either of the original message nor the actual message, meaning its likely an embed or attachment with no content.
+                              /** 
+                               * Return early if it cannot find any content in either of the original message nor the actual message, meaning its likely an embed or attachment with no content.
                                * @if {(@param {string} original_message.content is falsey) <AND> (@param {string} message[0].message.content is falsey)} -> Return early as the message has no translateable content.
                                */
                               if (!original_message?.content && !message[0]?.message?.content) { 
@@ -277,7 +306,8 @@ const Dislate: Plugin = {
                                  return res;
                               };
                               
-                              /** Gets useful data in this specific lexical scope
+                              /** 
+                               * Gets useful data in this specific lexical scope
                                * @param {string} message_id: The ID of the message which will be modified.
                                * @param {string} message_content: The content of the message, which will be translated later.
                                * @param {object || undefined} existing_cached_object: Finds a cached object from the message cache. Can be @arg undefined.
@@ -292,7 +322,8 @@ const Dislate: Plugin = {
                               const message_content = original_message?.content ?? message[0]?.message?.content
                               const existing_cached_object = find_item(cached_data, (o: any) => Object.keys(o)[0] === message_id, 'cache object')
                               
-                              /** Set the Button's enum type to whichever is needed based on whether any object in the cache was found, using a ternary operator. Uses the setter as the dependency array so its a single call.
+                              /** 
+                               * Set the Button's enum type to whichever is needed based on whether any object in the cache was found, using a ternary operator. Uses the setter as the dependency array so its a single call.
                                * @param {object || undefined} existing_cached_object: Finds a cached object from the message cache. Can be @arg undefined.
                                * @param {enum} buttonType: Has 2 States ~ @arg Translate, and @arg Revert.
                                * 
@@ -308,7 +339,8 @@ const Dislate: Plugin = {
                               }, setTranslateType)
 
                               const main_element = <FormRow
-                                 /** This is a TSX/JSX Element, and uses props in this way.
+                                 /** 
+                                  * This is a TSX/JSX Element, and uses props in this way.
                                   * @param {string} key: This is used to prevent duplicate rendering of the button. Set with @arg external_plugin_list.dislate.
                                   * @param {string} label: The label of the button. This is the text that will actually appear on as the button's Text. Shows Translate or Revert depending on whether the current type is @arg buttonType.Translate or not.
                                   * @param {icon} leading: The icon that will display before the button's text.
@@ -333,7 +365,8 @@ const Dislate: Plugin = {
                                        const to_language = get(manifest.name, "DislateLangTo", "english")
                                        const is_translated = translateType===buttonType.Translate;
 
-                                       /** Translates a string and reverts it back based on if it exists or not.
+                                       /** 
+                                        * Translates a string and reverts it back based on if it exists or not.
                                         * @function translate_string: Translates a string
                                              * @arg {string} original_message.content: The content of the message
                                              * @arg {string} from_language: The language to translate from.
@@ -346,7 +379,8 @@ const Dislate: Plugin = {
                                           to_language,
                                           !is_translated
                                        ).then(res => { 
-                                          /** Edit the message in the correct context
+                                          /** 
+                                           * Edit the message in the correct context
                                            * @param {object} edit_event: The main edit event which will be fired by @arg FluxDispatcher.
                                                 * @arg {string} type: The type of update, by default this is @param {string} MESSAGE_UPDATE.
                                                 * @arg {object} message: The main message with all attributes.
@@ -374,7 +408,8 @@ const Dislate: Plugin = {
                                            */
                                           FluxDispatcher.dispatch(edit_event);
 
-                                          /** Open a toast to declare whether the string was translated or reverted.
+                                          /** 
+                                           * Open a toast to declare whether the string was translated or reverted.
                                            * @param {string} content: The content of the toast.
                                            * @param {unknown} source: The source icon of the toast.
                                            * 
@@ -395,23 +430,26 @@ const Dislate: Plugin = {
                                              source: Icons.Translate
                                           })
 
-                                          /** Either adds or removes the object from cache depending if it has been translated already.
+                                          /** 
+                                           * Either adds or removes the object from cache depending if it has been translated already.
                                            * @if {(@param {boolean} is_translated is not false)} -> Add the new object to @param {(mutable)Array<object>} cached_data.
                                            * @else {()} -> Filter @param {object} cached_data and set it to itself
                                            */
                                           is_translated 
                                              ? cached_data.unshift({[message_id]: message_content}) 
-                                             : cached_data = filter_array(cached_data, (e: any) => e!==existing_cached_object, 'cached data override')
+                                             : cached_data = filter_item(cached_data, (e: any) => e!==existing_cached_object, 'cached data override')
                                        })
                                           
-                                       /** Hides the ActionSheet
+                                       /** 
+                                        * Hides the ActionSheet
                                         * @function LazyActionSheet.hideActionSheet: Hides an action sheet.
                                         */
                                        LazyActionSheet.hideActionSheet()
                                     } catch(err) { console.log(`[Dislate Local Error ${err}]`);}
                                  }} />
 
-                                 /** Inserts the React item to the list of items in the array
+                                 /** 
+                                  * Inserts the React item to the list of items in the array
                                   * @if {(@function find_item returns undefined)} -> Insert @param {TSX} main_element into the @param Array.
                                   * 
                                   * @function find_item: Searches for whether there's an existing message in the cache.
@@ -434,7 +472,8 @@ const Dislate: Plugin = {
                   })
                } catch(err) {
                   console.log(`[${manifest.name} Local Error ${err}]`);
-                  /** Opens an error as a Toast
+                  /** 
+                   * Opens an error as a Toast
                    * @if {(@param {boolean} enable_toasts is true)} -> Open a toast declaring an error.
                         * @param {string} manifest.name: The name of the plugin. 
                    * @else {()} -> null
@@ -454,7 +493,8 @@ const Dislate: Plugin = {
                   console.warn(
                      `[${manifest.name}] failed to start. Trying again in ${attempt}0s.`
                   );
-                  /** Opens an error as a Toast declaring that it is trying again in an amount of secords.
+                  /** 
+                   * Opens an error as a Toast declaring that it is trying again in an amount of secords.
                    * @if ((@param {boolean} enable_toasts is true)) -> Open a toast declaring an error.
                         * @param {string} manifest.name: The name of the plugin. 
                    * @else () -> null
@@ -466,14 +506,16 @@ const Dislate: Plugin = {
                         })
                      :  null
 
-                  /** Waits an amount of time before trying again recursively
+                  /** 
+                   * Waits an amount of time before trying again recursively
                    * @function patch_action_sheet: The current function.
                    * @param {number} attempt: The current attempt.
                    */
                   setTimeout(patch_action_sheet, attempt * 10000); 
                } else {
                   console.error(`[${manifest.name}] failed to start. Giving up.`);
-                  /** Opens an error as a Toast declaring giving up on Initialising Dislate.
+                  /** 
+                   * Opens an error as a Toast declaring giving up on Initialising Dislate.
                    * @if ((@param {boolean} enable_toasts is true)) -> Open a toast declaring an error.
                         * @param {string} manifest.name: The name of the plugin. 
                    * @else () -> null
@@ -488,7 +530,8 @@ const Dislate: Plugin = {
             }
       }
 
-      /** Waits 500 ms before initialising everything. This also gives FluxDispatcher time to initialise.
+      /** 
+       * Waits 500 ms before initialising everything. This also gives FluxDispatcher time to initialise.
        * @param {function} patch_action_sheet: The main ActionSheet patcher for Dislate.
        * @param {object} this.patches: The patches implemented in this plugin.
        */
@@ -499,7 +542,8 @@ const Dislate: Plugin = {
    },
 
    onStop() {
-      /** Unpatches everything 
+      /** 
+       * Unpatches everything 
        * @param {Command[]} this.commands
        * @param {Patch[]} this.patches
        * 
@@ -511,7 +555,8 @@ const Dislate: Plugin = {
    },
 
    getSettingsPanel({ settings }) {
-      /** Opens a settings panel
+      /** 
+       * Opens a settings panel
        * @param {TSX} Settings: React Native Page.
        */
       return <Settings 

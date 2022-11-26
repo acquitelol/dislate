@@ -1,3 +1,11 @@
+/**
+ * Imports
+ * @param Storage: Allows you to store and retrieve data asynchronously.
+ * @param find_item: Allows you to filter for a specific item.
+ * @param try_callback: Wraps a function in a try-catch.
+ * @param name: The name of the plugin.
+ * @param set: Allows you to store a setting in the plugin file.
+ */
 import { Storage } from 'enmity/metro/common';
 import { find_item } from './array_methods'
 import { try_callback } from './try_callback';

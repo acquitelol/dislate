@@ -15,7 +15,7 @@ import { getByName } from 'enmity/metro';
 import { React } from 'enmity/metro/common';
 import { name } from '../../manifest.json';
 import language_names from '../../modified/translate/src/languages/names';
-import { filter_array, map_item } from '../utils/array_methods';
+import { filter_item, map_item } from '../utils/array_methods';
 import Dialog from './Dialog';
 import ExitWrapper from './ExitWrapper';
 import LanguageItem from './LanguageItem';
@@ -62,7 +62,7 @@ export default () => {
              * Renders a @arg LanguageItem component for each of the available languages. If the page opened was the language to translate to, then the "Detect" option will not be rendered at all.
              */}
             {map_item(
-                filter_array(languages, (language: string) => language.toLowerCase().includes(query), 'getting searched languages'), 
+                filter_item(languages, (language: string) => language.toLowerCase().includes(query), 'getting searched languages'), 
                 (language: string) => 
                 (get(name, "DislateLangFilter") && language=='detect') 
                     ?   <></> 
@@ -71,11 +71,11 @@ export default () => {
             )}
         </>} />
          {/**
-         * Renders a custom Dialog implementation to display a tip to help you navigate the page, and tells you that the current selected language has a tick next to it.
+         * Renders a custom Dialog implementation to display a tip to help you navigate the page, and informs you that the current selected language has a tick next to it.
          */}
         <Dialog 
                 label="Important" 
-                content={`You can either tap or long-press on an item to select that item as the language to translate ${get(name, "DislateLangFilter")?'to':'from'}. Your current selected language has a ✓ next to it.\n\nTo hide this dialog, press on it.`} 
+                content={`You can either press or long-press on an item to select it as the language to translate ${get(name, "DislateLangFilter")?'to':'from'}. Your current selected language has a ✓ next to it.\n\nTo hide this dialog, press on it.`} 
                 type={'floating'}
         />
     </>;

@@ -1,4 +1,5 @@
-/** Imports
+/** 
+ * Imports
  * @param name: The name of the project, in this case being Dislate
  * @param plugin: Information about the plugin such as build, download link, and repo
  * @param version: The current latest version of the plugin
@@ -12,7 +13,8 @@ import { reload } from "enmity/api/native";
 import { try_callback } from "./try_callback";
 import { FormDivider, FormRow, FormSection, FormSwitch, Text } from 'enmity/components';
 
-/** An enum to choose whether the type of update is a version or a build update.
+/** 
+ * An enumerator to choose whether the type of update is a version or a build update.
  * @param {enum} version: The @arg version part of the enum
  * @param {enum} build: The @arg build part of the enum
  */
@@ -27,31 +29,36 @@ enum updateType {
  */
 async function check_for_updates() {
     await try_callback(async function() {
-        /** Gets a valid installation URL to fetch and see if the version is latest
+        /** 
+         * Gets a valid installation URL to fetch and see if the version is latest
          * @param {(constant)string} url: The url of the plugin to install.
          */
         const url = `${plugin.download}?${Math.floor(Math.random() * 1001)}.js`
 
-        /** Gets the latest build source code as a string from the GitHub repo.
+        /** 
+         * Gets the latest build source code as a string from the GitHub repo.
          * @param {object} res: The object of all information fetched from the REST api.
          * @param {string} content: The plugin source code as a string to check if the version is not the latest.
          */
         const res = await REST.get(url);
         const content = await res.text;
 
-        /** Gets the external version and build from the repo.
+        /** 
+         * Gets the external version and build from the repo.
          * @param {string} external_version: The current latest version externally. Example: @arg {1.1.5}
          * @param {string} external_build: The current latest build externally. Example: @arg {patch-1.2.8}. This would be then shortened into a simpler string: @arg {1.2.8}
          */
         const external_version = content.match(/\d\.\d\.\d+/g)[0];
         const external_build = content.match(/patch\-\d\.\d\.\d+/g)[0];
 
-        /** Returns early if it cannot find either of the versions from online and show the no_update dialog
+        /** 
+         * Returns early if it cannot find either of the versions from online and show the no_update dialog
          * @if {(@param external_version is falsey) <OR> (@param external_build is falsey)} -> Return early and show @arg no_updates dialog.
          */
         if (!external_version || !external_build) return no_updates(name, [version, plugin.build]);
 
-        /** Checks if the external version and build match the current version and build. The latest version takes priority over the latest build. If neither are found, then show @arg no_updates dialog.
+        /** 
+         * Checks if the external version and build match the current version and build. The latest version takes priority over the latest build. If neither are found, then show @arg no_updates dialog.
          * @if {(@param external_version is not equal to @param version)} -> Show update dialog with new @arg version as the newer update.
          * @elif {(@param external_build is not equal to @param plugin.build)} -> Show update dialog with new @arg build as the newer update.
          * @else {()} -> Return @arg no_updates dialog, showing there are no new updates.
@@ -69,7 +76,8 @@ async function check_for_updates() {
     }, [plugin], name, 'checking if latest version at', "the async check for updates callback")
 }
 
-/** Shows a dialog that a new update is a available
+/** 
+ * Shows a dialog that a new update is a available
  * @param url: The url to update to the newer version
  * @param version: The newer version to update to (may be @arg undefined)
  * @param build: The newer build to update to (may be @arg undefined)

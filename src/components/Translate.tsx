@@ -22,7 +22,7 @@ import { React, Dialog, Messages, Toasts } from 'enmity/metro/common';
 import { name } from '../../manifest.json';
 import lang_names from '../../modified/translate/src/languages/names';
 import { find_item, format_string, Icons, map_item, translate_string } from "../utils";
-import { filter_array } from "../utils/array_methods";
+import { filter_item } from "../utils/array_methods";
 
 /**
  * Creates a new array with the options of languages in a form which is required to render options in Enmity commands.
@@ -31,7 +31,7 @@ import { filter_array } from "../utils/array_methods";
  * @param lang_options: The list of available languages in a format which can be used to create Enmity command options.
  */
 const lang_options: any[] = map_item(
-  filter_array(Object.keys(lang_names), (e: string) => e!=='detect', 'filter for everything except for detect'), 
+  filter_item(Object.keys(lang_names), (e: string) => e!=='detect', 'filter for everything except for detect'), 
   (item: string) => {
     return {
       name: format_string(item),
