@@ -70,8 +70,8 @@ async function check_for_updates() {
                 * @arg {boolean}: Whether it's a version update or a build update.
          * 
          */
-        if (external_version != version) return show_update_dialog(url, external_version, null, updateType.version)
-        if (external_build != plugin.build) return show_update_dialog(url, null, external_build.split('-')[1], updateType.build)
+        if (external_version != version) return show_update_dialog(url, external_version, updateType.version)
+        if (external_build != plugin.build) return show_update_dialog(url, external_build.split('-')[1], updateType.build)
         return no_updates(name, [version, plugin.build])
     }, [plugin], name, 'checking if latest version at', "the async check for updates callback")
 }
@@ -84,12 +84,11 @@ async function check_for_updates() {
  * @param update_type: The type of update, which is an @arg enum and has 2 states being @arg version and @arg build.
  * @returns {void}
  */
-const show_update_dialog = (url: string, version: string, build: string, update_type: updateType) => {
+const show_update_dialog = (url: string, type: string, update_type: updateType) => {
     const update_boolean: boolean = update_type==updateType.build
-    const type: string = update_boolean?build:version
     Dialog.show({
         title: "Update found",
-        body: `A newer ${update_boolean?"build":"version"} is available for ${name}. ${update_boolean?`\nThe version will remain at ${version}, but the build will update to ${build}.`:""}\nWould you like to install ${update_boolean ? `build \`${build}\`` : `version \`${version}\``}  now?`,
+        body: `A newer ${update_boolean ? "build" : "version"} is available for ${name}. ${update_boolean ? `\nThe version will remain at ${version}, but the build will update to ${type}.` : ""}\nWould you like to install ${update_boolean ? `build` : `version`} \`${type}\` now?`,
         confirmText: "Update",
         cancelText: "Not now",
         
