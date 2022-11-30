@@ -28,7 +28,8 @@ async function fetch_debug_arguments(): Promise<{ [key: string]: string | undefi
         "Plugin Version": version,
         "Plugin Build": (plugin.build).split('-')[1],
         "Release Channel": release,
-        "Discord Build": Native.InfoDictionaryManager.Version,
+        "Discord Version": Native.InfoDictionaryManager.Version,
+        "Discord Build": Native.InfoDictionaryManager.Build,
         "Software Version": Native.DCDDeviceManager.systemVersion,
         "Device": devices[Native.DCDDeviceManager.device]
     }
