@@ -104,7 +104,7 @@ export default ({ option, channel_id, channel_name }) => {
     const animated_scale_style = {
         transform: [
             {
-                scale: `${animated_button_scale*100}%`
+                scale: animated_button_scale
             }
         ]
     }
