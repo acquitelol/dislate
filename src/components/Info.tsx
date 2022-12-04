@@ -77,7 +77,7 @@ export default ({ channel_id, channel_name }) => {
                 * @arg Note: The boundary value provided for this function is based on theory, and not 50%, as that will cause weird side effects.
          */
         text: {
-            color: filter_color(Constants.ThemeColorMap.HEADER_PRIMARY[0], '#FFF', "#000", 0.8, 'buttons in debug info menu'),
+            color: filter_color(Constants.ThemeColorMap.HEADER_PRIMARY[0], '#f2f2f2', "#121212", 0.8, 'buttons in debug info menu'),
             textAlign: 'center',
             paddingLeft : 10,
             paddingRight : 10,

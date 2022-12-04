@@ -53,7 +53,7 @@ export default ({ label, content, type }) => {
                 * @arg Note: The boundary value provided for this function is based on theory, and not 50%, as that will cause weird side effects.
          */
         text: {
-            color: filter_color("#000000", '#FFF', "#000", 0.8, 'buttons in debug info menu'),
+            color: "#f2f2f2",
             textAlign: 'left',
             letterSpacing: 0.25,
             padding: 10

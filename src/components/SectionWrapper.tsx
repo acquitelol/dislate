@@ -24,7 +24,7 @@ export default ({label, component}) => {
                 * @arg Note: The boundary value provided for this function is based on theory, and not 50%, as that will cause weird side effects.
          */
         text: {
-            color: filter_color(Constants.ThemeColorMap.HEADER_PRIMARY[0], '#FFF', "#000", 0.8, 'buttons in debug info menu'),
+            color: Constants.ThemeColorMap.HEADER_SECONDARY,
             paddingLeft: "5.5%",
             paddingRight: 10,
             marginBottom: 10,

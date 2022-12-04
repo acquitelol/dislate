@@ -143,7 +143,7 @@ export default ({ settings, manifest: { name, version, plugin, authors, release 
                                  */
                                 Navigation.push(Page, { component: Languages, name: `${name}: Language From` })
                             }}
-                            onLongPress={()=>toast('Open a new page allowing you to choose a language that you can translate from. The default is "Detect"', 'tooltip')}
+                            onLongPress={()=>toast('Open a new page allowing you to choose a language that you can translate from. The default is "Detect".', 'tooltip')}
                         />
                         <FormDivider/>
                         {/**
@@ -174,7 +174,7 @@ export default ({ settings, manifest: { name, version, plugin, authors, release 
                                  */
                                 Navigation.push(Page, { component: Languages, name: `${name}: Language To` })
                             }}
-                            onLongPress={()=>toast('Open a new page allowing you to choose a language that you can translate to. The default is "English"', 'tooltip')}
+                            onLongPress={()=>toast('Open a new page allowing you to choose a language that you can translate to. The default is "English".', 'tooltip')}
                         />
                         <FormDivider/>
                         {/**
@@ -191,7 +191,7 @@ export default ({ settings, manifest: { name, version, plugin, authors, release 
                             label='Abbreviate Language'
                             leading={<FormRow.Icon style={styles.icon} source={Icons.Retry} />}
                             subLabel={`Label language in a shorter form when translating (English ➝ EN).`}
-                            onLongPress={()=>toast('Convert the full language name to an abbreviation when translating someone else\'s message. (test [English] ➝ test [EN]', 'tooltip')}
+                            onLongPress={()=>toast('Convert the full language name to an abbreviation when translating someone else\'s message. (test [English] ➝ test [EN])', 'tooltip')}
                             trailing={
                                 <FormSwitch
                                     /**
@@ -293,7 +293,7 @@ export default ({ settings, manifest: { name, version, plugin, authors, release 
                             label='Initialisation Toasts'
                             leading={<FormRow.Icon style={styles.icon} source={Icons.Settings.Initial} />}
                             subLabel={`Toogle initialisation toasts to display loading state of ${name}.`}
-                            onLongPress={()=>toast(`When Enmity is first started, show toasts based on ${name}'s current state (Starting, Failed, Etc)`, 'tooltip')}
+                            onLongPress={()=>toast(`When Enmity is first started, show toasts based on ${name}'s current state (starting, failed, retrying, etc)`, 'tooltip')}
                             trailing={
                                 <FormSwitch
                                     /**
@@ -333,7 +333,7 @@ export default ({ settings, manifest: { name, version, plugin, authors, release 
                         <FormRow
                             label='Copy Debug Info'
                             subLabel={`Copy useful debug information like version and build of ${name} to clipboard.`}
-                            onLongPress={()=>toast(`Copy the full debug log to clipboard including ${name}'s Version, Build, and Release, and also Enmity's Version and Build etc.`, 'tooltip')}
+                            onLongPress={()=>toast(`Copy the full debug log to clipboard including ${name}'s Version, Build, and Release, Enmity's Version and Build, etc.`, 'tooltip')}
                             leading={<FormRow.Icon style={styles.icon} source={Icons.Copy} />}
                             trailing={FormRow.Arrow}
                             onPress={ async function() {
@@ -363,7 +363,7 @@ export default ({ settings, manifest: { name, version, plugin, authors, release 
                         <FormRow
                             label='Clear Stores'
                             subLabel={`Void most of the settings and stores used throughout ${name} to store data locally.`}
-                            onLongPress={()=>toast(`Clear stores and settings throughout ${name} including the setting to hide any Dialogs forever and hiding the Incompatible Dialog forever.`, 'tooltip')}
+                            onLongPress={()=>toast(`Clear stores and settings throughout ${name} including the settings to hide popups forever and the list of device codes.`, 'tooltip')}
                             leading={<FormRow.Icon style={styles.icon} source={Icons.Delete} />}
                             trailing={FormRow.Arrow}
                             onPress={async function() {
@@ -460,7 +460,7 @@ export default ({ settings, manifest: { name, version, plugin, authors, release 
              */}
             <Text 
                 style={{
-                    color: filter_color(Constants.ThemeColorMap.HEADER_PRIMARY[0], '#FFF', "#000", 0.8, 'buttons in debug info menu'),
+                    color: Constants.ThemeColorMap.HEADER_SECONDARY,
                     textAlign: 'center',
                     margin: 10,
                     marginBottom: 50,
