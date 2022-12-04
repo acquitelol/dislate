@@ -108,7 +108,7 @@ export default ({ option, channel_id, channel_name }) => {
             }
         ]
     }
-    
+
     /**
      * Return a Discord-Native FormRow with the onPress allowing you to @arg toggle the value, and onLongPress allowing you to send @arg only that log.
      * @returns {TSX Component}
@@ -155,7 +155,7 @@ export default ({ option, channel_id, channel_name }) => {
         {/**
          * The main animated view, which will be affected by the Animation variable.
          */}
-        <Animated.View style={animated_scale_style}>
+        <Animated.View style={[animated_scale_style]}>
             <FormRow
                 key={option}
                 label={option}

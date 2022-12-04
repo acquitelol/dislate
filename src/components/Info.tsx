@@ -1,7 +1,7 @@
 /**
  * Imports
  * @param getBoolean: Fetches a boolean setting from a file.
- * @param {FormDivider, FormSection}: Used to render Form Items on the screen.
+ * @param {FormDivider}: Used to render Form Items on the screen.
  * @param Text: Used to render styleable text on the screen.
  * @param TouchableOpacity: Used to render a component child inside of this component, but adds a small opacity effect upon press.
  * @param getByName: Allows you to fetch a component from Discord.
@@ -13,14 +13,15 @@
  * @param ExitWrapper: A component to wrap the rest of the components into a ScrollView with capibility to close the page upon swiping right. Used by passing the TSX to render inside the Component prop. Can be a single component or a Fragment <>.
  */
 import { getBoolean } from 'enmity/api/settings';
-import { FormDivider, FormSection, Text, TouchableOpacity, View } from 'enmity/components';
+import { FormDivider, Text, TouchableOpacity, View } from 'enmity/components';
 import { getByName } from 'enmity/metro';
 import { Constants, React, StyleSheet } from 'enmity/metro/common';
 import { name } from '../../manifest.json';
-import { fetch_debug_arguments, filter_item, filter_color, map_item, send_debug_log } from '../utils';
+import { fetch_debug_arguments, filter_item, filter_color, map_item, send_debug_log, shadow } from '../utils';
 import InfoItem from './InfoItem';
 import Dialog from './Dialog';
 import ExitWrapper from './ExitWrapper';
+import SectionWrapper from './SectionWrapper';
 
 /**
  * The main Search module, used to input text and store it. This is easy to make from scratch, but because Discord already made one I might aswell use it.
@@ -80,10 +81,22 @@ export default ({ channel_id, channel_name }) => {
             textAlign: 'center',
             paddingLeft : 10,
             paddingRight : 10,
-            fontSize: 16,
             letterSpacing: 0.25,
             fontFamily: Constants.Fonts.PRIMARY_BOLD
         },
+        buttonText: {
+            fontSize: 16,
+        },
+        optionText: {
+            fontSize: 12
+        },
+        container: {
+            width: '90%',
+            marginLeft: '5%',
+            borderRadius: 10,
+            backgroundColor: Constants.ThemeColorMap.BACKGROUND_MOBILE_SECONDARY,
+            ...shadow
+        }
     })
     
     /**
@@ -107,23 +120,25 @@ export default ({ channel_id, channel_name }) => {
                 marginBottom: 100
             }}
         >
-            {/**
-             * The main section of available options to be selected by the User.
-             */}
-            <FormSection title='Options'>
+            <SectionWrapper label='Options' component={<>
                 {/**
-                 * Maps through the list of filtered available items, and returns a @arg DebugItem component for each one.
-                 * @param options: The list of available options.
-                 * @param query: Any possible text that has been typed in the search box.
-                 * @param DebugItem: Component to render toggleable options, with independent state.
+                 * The main section of available options to be selected by the User.
                  */}
-                {map_item(
-                    filter_item(options, (option: string) => option.toLowerCase().includes(query)), 
-                    (option) => <InfoItem option={option} channel_id={channel_id} channel_name={channel_name} />,
-                    'list of debug information options'
-                )}
-                <FormDivider />
-            </FormSection>
+                <View style={styles.container}>
+                    {/**
+                     * Maps through the list of filtered available items, and returns a @arg DebugItem component for each one.
+                     * @param options: The list of available options.
+                     * @param query: Any possible text that has been typed in the search box.
+                     * @param DebugItem: Component to render toggleable options, with independent state.
+                     */}
+                    {map_item(
+                        filter_item(options, (option: string) => option.toLowerCase().includes(query)), 
+                        (option: string) => <InfoItem option={option} channel_id={channel_id} channel_name={channel_name} />,
+                        'list of debug information options'
+                    )}
+                    <FormDivider />
+                </View>
+            </>} />
             {/**
              * Button to send the Full Debug log, hence the text @arg Send_All
              */}
@@ -140,7 +155,7 @@ export default ({ channel_id, channel_name }) => {
                         'full log in Info Component.'
                     )
             }}>
-                <Text style={styles.text}>Send All</Text>
+                <Text style={[styles.text, styles.buttonText]}>Send All</Text>
             </TouchableOpacity>
             {/**
              * Button to send the Partial Debug log, hence the text @arg Send_Message instead.
@@ -163,7 +178,7 @@ export default ({ channel_id, channel_name }) => {
                         'partial log in Info Component.'
                     )
             }}>
-                <Text style={styles.text}>Send Message</Text>
+                <Text style={[styles.text, styles.buttonText]}>Send Message</Text>
             </TouchableOpacity>
             {/**
              * Renders a custom Dialog implementation to display a tip to help you navigate the page.

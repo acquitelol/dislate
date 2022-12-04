@@ -13,11 +13,11 @@
  */
  import { get, set } from 'enmity/api/settings';
  import { FormRow, TouchableOpacity } from 'enmity/components';
- import { Constants, Navigation, React, Toasts } from 'enmity/metro/common';
+ import { Constants, Navigation, React, Toasts, StyleSheet } from 'enmity/metro/common';
  import { name } from '../../manifest.json';
  import language_names from '../../modified/translate/src/languages/names';
  import language_names_short from '../../modified/translate/src/languages/iso2';
- import { format_string, Icons, reverse_object } from '../utils';
+ import { filter_color, format_string, Icons, reverse_object } from '../utils';
 
  
  /** 
@@ -69,6 +69,22 @@
              }
          ]
      }
+
+     /**
+     * @param styles: StyleSheet of generic styles used throughout the component.
+     */
+    const styles = StyleSheet.createThemedStyleSheet({
+        /**
+         * @param container: Main style for a rounded container for creating custom FormRow edge implementations.
+         */
+        container: {
+            width: '95%',
+            marginLeft: '2.5%',
+            borderRadius: 10,
+            marginTop: 15,
+            backgroundColor: Constants.ThemeColorMap.BACKGROUND_MOBILE_SECONDARY
+        }
+    })
  
      /**
       * Takes a language as an argument and sets the current language based on the page which was opened to the one that was pressed.
@@ -117,8 +133,9 @@
                 {/**
                  * The main view. This is what the scale style is actually applied to.
                  * @param animated_scale_style: The current transform scale value. This will change depending on the Ref.
+                 * @param styles.container: The main style for the Language item, allowing it to seem rounded.
                  */}
-                <Animated.View style={animated_scale_style}>
+                <Animated.View style={[animated_scale_style, styles.container]}>
                     <FormRow
                         label={format_string(language)}
 

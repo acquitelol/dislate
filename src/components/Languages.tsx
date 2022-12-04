@@ -11,6 +11,7 @@
  * @param ExitWrapper: Used as a wrapped to place @arg components inside of a @arg ScrollView and allow closing the page by swiping to the right.
  */
 import { get } from 'enmity/api/settings';
+import { View } from 'enmity/components';
 import { getByName } from 'enmity/metro';
 import { React } from 'enmity/metro/common';
 import { name } from '../../manifest.json';
@@ -58,17 +59,19 @@ export default () => {
          * This is wrapped in an @arg ExitWrapper component to allow the user to close out the page by swiping to the right.
          */}
         <ExitWrapper Component={<>
-            {/**
-             * Renders a @arg LanguageItem component for each of the available languages. If the page opened was the language to translate to, then the "Detect" option will not be rendered at all.
-             */}
-            {map_item(
-                filter_item(languages, (language: string) => language.toLowerCase().includes(query), 'getting searched languages'), 
-                (language: string) => 
-                (get(name, "DislateLangFilter") && language=='detect') 
-                    ?   <></> 
-                    :   <LanguageItem language={language}/>,
-                "listing different possible languages"
-            )}
+            <View style={{marginBottom: 15}}>
+                {/**
+                 * Renders a @arg LanguageItem component for each of the available languages. If the page opened was the language to translate to, then the "Detect" option will not be rendered at all.
+                 */}
+                {map_item(
+                    filter_item(languages, (language: string) => language.toLowerCase().includes(query), 'getting searched languages'), 
+                    (language: string) => 
+                    (get(name, "DislateLangFilter") && language=='detect') 
+                        ?   <></> 
+                        :   <LanguageItem language={language}/>,
+                    "listing different possible languages"
+                )}
+            </View>
         </>} />
          {/**
          * Renders a custom Dialog implementation to display a tip to help you navigate the page, and informs you that the current selected language has a tick next to it.

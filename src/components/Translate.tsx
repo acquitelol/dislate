@@ -180,10 +180,12 @@ const translate_command: Command = {
        * In **${preferred_language}**, this will translate to:
        * \`${translated_back}\`
        * 
+       * [OPTIONAL if user chose to send both translated and original:
+       * **Note: Sending original and translated**]
        * Are you sure you want to send this?
        * }
        */
-      body: `The message **about to be sent** is:\n\`${translated_content}\`\n\nIn **${format_string(get(name, "DislateLangTo", 'english'))}**, this will translate to:\n\`${translated_back}\`\n\nAre you sure you want to send this?`,
+      body: `The message **about to be sent** is:\n\`${translated_content}\`\n\nIn **${format_string(get(name, "DislateLangTo", 'english'))}**, this will translate to:\n\`${translated_back}\`\n\n${get(name, "DislateBothLangToggle", false) ? `**Note: Sending original and translated**\n` : ''}Are you sure you want to send this?`,
       confirmText: "Yeah, send it",
       cancelText: "Nope, don't send it",
       onConfirm: () => {
@@ -192,7 +194,7 @@ const translate_command: Command = {
          * @param translated_content: The main content of the message, from the text and language provided as parameters to the command.
          */
         Messages.sendMessage(context.channel.id, {
-          content: translated_content
+          content: get(name, "DislateBothLangToggle", false) ? `${message}\n\n${translated_content}` : translated_content
         });
 
         /**

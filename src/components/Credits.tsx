@@ -8,12 +8,12 @@
  * @param View: Allows you to create a closure to place components inside of.
  * @param Image: Allows you to render an image from @arg require or a @arg uri.
  * @param Text: Allows you to render text.
- * @param {clipboard_toast, debug_info, fetch_debug_arguments, map_item}: Functions which will be used throughout the script.
+ * @param {clipboard_toast, debug_info, fetch_debug_arguments, map_item, shadow}: Functions which will be used throughout the script.
  */
 import { React, Constants, StyleSheet } from 'enmity/metro/common';
 import { bulk, filters} from 'enmity/metro';
 import { TouchableOpacity, View, Image, Text} from 'enmity/components';
-import { clipboard_toast, debug_info, fetch_debug_arguments, map_item } from '../utils';
+import { toast, debug_info, fetch_debug_arguments, map_item, shadow } from '../utils';
 
 /** 
  * This is the main 'Animated' component of React Native, but for some reason its not exported in Enmity's dependencies so I'm importing it manually.
@@ -48,8 +48,8 @@ export default ({name, version, plugin, authors}): void => {
          * Main container style. This would likely be used in the @arg View or @arg Subviews
          */
         container: {
-            paddingTop: 20,
-            paddingLeft: 20,
+            marginTop: 25,
+            marginLeft: '5%',
             marginBottom: -15,
             flexDirection: "row"
         },
@@ -61,6 +61,7 @@ export default ({name, version, plugin, authors}): void => {
             paddingTop: 5,
             flexDirection: 'column',
             flexWrap: 'wrap',
+            ...shadow
         },
         /**
          * Style for the @arg {<Image>} component. Pretty self explanatory.
@@ -68,7 +69,8 @@ export default ({name, version, plugin, authors}): void => {
         image: {
             width: 75,
             height: 75,
-            borderRadius: 10
+            borderRadius: 10,
+            ...shadow
         },
         /**
          * Styles shared between the @arg Main text and the @arg Subtitle text.
@@ -260,7 +262,7 @@ export default ({name, version, plugin, authors}): void => {
                         onPress={async function() {
                             const options = await fetch_debug_arguments()
                             Clipboard.setString(await debug_info(Object.keys(options)));
-                            clipboard_toast('debug information')
+                            toast('debug information', 'clipboard')
                         }}
                     >
                         {/**

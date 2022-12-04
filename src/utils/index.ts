@@ -21,16 +21,17 @@ import {
 } from './debug'
 
 /**
- * @param clipboard_toast: Opens a @arg Toast which informs the user that @arg {any} something has been copied to clipboard
+ * @param toast: Opens a @arg Toast which informs the user that @arg {any} something has been copied to clipboard or @arg {opens} tooltip
  */
-import { clipboard_toast } from "./clipboard";
+import { toast } from "./misc";
 
 /**
  * Main Miscallaneous Modules
  * @param external_plugins: List of external plugin keys to be verified in @arg index.tsx and push down the Dislate button if any are found.
+ * @param shadow: Native shadow implementation so that it can be changed from a single place.
  * @param filter_color: Takes an input color and returns a dark or light color if the contrast of the given color reaches a threshold.
  */
-import { external_plugins, filter_color } from './misc'
+import { external_plugins, shadow, filter_color } from './misc'
 
 /**
  * Main Custom Array Manipulation Implementations. These are all available in 
@@ -77,13 +78,18 @@ import { Icons } from "./icons";
  */
 import { format_object, reverse_object } from "./object";
 
+/**
+ * @param check_for_updates: Checks if any updates are available for Dislate
+ */
+import { check_for_updates } from "./update";
+
 export { 
     translate_string, 
     format_string, 
     debug_info, 
     fetch_debug_arguments,
     send_debug_log,
-    clipboard_toast, 
+    toast, 
     external_plugins, 
     find_item, 
     insert_item,
@@ -97,5 +103,7 @@ export {
     filter_color,
     store_item,
     format_object,
-    reverse_object
+    reverse_object,
+    shadow,
+    check_for_updates
 };

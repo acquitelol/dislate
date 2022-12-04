@@ -21,7 +21,7 @@ import {
 import { Dialog, Navigation } from 'enmity/metro/common'
 import { React, Toasts, Storage } from 'enmity/metro/common';
 import { name, plugin } from '../../manifest.json';
-import { format_string, clipboard_toast, Icons, fetch_debug_arguments, map_item, send_debug_log, for_item, find_item } from '../utils'
+import { format_string, toast, Icons, fetch_debug_arguments, map_item, send_debug_log, for_item, find_item } from '../utils'
 import { bulk, filters } from "enmity/metro";
 import Info from "./Info";
 import Page from "./Page";
@@ -152,7 +152,7 @@ const options = (channel_id: string, channel_name: string): any => {
              * @func clipboard_toast: Opens a toast with a specified string as the argument saying that it has been copied to clipboard.
              * @returns {void}
              */
-            clipboard_toast("download link")
+            toast("download link", 'clipboard')
         }
     }
 }

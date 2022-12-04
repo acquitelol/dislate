@@ -36,7 +36,8 @@ const Icons = {
         Translate_To: getIDByName('ic_activity_24px'),
         Debug: getIDByName('ic_rulebook_16px'),
         Initial: getIDByName('coffee'),
-        Update: getIDByName("ic_upload")
+        Update: getIDByName("ic_upload"),
+        Locale: getIDByName("ic_locale_24px")
     }
 };
 

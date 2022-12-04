@@ -10,14 +10,13 @@
  * @param Dialog: The default Discord Dialog which allows you to render a pop-up on the screen. The component which is being exported is actually a custom implementation.
  * @param filter_color: Allows you to render a light or dark color depending on the color provided (generally your @arg background_color)
  * @param name: The name of the Plugin, from @arg manifest.json. In this case, it's Dislate.
- * @param set: Allows you to store a Setting in your plugin file.
  * @param get: Allows you to retrieve a Setting from your plugin file.
  */
 import { TouchableOpacity, Text, Image, View } from "enmity/components"
-import { StyleSheet, Constants, React, Dialog, Storage } from "enmity/metro/common"
-import { filter_color, find_item, store_item } from "../utils"
+import { StyleSheet, Constants, React, Dialog } from "enmity/metro/common"
+import { filter_color, store_item, shadow } from "../utils"
 import {name} from '../../manifest.json'
-import { get, set } from "enmity/api/settings"
+import { get } from "enmity/api/settings"
 
 /** 
  * This is the main 'Animated' component of React Native, but for some reason its not exported in Enmity's dependencies so I'm importing it manually.
@@ -45,6 +44,7 @@ export default ({ label, content, type }) => {
             borderRadius: 10,
             marginLeft: '4%',
             marginRight: '4%',
+            ...shadow
         },
         /**
          * @param text: The main styling for the text component

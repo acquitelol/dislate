@@ -2,10 +2,13 @@
  * Imports 
  * @param {string} name: The name from manifest.json.
  * @param try_callback: Function to wrap another function in a try-catch
+ * @param {function} Toasts: The function to open a toast on the screen
+ * @param {object} Icons: The icons exported in ./Icons
  */
 import { name } from '../../manifest.json'
 import { try_callback } from "./try_callback";
-
+import { Toasts } from "enmity/metro/common";
+import { Icons } from "./icons";
 
 /** 
  * Fetch a list of all external plugins that Dislate might need to account for, including itself.
@@ -18,6 +21,28 @@ const external_plugins: { [key: string]: string | undefined; }  = {
     cut_message: "512",
     dislate: "1002"
 }
+
+/**
+ * Native shadow implementation that is used throughout the entire plugin.
+ */
+const shadow = {
+    shadowColor: "#000",
+    shadowOffset: {
+        width: 1,
+        height: 4,
+    },
+    shadowOpacity: 0.10,
+    shadowRadius: 4.65,
+    elevation: 8,
+}
+
+ 
+ /** 
+  * Open a toast with the text provided saying it has been copied to clipboard or as a tooltip
+  * @param {string} source: The text provided
+  * @returns {void}
+  */
+const toast = (source: string, type: 'clipboard' | 'tooltip') => Toasts.open({ content: type=='clipboard'?`Copied ${source} to clipboard.`:source, source: type=='clipboard'?Icons.Clipboard:Icons.Settings.Initial });
 
 /** 
  * Chooses whether the color should be Dark or Light depending on the background color of the element.
@@ -65,4 +90,4 @@ const external_plugins: { [key: string]: string | undefined; }  = {
     }, [color, light, dark, boundary], name, 'checking if color should be light or dark at', label)
 }
 
-export { external_plugins, filter_color }
+export { external_plugins, shadow, toast, filter_color }

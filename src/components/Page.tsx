@@ -9,7 +9,7 @@
  * @param { Button, View }: Basic React Native elements used to create Components.
  */
 import { React, Navigation, NavigationNative, NavigationStack, StyleSheet, Constants } from 'enmity/metro/common';
-import { Button, View } from 'enmity/components';
+import { Text, View } from 'enmity/components';
 
 /**
  * Initialize a new @arg {Page Stack Navigator}
@@ -54,7 +54,11 @@ export default ({
       elevation: 0,
     },
     close: {
-      color: Constants.ThemeColorMap.HEADER_PRIMARY
+      color: Constants.ThemeColorMap.HEADER_PRIMARY,
+      fontFamily: Constants.Fonts.PRIMARY_NORMAL,
+      fontSize: 16,
+      marginLeft: 20,
+      backgroundColor: 'transparent'
     }
   });
 
@@ -86,13 +90,13 @@ export default ({
             color: 'white',
             fontFamily: Constants.Fonts.PRIMARY_NORMAL
           },
-          headerLeft: () => (<Button
-            color={styles.close.color}
-            title={"Close"}
+          headerLeft: () => (<Text
+            style={styles.close}
             onPress={(): void => {
               Navigation.pop()
-            }}
-          />),
+          }}>
+            Close
+          </Text>),
           ...NavigationStack.TransitionPresets.ModalSlideFromBottomIOS
         }}
       />
