@@ -78,6 +78,18 @@ export default ({ settings, manifest: { name, version, plugin, authors, release 
             borderRadius: 10,
             backgroundColor: Constants.ThemeColorMap.BACKGROUND_MOBILE_SECONDARY,
             ...shadow /** @param shadow: Main shadow implementation */
+        },
+        /**
+         * @param subheaderText: Main styling for the text right at the bottom of the settings page, showing build and release channel.
+         */
+        subheaderText: {
+            color: Constants.ThemeColorMap.HEADER_SECONDARY,
+            textAlign: 'center',
+            margin: 10,
+            marginBottom: 50,
+            letterSpacing: 0.25,
+            fontFamily: Constants.Fonts.PRIMARY_BOLD,
+            fontSize: 14
         }
     });
 
@@ -459,15 +471,7 @@ export default ({ settings, manifest: { name, version, plugin, authors, release 
              * Renders a simple FormRow with a version and build to display to the user. This is unnecessary as there as multiple ways to view this but it adds slightly more polish to the Settings Panel.
              */}
             <Text 
-                style={{
-                    color: Constants.ThemeColorMap.HEADER_SECONDARY,
-                    textAlign: 'center',
-                    margin: 10,
-                    marginBottom: 50,
-                    letterSpacing: 0.25,
-                    fontFamily: Constants.Fonts.PRIMARY_BOLD,
-                    fontSize: 14
-                }}
+                style={styles.subheaderText}
             >
                 {`Build: (${(plugin.build).split('-')[1]}) Release: (${release})`}
             </Text>
