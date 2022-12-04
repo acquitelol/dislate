@@ -32,13 +32,11 @@ import { filter_item } from "../utils/array_methods";
  */
 const lang_options: any[] = map_item(
   filter_item(Object.keys(lang_names), (e: string) => e!=='detect', 'filter for everything except for detect'), 
-  (item: string) => {
-    return {
+  (item: string) => ({
       name: format_string(item),
       displayName: format_string(item),
       value: item
-    }
-  }, 
+  }), 
   "language names"
 )
 
