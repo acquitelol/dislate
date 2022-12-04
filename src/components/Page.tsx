@@ -84,6 +84,7 @@ export default ({
         options={{
           headerTitleStyle: {
             color: 'white',
+            fontFamily: Constants.Fonts.PRIMARY_NORMAL
           },
           headerLeft: () => (<Button
             color={styles.close.color}
