@@ -11,9 +11,9 @@ import { try_callback } from './try_callback'
  * @param array: The item to find.
  * @param callback: A function which is ran to find the item.
  * @param label: A label which is used to determine what the function does
- * @returns (@param {any || undefined}): Logs either the item found or undefined if nothing found
+ * @returns (@param { any || undefined }): Logs either the item found or undefined if nothing found
  */
-const find_item = (array: any, callback: any, label?: string): any | undefined => {
+const find_item = (array: any[], callback: any, label?: string): any | undefined => {
     return try_callback(() => {
         /** 
          * Returns early if it cannot find a valid array.
@@ -23,14 +23,14 @@ const find_item = (array: any, callback: any, label?: string): any | undefined =
 
          /** 
           * Loops through the array of items
-          * @param array: The array to loop through
-          * @param callback: The function to run for each iteration
+          * @param {any[]} array: The array to loop through
+          * @param {any} callback: The function to run for each iteration
           * @param {number} i: The iterator
           */
          for (let i = 0; i < array.length; i++) { 
-             if (callback(array[i], i, callback)) {
-                 return array[i]
-             }
+            if (callback(array[i], i, callback)) {
+                return array[i]
+            }
          }
  
          /**
@@ -45,7 +45,7 @@ const find_item = (array: any, callback: any, label?: string): any | undefined =
  * @param {any[]} original_array: The array provided
  * @param {any} insert: The item to insert
  * @param {number} insert_index: The index to insert the item
- * @param {string?} label:
+ * @param {string?} label?: The label of the place where the item is being inserted. This is optional.
  * @returns {number}
  */
 const insert_item = (original_array: any[], insert: any, insert_index: number, label?: string): number => {
@@ -64,32 +64,38 @@ const insert_item = (original_array: any[], insert: any, insert_index: number, l
  
          /** 
           * Shift all of the elements forward
-          * @param {any[] || undefined} original_array: The provided array
-          * @param {number} insert_index: The index to insert the item
-          * 
-          **  Insert the array at the correct position
-          * @param {any} insert: The item to insert
+          * @uses @param {any[] || undefined} original_array: The provided array
+          * @uses @param {number} insert_index: The index to insert the item
           */
-         for (let i = original_array.length - 1; i >= insert_index; i--) {
-             original_array[i] = original_array[i - 1];
-         }
-         original_array[insert_index - 1] = insert;
-         return original_array.length
+        for (let i = original_array.length - 1; i >= insert_index; i--) {
+            original_array[i] = original_array[i - 1];
+        }
+
+        /**
+         * Insert the item into the array at the correct position
+         * @uses @param {any} insert: The item to insert into the array
+         */
+        original_array[insert_index - 1] = insert;
+
+        /**
+         * Finally, return the new array's length.
+         */
+        return original_array.length
     }, [original_array, insert, insert_index], name, "insert an item at", label)
 };
 
 /** 
  * Loops through an array and only adds the items on which the callback returns true. Returns a filtered array.
- * @param array: The original array 
- * @param callback: The callback to check if it exists for each iteration
- * @param label: Optional label to describe what the function was used for
+ * @param {any[]} array: The original array 
+ * @param {any} callback: The callback to check if it exists for each iteration
+ * @param {string?} label?: Optional label to describe what the function was used for
  * @returns {any[] new_array}
  */
 const filter_item = (array: any[], callback: any, label?: string): any[] => {
     return try_callback(() => {
         /** 
          * Start off with an empty array
-         * @param {any[]} new_array
+         * @param {any[]} new_array: Empty array
          */
         let new_array = []
 
@@ -99,7 +105,7 @@ const filter_item = (array: any[], callback: any, label?: string): any[] => {
           * @param {any[]} array: The array provided
           * @param {any} callback: The function to run
           * 
-          * @function push_item: Push an item to an array
+          * @uses @func insert_item: Insert an item into an array reference with the index provided
           */
         for (let i = 0; i < array.length; i++) {
             /** 
@@ -120,9 +126,9 @@ const filter_item = (array: any[], callback: any, label?: string): any[] => {
 
 /** 
  * Loops through an array of items and runs a callback for each iteration.
- * @param array: The array to loop through.
- * @param callback: The function to run at each iteration.
- * @param label: Optional label to descibe what the function is doing
+ * @param {any[]} array: The array to loop through.
+ * @param {any} callback: The function to run at each iteration.
+ * @param {string?} label?: Optional label to descibe what the function is doing
  * @returns {void}
  */
 const for_item = (array: any[], callback: any, label?: string): void => {
@@ -141,10 +147,10 @@ const for_item = (array: any[], callback: any, label?: string): void => {
 
 /** 
  * Loops through an array, runs a callback for each iteration, and pushes the result of that callback to a new array
- * @param array: The starting array
- * @param callback: The function to run
- * @param label: Optional label to descibe what the function is doing
- * @returns {new_array array}
+ * @param {any[]} array: The starting array
+ * @param {any} callback: The function to run
+ * @param {string} label: Optional label to descibe what the function is doing
+ * @returns {new_array<array>}
  */
 const map_item = (array: any[], callback: any, label?: string): any[] => {
     return try_callback(() => {
@@ -152,25 +158,25 @@ const map_item = (array: any[], callback: any, label?: string): any[] => {
          * Start off with an empty array.
          * @param {any[]} new_array: The array to start with.
          */
-         let new_array = []
+        let new_array = []
 
-         /** 
-          * Loop through the array and run the callback at each iteration, then push the return value to the new array
-          * @param {number} i: The iteration
-          * @param {any[]} array: The array provided
-          * @param {any} callback: The function to run
-          * 
-          * @function push_item: Push an item to an array
-          */
-         for(let i = 0; i < array.length; i++) {
+        /** 
+         * Loop through the array and run the callback at each iteration, then push the return value to the new array
+         * @param {number} i: The iteration
+         * @param {any[]} array: The array provided
+         * @param {any} callback: The function to run
+         * 
+         * @uses @func insert_item: Insert an item into an array reference with the index provided
+         */
+        for(let i = 0; i < array.length; i++) {
             insert_item(new_array, callback(array[i], i, array), new_array.length)
-         }
+        }
  
-         /** 
-          * Finally, return the array
-          * @param new_array
-          */
-         return new_array
+        /** 
+         * Finally, return the array
+         * @param new_array
+         */
+        return new_array
     }, [array, callback], name, 'map an array at', label)
 }
 

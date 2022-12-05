@@ -52,7 +52,7 @@ async function debug_info(options: string[], label?: string): Promise<string> {
         for_item(options, (option: string) => {
             /** 
              * Only pushes to the new array for each option that exists in the debug list
-             * @param {string} option: The string option that will be checked to see if exists in the array.
+             * @uses @param {string} option: The string option that will be checked to see if exists in the array.
              */
             debug_list[option] 
                 ?   insert_item(final_debug, `> **${option}**: ${debug_list[option]}`, final_debug.length, 'pushing to debug argument array')
@@ -69,23 +69,24 @@ async function debug_info(options: string[], label?: string): Promise<string> {
 
 /**
  * Sends a debug log with the specific parameters into a channel.
- * @param options: The list of debug options to be sent by the command.
- * @param {~ channel_id, channel_name}: The channel name and id, used for sending the message in a specific channel and displaying the correct channel name in the toast.
- * @param type: The type of log that has been called. An example would be @arg partial or @arg full.
- * @param label: The label which describes what this function was doing. May be optional
+ * @param {string[]} options: The list of debug options to be sent by the command.
+ * @param {~ channel_id: string, channel_name: string}: The channel name and id, used for sending the message in a specific channel and displaying the correct channel name in the toast.
+ * @param {string} type: The type of log that has been called. An example would be @arg partial or @arg full.
+ * @param {string?} label?: The label which describes what this function was doing. May be undefined.
  * @returns {~ Promise<void>}
  */
 async function send_debug_log(options: string[], {channel_id, channel_name}, type: string, label?: string): Promise<void> {
     await try_callback(async function() {
         /**
          * This closes the most top-level item in the Navigation stack. As the current @arg Info page is at the top, because this button is visible, This method will close the page.
-         * @param Navigation.pop: Removes the top item from an array or stack.
+         * @param Navigation.pop: Removes the top item from the Navigation stack, closing the top level page.
          */
         Navigation.pop()
 
         /**
          * Pass the list of options as a parameter to the @func debug_info function, and then send it to the channel where the command was triggered.
-         * @param options: The list of options to render out on the page, from the parameters passed.
+         * @uses @param {string} channel_id: The ID of the channel where the message should be sent.
+         * @uses @param {string[]} options: The list of options to render out on the page, from the parameters passed.
          */
         Messages.sendMessage(channel_id, {
             content: await debug_info(options)
@@ -93,8 +94,8 @@ async function send_debug_log(options: string[], {channel_id, channel_name}, typ
 
         /**
          * Opens a toast saying that a Log with the specific type has been sent to the channel_name.
-         * @param type: The type of log that has been sent
-         * @param channel_name: The name of the channel where the message has been sent.
+         * @uses @param {string} type: The type of log that has been sent
+         * @uses @param {string} channel_name: The name of the channel where the message has been sent.
          */
         Toasts.open({ 
             content: `Sent ${type} log in #${channel_name}.`, 

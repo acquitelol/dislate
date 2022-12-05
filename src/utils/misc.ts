@@ -23,9 +23,10 @@ const external_plugins: { [key: string]: string | undefined; }  = {
 }
 
 /**
- * Native shadow implementation that is used throughout the entire plugin.
+ * @param shadow: Native shadow implementation that is used throughout the entire plugin.
  */
-const shadow = {
+type Shadow = { [key: string]: string | number | Shadow }
+const shadow: Shadow = {
     shadowColor: "#000",
     shadowOffset: {
         width: 1,
@@ -39,20 +40,26 @@ const shadow = {
  
  /** 
   * Open a toast with the text provided saying it has been copied to clipboard or as a tooltip
-  * @param {string} source: The text provided
+  * @param {string} source: The text provided to send inside of the toast
+  * 
+  * @uses @param {string_id} Icons.Clipboard
+  * @uses @param {string_id} Icons.Settings.Initial
   * @returns {void}
   */
-const toast = (source: string, type: 'clipboard' | 'tooltip') => Toasts.open({ content: type=='clipboard'?`Copied ${source} to clipboard.`:source, source: type=='clipboard'?Icons.Clipboard:Icons.Settings.Initial });
+const toast = (source: string, type: 'clipboard' | 'tooltip') => Toasts.open({ 
+    content: type=='clipboard' ? `Copied ${source} to clipboard.` : source, 
+    source: type=='clipboard' ? Icons.Clipboard : Icons.Settings.Initial 
+});
 
 /** 
  * Chooses whether the color should be Dark or Light depending on the background color of the element.
- * @param color: The background color
- * @param light: The light color
- * @param dark: The dark color
- * @param boundary: The maximum boundary that the color can reach before choosing dark mode.
+ * @param {string} color: The background color
+ * @param {string} light: The light color
+ * @param {string} dark: The dark color
+ * @param {number?} boundary: The maximum boundary that the color can reach before choosing dark mode.
  * @returns {string color}
  */
- const filter_color = (color: string, light: string, dark: string, boundary: number = 186, label?: string): string => {
+const filter_color = (color: string, light: string, dark: string, boundary: number = 186, label?: string): string => {
     return try_callback(() => {
         /**
          * Gets the @arg color without the @arg {#} (@arg {#FFFFFF} -> @arg {FFFFFF})
@@ -61,9 +68,9 @@ const toast = (source: string, type: 'clipboard' | 'tooltip') => Toasts.open({ c
 
         /**
          * Parses a color as an integer from any @arg base provided to @arg {base 10}
-         * @param color: The color provided as a @func string, in @func base_any
-         * @param digits: The digits of the color which it should return as @func base10
-         * @param base: The base provided, can be anything but it would be @func base16 when called
+         * @param {string} color: The color provided as a @func string, in @func base_any
+         * @param {number[]} digits: The digits of the color which it should return as @func base10
+         * @param {number} base: The base provided, can be anything but it would be @func base16 when called
          * @returns {~ string formatted_color}
          */
         const parse_color_as_int = (color: string, digits: number[], base: number) => parseInt(color.substring(digits[0], digits[1]), base)
@@ -74,9 +81,9 @@ const toast = (source: string, type: 'clipboard' | 'tooltip') => Toasts.open({ c
          * @param {number} green: The green value of the color, at @arg {2, 4}
          * @param {number} blue: The blue value of the color, at @arg {4, 6}
          */
-        let red = parse_color_as_int(base_color, [0, 2], 16);
-        let green = parse_color_as_int(base_color, [2, 4], 16);
-        let blue = parse_color_as_int(base_color, [4, 6], 16);
+        const red = parse_color_as_int(base_color, [0, 2], 16),
+              green = parse_color_as_int(base_color, [2, 4], 16),
+              blue = parse_color_as_int(base_color, [4, 6], 16);
 
         /**
          * Checks if the colors added up are higher than the boundary, and returns the light or dark color accordingly

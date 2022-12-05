@@ -1,6 +1,6 @@
 /**
  * Imports
- * @param {get, set}: Allows you to @arg store and @arg retrieve Settings from your plugin file.
+ * @param { get, set }: Allows you to @arg store and @arg retrieve Settings from your plugin file.
  * @param FormRow: Allows you to render a custom @arg Form_Item on the screen.
  * @param Constants: Module for many @arg constant values such as Theme colors etc. 
  * @param Navigation: Used to @arg close (pop) the current page from the Navigation Stack.
@@ -10,6 +10,7 @@
  * @param language_names: The full list of available full @arg {language names}, which can be mapped over and manipulated
  * @param format_string: Used to replace @arg underscores with @arg spaces, and add a capital letter to the first character of a string.
  * @param Icons: Used as a module to store icons easier.
+ * @param reverse_object: Allows you to set an object's keys to its values and its values to its keys.
  */
  import { get, set } from 'enmity/api/settings';
  import { FormRow, TouchableOpacity } from 'enmity/components';
@@ -17,7 +18,7 @@
  import { name } from '../../manifest.json';
  import language_names from '../../modified/translate/src/languages/names';
  import language_names_short from '../../modified/translate/src/languages/iso2';
- import { filter_color, format_string, Icons, reverse_object } from '../utils';
+ import { format_string, Icons, reverse_object } from '../utils';
 
  
  /** 
@@ -29,11 +30,12 @@
  
  /**
   * Main Languages Page Item Component.
+  * @param {string} language: The main language that the Component represents.
   */
  export default ({language}) => { 
      /** 
       * Use React to create a new Ref with @arg Animated
-      * @param animated_button_scale
+      * @param {React.useRef} animated_button_scale: The main button scale Ref.
       */
       const animated_button_scale = React.useRef(new Animated.Value(1)).current
  
@@ -60,7 +62,7 @@
      
       /** 
       * The main animated style, which is going to be modified by the Animated property.
-      * @param animated_scale_style: The main scale style applied to the element which has the scale.
+      * @param {object{transform[]}} animated_scale_style: The main scale style applied to the element which has the scale.
       */
      const animated_scale_style = {
          transform: [
@@ -71,11 +73,11 @@
      }
 
      /**
-     * @param styles: StyleSheet of generic styles used throughout the component.
+     * @param {StyleSheet} styles: StyleSheet of generic styles used throughout the component.
      */
     const styles = StyleSheet.createThemedStyleSheet({
         /**
-         * @param container: Main style for a rounded container for creating custom FormRow edge implementations.
+         * @param {object} container: Main style for a rounded container for creating custom FormRow edge implementations.
          */
         container: {
             width: '95%',
@@ -86,23 +88,23 @@
         }
     })
  
-     /**
-      * Takes a language as an argument and sets the current language based on the page which was opened to the one that was pressed.
-      * @param language: The language to set.
-      * @returns {void}
-      */
-    const set_language = (language: string): void => {
-    /**
-     * Sets the language as the one to translate to or from depending on which page was opened.
-     * @param {set, get}: Store and retrieve settings from the plugin.
-     */
-    set(name, `DislateLang${get(name, "DislateLangFilter")?"To":"From"}`, language) 
+        /**
+         * Takes a language as an argument and sets the current language based on the page which was opened to the one that was pressed.
+         * @param {string} language: The language to set.
+         * @returns {void}
+         */
+        const set_language = (language: string): void => {
+        /**
+         * Sets the language as the one to translate to or from depending on which page was opened.
+         * @param {set, get}: Store and retrieve settings from the plugin.
+         */
+        set(name, `DislateLang${get(name, "DislateLangFilter")?"To":"From"}`, language) 
 
-    /**
-     * Afterwards, open a toast stating that the language chosen has been set as the language to translate to or from.
-     * @param language_names: The full list of languages.
-     * @param language: The language that this component is representing. This is the language that a user would press on.
-     */
+        /**
+         * Afterwards, open a toast stating that the language chosen has been set as the language to translate to or from.
+         * @param {string[]} language_names: The full list of languages.
+         * @param {string} language: The language that this component is representing. This is the language that a user would press on.
+         */
         Toasts.open({ content: `Set ${(language_names[language]).toUpperCase()} as Language to Translate ${get("Dislate", "DislateLangFilter") ? "to" : "from"}.`, 
             source: get(name, "DislateLangFilter") ? Icons.Settings.Translate_To : Icons.Settings.Translate_From
         })
@@ -120,10 +122,12 @@
          <>
             <TouchableOpacity
                 /**
-                 * @arg onPress: Set the language pressed as the chosen language to translate to or from.
-                 * @arg onLongPress: Set the language pressed as the chosen language to translate to or from.
-                 * @arg onPressIn: Scale in the component to @arg {1.05} scale.
-                 * @arg onPressIn: Scale in the component back to @arg {1} scale.
+                 * @arg {callback?} onPress: Set the language pressed as the chosen language to translate to or from.
+                 * @arg {callback?} onLongPress: Set the language pressed as the chosen language to translate to or from.
+                 * @arg {callback} onPressIn: Scale in the component to @arg {1.05} scale.
+                 * @arg {callback} onPressOut: Scale out the component back to @arg {1} scale.
+                 * 
+                 * @uses @param {string} language
                  */
                 onPress={() => set_language(language)}
                 onLongPress={() => set_language(language)}
@@ -132,8 +136,8 @@
             >
                 {/**
                  * The main view. This is what the scale style is actually applied to.
-                 * @param animated_scale_style: The current transform scale value. This will change depending on the Ref.
-                 * @param styles.container: The main style for the Language item, allowing it to seem rounded.
+                 * @uses @param {object} animated_scale_style: The current transform scale value. This will change depending on the Ref.
+                 * @uses @param {object} styles.container: The main style for the Language item, allowing it to seem rounded.
                  */}
                 <Animated.View style={[animated_scale_style, styles.container]}>
                     <FormRow
@@ -141,7 +145,7 @@
 
                         /**
                          * Fetches the shorter names of each language. As the ISO's are all directly linked to the names, this will never return undefined.
-                         * @param language_names[language]: Shorter implementation of the language
+                         * @uses @param {string} language_names[language]: Shorter implementation of the language
                          * @func reverse_object: Reverses the keys and values of an object
                          */
                         subLabel={`Aliases: ${language_names[language]}, ${reverse_object(language_names_short, 'creating aliases for language names')[language_names[language]]}`}
@@ -149,7 +153,7 @@
                         leading={<FormRow.Icon style={{color: Constants.ThemeColorMap.INTERACTIVE_NORMAL}} source={
                             /**
                              * Either set the Icon to ✓ or + depending on whether @arg DislateLangFilter is true or false, and then further whether the current @arg language is the same as the current language stored in @arg DislateLang*.
-                             * @param Icons.Settings.Toasts: Part of the icon dependency to display icons for Toasts, can also be used in this scenario.
+                             * @uses @param {string_id} Icons.Settings.Toasts: Part of the icon dependency to display icons for Toasts, can also be used in this scenario.
                              * 
                              * @if {(@arg DislateLangFilter) evaluates to true} ->
                                     * @if {(@arg language) is equal to (@arg DislateLangTo)} -> Show ✓ Icon

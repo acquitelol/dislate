@@ -5,7 +5,7 @@ import { getIDByName } from 'enmity/api/assets';
 
 /** 
  * Icons used throughout Dislate, available in a single place for ease of use.
- * @param {object} Icons: Object of Icons
+ * @param {object} Icons: Object of Icons which are grouped by their place of use.
  */
 const Icons = {
     Translate: getIDByName('img_nitro_star'),

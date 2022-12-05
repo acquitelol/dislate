@@ -4,11 +4,6 @@
 import { translate_string } from "./translate";
 
 /**
- * @param format_string: Adds a capital letter to the beginning and replaces underscores with spaces in a @arg string.
- */
-import { format_string } from './format_text'
-
-/**
  * Main Debug Info Functions
  * @param debug_info: Formats the possible arguments into a format that can be sent as a Discord Message.
  * @param fetch_debug_arguments: Asynchronously fetches the full list of debug arguments. This is its own function for ease of use.
@@ -73,16 +68,20 @@ import { Icons } from "./icons";
 
 /**
  * Main Modules to manipulate Objects.
+ * @param format_string: Adds a capital letter to the beginning and replaces underscores with spaces in a @arg string.
  * @param format_object: Formats the specific return from the Device List GitHub Gist as a valid JSON object.
  * @param reverse_object: Returns a given object with the keys as the values and the values as the keys.
  */
-import { format_object, reverse_object } from "./object";
+import { format_string, format_object, reverse_object } from "./format";
 
 /**
  * @param check_for_updates: Checks if any updates are available for Dislate
  */
 import { check_for_updates } from "./update";
 
+/**
+ * Finally, export all of these functions. Other components in the code will be able to access these methods by accessing @arg index.ts afterwards
+ */
 export { 
     translate_string, 
     format_string, 

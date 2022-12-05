@@ -375,8 +375,10 @@ const Dislate: Plugin = {
                                         */
                                        translate_string(
                                           original_message.content,
-                                          from_language,
-                                          to_language,
+                                          {
+                                             fromLang: from_language,
+                                             toLang: to_language
+                                          },
                                           !is_translated
                                        ).then(res => { 
                                           /** 

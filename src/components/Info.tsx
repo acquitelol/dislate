@@ -1,14 +1,14 @@
 /**
  * Imports
  * @param getBoolean: Fetches a boolean setting from a file.
- * @param {FormDivider}: Used to render Form Items on the screen.
+ * @param { FormDivider }: Used to render Form Items on the screen.
  * @param Text: Used to render styleable text on the screen.
  * @param TouchableOpacity: Used to render a component child inside of this component, but adds a small opacity effect upon press.
  * @param getByName: Allows you to fetch a component from Discord.
  * @param StyleSheet: Used to create React Native StyleSheeets, for styling components.
  * @param Constants: Used for constant values which may differ between themes like colors and font weights.
  * @param name: The name of the plugin, from @arg manifest.json
- * @param {* from utils}: Utility functions used throughout the component.
+ * @param { * from utils }: Utility functions used throughout the component.
  * @param DebugItem: A component to render a toggleable option state. This is its own component so that it can have independent state.
  * @param ExitWrapper: A component to wrap the rest of the components into a ScrollView with capibility to close the page upon swiping right. Used by passing the TSX to render inside the Component prop. Can be a single component or a Fragment <>.
  */
@@ -31,8 +31,8 @@ const Search = getByName('StaticSearchBarContainer');
 
 /**
  * Main Info Page Component
- * @param channel_id: The main channel ID, passed as a string from the Debug command/component.
- * @param channel_name: The name of the channel, used to display in the toast if the message is sent.
+ * @param {string} channel_id: The main channel ID, passed as a string from the Debug command/component.
+ * @param {string} channel_name: The name of the channel, used to display in the toast if the message is sent.
  */
 export default ({ channel_id, channel_name }) => {
     /**
@@ -45,18 +45,18 @@ export default ({ channel_id, channel_name }) => {
 
     /**
      * Use an asynchronous call to fetch the available debug arguments, on the first mount of the component to not cause any refetching on re-renders.
-     * @param fetch_debug_arguments: Gets a list of debug arguments.
+     * @param {returns string[]} fetch_debug_arguments: Gets a list of debug arguments.
      */
     React.useEffect(async function() {
         setOptions(Object.keys(await fetch_debug_arguments()))
     }, [])
 
     /**
-     * @param styles: StyleSheet of generic styles used throughout the component.
+     * @param {StyleSheet} styles: StyleSheet of generic styles used throughout the component.
      */
     const styles = StyleSheet.createThemedStyleSheet({
         /**
-         * @param button: The main button styling, to make it look cute and pretty :D
+         * @param {object} button: The main button styling, to make it look cute and pretty :D
          * The values for @arg width, @arg marginLeft, and @arg marginRight may seem quite random, but the margins are just (100 (%) - @arg width) / 2 each. This evenly splits the available space on each side of the button.
          */
         button: {
@@ -71,7 +71,7 @@ export default ({ channel_id, channel_name }) => {
             marginTop: 20
         },
         /**
-         * @param text: The main styling for the text component
+         * @param {object} text: The main styling for the text component
          * 
          * @func filter_color: Takes an @arg input color and a @arg light and @arg dark color, and calculates whether the color should be the light color or dark color based on the @arg boundary provided as a multiplier (0.8 -> 80% contrast).
                 * @arg Note: The boundary value provided for this function is based on theory, and not 50%, as that will cause weird side effects.
@@ -84,12 +84,15 @@ export default ({ channel_id, channel_name }) => {
             letterSpacing: 0.25,
             fontFamily: Constants.Fonts.PRIMARY_BOLD
         },
+        /**
+         * @param {object} buttonText: The font size for the main Buttons text.
+         */
         buttonText: {
             fontSize: 16,
         },
-        optionText: {
-            fontSize: 12
-        },
+        /**
+         * @param {object} container: The main styling for the container implementation which overrides the FormSection.
+         */
         container: {
             width: '90%',
             marginLeft: '5%',
@@ -113,9 +116,9 @@ export default ({ channel_id, channel_name }) => {
         />
         {/**
          * The main part of the component, showing available options to toggle.
-         * This is wrapped in an @arg ExitWrapper component to allow the user to close out the page by swiping to the right.
+         * This is wrapped in an @arg {TSX} ExitWrapper component to allow the user to close out the page by swiping to the right.
          */}
-        <ExitWrapper Component={<View
+        <ExitWrapper component={<View
             style={{
                 marginBottom: 100
             }}
@@ -127,9 +130,9 @@ export default ({ channel_id, channel_name }) => {
                 <View style={styles.container}>
                     {/**
                      * Maps through the list of filtered available items, and returns a @arg DebugItem component for each one.
-                     * @param options: The list of available options.
-                     * @param query: Any possible text that has been typed in the search box.
-                     * @param DebugItem: Component to render toggleable options, with independent state.
+                     * @uses @param {string[]} options: The list of available options.
+                     * @uses @param {string} query: Any possible text that has been typed in the search box.
+                     * @uses @param {TSX} DebugItem: Component to render toggleable options, with independent state.
                      */}
                     {map_item(
                         filter_item(options, (option: string) => option.toLowerCase().includes(query)), 
@@ -147,6 +150,7 @@ export default ({ channel_id, channel_name }) => {
                 onPress={async function() {
                     /**
                      * Send a full log in the current channel.
+                     * @uses @param {string[]} options: List of available debug options, all are passed to the debug log as this is sending @arg all the options
                      */
                     await send_debug_log(
                         options, 
@@ -164,16 +168,17 @@ export default ({ channel_id, channel_name }) => {
                 style={styles.button}
                 onPress={async function() {
                     /**
-                     * @param debug_options: Filtered list of options which only includes ones that the user has chosen to be true.
+                     * @param {string[]} debug_options: Filtered list of options which only includes ones that the user has chosen to be true.
                      */
                     const debug_options = filter_item(options, (item: string) => getBoolean(name, item, false), 'filtering chosen debug options')
 
                     /**
-                     * Send the debug log with the filtered list.
+                     * Send a partial debug log with the filtered list in the current channel.
+                     * @uses @param {string[]} debug_options: Filtered list of debug options.
                      */
                     await send_debug_log(
                         debug_options, 
-                        {channel_id: channel_id, channel_name: channel_name}, 
+                        { channel_id: channel_id, channel_name: channel_name }, 
                         'partial', 
                         'partial log in Info Component.'
                     )
@@ -181,7 +186,8 @@ export default ({ channel_id, channel_name }) => {
                 <Text style={[styles.text, styles.buttonText]}>Send Message</Text>
             </TouchableOpacity>
             {/**
-             * Renders a custom Dialog implementation to display a tip to help you navigate the page.
+             * @param {TSX} Dialog: Renders a custom Dialog implementation to display a tip to help you navigate the page.
+             * @uses @param {type} standard
              */}
             <Dialog 
                 label="Information" 

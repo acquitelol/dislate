@@ -8,14 +8,15 @@
  * @param Constants: Module for many constant values such as Theme colors etc.
  * @param React: The main React implementation to do functions such as @arg React.useState or @arg React.useEffect
  * @param Dialog: The default Discord Dialog which allows you to render a pop-up on the screen. The component which is being exported is actually a custom implementation.
- * @param filter_color: Allows you to render a light or dark color depending on the color provided (generally your @arg background_color)
+ * @param store_item: Allows you to store an item into either Settings or the Storage store.
+ * @param shadow: The main shadow implementation, abstracted away so all the different components can use the same shadow simultaneously.
  * @param name: The name of the Plugin, from @arg manifest.json. In this case, it's Dislate.
  * @param get: Allows you to retrieve a Setting from your plugin file.
  */
 import { TouchableOpacity, Text, Image, View } from "enmity/components"
 import { StyleSheet, Constants, React, Dialog } from "enmity/metro/common"
-import { filter_color, store_item, shadow } from "../utils"
-import {name} from '../../manifest.json'
+import { store_item, shadow } from "../utils"
+import { name } from '../../manifest.json'
 import { get } from "enmity/api/settings"
 
 /** 
@@ -32,11 +33,11 @@ const Easing = window.enmity.modules.common.Components.General.Easing
 
 export default ({ label, content, type }) => {
     /**
-     * @param styles: StyleSheet of generic styles used throughout the component.
+     * @param {StyleSheet} styles: StyleSheet of generic styles used throughout the component.
      */
      const styles = StyleSheet.createThemedStyleSheet({
         /**
-         * @param button: The main button styling, to make it look cute and pretty :D
+         * @param {object} button: The main button styling, to make it look cute and pretty :D
          * The values for @arg width, @arg marginLeft, and @arg marginRight may seem quite random, but the margins are just (100 (%) - @arg width) / 2 each. This evenly splits the available space on each side of the button.
          */
         button: {
@@ -47,10 +48,7 @@ export default ({ label, content, type }) => {
             ...shadow
         },
         /**
-         * @param text: The main styling for the text component
-         * 
-         * @func filter_color: Takes an @arg input color and a @arg light and @arg dark color, and calculates whether the color should be the light color or dark color based on the @arg boundary provided as a multiplier (0.8 -> 80% contrast).
-                * @arg Note: The boundary value provided for this function is based on theory, and not 50%, as that will cause weird side effects.
+         * @param {object} text: The main styling for the text component.
          */
         text: {
             color: "#f2f2f2",
@@ -59,21 +57,21 @@ export default ({ label, content, type }) => {
             padding: 10
         },
         /**
-         * @param text_header: The styling specifically for the title text/label.
+         * @param {object} text_header: The styling specifically for the title text/label.
          */
         text_header: {
             fontSize: 20,
             fontFamily: Constants.Fonts.PRIMARY_BOLD
         },
         /**
-         * @param text_content: THe styling for the text content/body.
+         * @param {object} text_content: THe styling for the text content/body.
          */
         text_content: {
             fontSize: 16,
             fontFamily: Constants.Fonts.PRIMARY_NORMAL
         },
         /**
-         * Style for the @arg {<Image>} component. Pretty self explanatory.
+         * @param {object} image: Style for the @arg {<Image>} component. Pretty self explanatory.
          */
          image: {
             width: 25,
@@ -87,7 +85,7 @@ export default ({ label, content, type }) => {
 
     /** 
      * Use React to create a new Ref with @arg Animated
-     * @param animated_button_scale
+     * @param {React.useRef} animated_button_scale: The main animated value ref.
      */
     const animated_button_scale = React.useRef(new Animated.Value(1)).current
 
@@ -107,7 +105,7 @@ export default ({ label, content, type }) => {
         }).start();
 
         /**
-         * Open a Discord-Native pop-up prompting the user whether they want to hide the Dialog forever (until it is cleared in Settings) or just hide it.
+         * @param {callback} Dialog: Open a Discord-Native pop-up prompting the user whether they want to hide the Dialog forever (until it is cleared in Settings) or just hide it.
          */
         Dialog.show({
             title: "Close Tip?",
@@ -117,12 +115,14 @@ export default ({ label, content, type }) => {
             onConfirm: () => {
                 /**
                  * "Confirming" means that you just want the Dialog to hide for this instance. Therefore, play the animation to scale down the Dialog, and nothing else.
+                 * @func animate: Moves the scale of the dialog to 0 with sinusoidal easing.
                  */
                 animate()
             },
             onCancel: async function() {
                 /**
                  * "Cancelling" means that you want the Dialog to never show again. Therefore, set the option in Settings for this specific label to true (hidden).
+                 * @func store_item: Stores a setting or store item asynchronously.
                  */
                 await store_item(
                     {
@@ -135,6 +135,7 @@ export default ({ label, content, type }) => {
 
                 /**
                  * Finally, call the @arg animate function to hide the Dialog.
+                 * @func animate: Moves the scale of the dialog to 0 with sinusoidal easing.
                  */
                 animate()
             },
@@ -143,7 +144,7 @@ export default ({ label, content, type }) => {
 
     /**
      * Allows you to open a Dialog with a specific type
-     * @param types: The hashmap of possible types that the Dialog could display as. If an invalid type is passed as a prop, @arg standard will be chosen by default.
+     * @param {object} types: The hashmap of possible types that the Dialog could display as. If an invalid type is passed as a prop, @arg standard will be chosen by default.
      */
     const types = {
         /**
@@ -165,7 +166,7 @@ export default ({ label, content, type }) => {
     }
     /** 
      * The main animated style, which is going to be modified by the Animated property.
-     * @param animated_scale_style: The main scale style applied to the element which has the scale.
+     * @param {object{transform[{}]}}animated_scale_style: The main scale style applied to the element which has the scale.
      */
      const animated_scale_style = {
         transform: [
@@ -175,17 +176,15 @@ export default ({ label, content, type }) => {
         ]
     }
 
-    /**
-     * Checks if this dialog has been hidden forever before, and doesn't render if it has been shown and the user clicked "Don't Show Again."
-     */
-    const shown_already = get(name, label, false)
 
     /**
      * Renders an empty fragment if the user chose "Don't show again."
      * @if {(@arg shown_already is true)} -> Render an empty fragment.
      * @else {()} -> Render the main Dialog TSX.
+     * 
+     * Also checks if this dialog has been hidden forever before, and doesn't render if it has been shown and the user clicked "Don't Show Again."
      */
-    return !shown_already ? <>
+    return !get(name, label, false) ? <>
         <Animated.View style={animated_scale_style}>
             <TouchableOpacity
                 /**

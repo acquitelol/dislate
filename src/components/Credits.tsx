@@ -8,10 +8,10 @@
  * @param View: Allows you to create a closure to place components inside of.
  * @param Image: Allows you to render an image from @arg require or a @arg uri.
  * @param Text: Allows you to render text.
- * @param {clipboard_toast, debug_info, fetch_debug_arguments, map_item, shadow}: Functions which will be used throughout the script.
+ * @param { toast, debug_info, fetch_debug_arguments, map_item, shadow }: Functions which will be used throughout the script.
  */
 import { React, Constants, StyleSheet } from 'enmity/metro/common';
-import { bulk, filters} from 'enmity/metro';
+import { bulk, filters } from 'enmity/metro';
 import { TouchableOpacity, View, Image, Text} from 'enmity/components';
 import { toast, debug_info, fetch_debug_arguments, map_item, shadow } from '../utils';
 
@@ -37,6 +37,11 @@ const [
  /** 
   * Main credits component.
   * @returns {TSX ~ Fragmented View}
+  * 
+  * @property @param {string} name: The name of the plugin, which is Dislate in this case.
+  * @property @param {string} version: The version of the plugin, this can vary.
+  * @property @param {object} plugin: Different data involving the plugin such as the plugin's base download link and build.
+  * @property @param {object}: List of authors, their Discord ID, and their GitHub profile. This will be mapped and displayed on the list.
   */
 export default ({name, version, plugin, authors}): void => {
     /**
@@ -101,7 +106,7 @@ export default ({name, version, plugin, authors}): void => {
 
     /** 
      * Use React to create a new Ref with @arg Animated
-     * @param animated_button_scale
+     * @param {React.useRef} animated_button_scale: The main animation scale ref.
      */
     const animated_button_scale = React.useRef(new Animated.Value(1)).current
 
@@ -133,7 +138,7 @@ export default ({name, version, plugin, authors}): void => {
 
     /** 
      * The main animated style, which is going to be modified by the Animated property.
-     * @param animated_scale_style: The main scale style applied to the element which has the scale.
+     * @param {object{transform[]}} animated_scale_style: The main scale style applied to the element which has the scale.
      */
     const animated_scale_style = {
         transform: [
@@ -217,9 +222,9 @@ export default ({name, version, plugin, authors}): void => {
                       * Loops through an array of objects and returns a @arg {TSX} element for each iteration
                       * @param authors: The list of authors for the plugin. In this case its only 1, but its scaleable.
                       * @param {() => {}}: The callback to run for each iteration
-                            * @arg author: The main author object, which contains @arg name, @arg id, and @arg profile.
-                            * @arg index: The index of the iteration
-                            * @arg authors_array: The array of authors, as a reference. It is better practice to use it from the callback rather than the object passed to the function.
+                            * @uses @arg author: The main author object, which contains @arg name, @arg id, and @arg profile.
+                            * @uses @arg index: The index of the iteration
+                            * @uses @arg authors_array: The array of authors, as a reference. It is better practice to use it from the callback rather than the object passed to the function.
                       */}
                     {map_item(authors, (author, index: number, authors_array: any[]) => { 
                         return <TouchableOpacity onPress={(): void => Router.openURL(author.profile)}> 

@@ -9,9 +9,9 @@ import { Navigation, React } from "enmity/metro/common"
 
 /**
  * Wrapper for any components which require ability to swipe right to close.
- * @param Component: The component to render inside of the @arg ScrollView.
+ * @param {TSX} component: The component to render inside of the @arg ScrollView.
  */
-export default ({Component}) => {
+export default ({component}) => {
     /**
      * Sets a state which will represent the X and Y amount of scrolling of the user.
      * @param {Getter, Setter}: The X position change of your finger.
@@ -24,8 +24,8 @@ export default ({Component}) => {
         onTouchStart={(e: any) => {
             /**
              * At the start of the Touch, set the starting value of the tap.
-             * @param pageX: The X value of your finger when you begin tapping
-             * @param pageY: The Y value of your finger when you begin tapping
+             * @param {float} pageX: The X value of your finger when you begin tapping
+             * @param {float} pageY: The Y value of your finger when you begin tapping
              */
             set_touch_x(e.nativeEvent.pageX)
             set_touch_y(e.nativeEvent.pageY)
@@ -42,6 +42,6 @@ export default ({Component}) => {
                 : null
         }}
     >
-        {Component}
+        {component}
     </ScrollView>
 }

@@ -19,8 +19,8 @@ export const PageNavigator = NavigationStack.createStackNavigator();
 
 /**
  * Export the main Page, which will be pushed to the navigation.
- * @param name: The name of the page, which will be shown at the top. Default is @arg Page.
- * @param component: The component which will be rendered inside the Page container. Default is just an empty view.
+ * @param {string} name: The name of the page, which will be shown at the top. Default is @arg Page.
+ * @param {TSX} component: The component which will be rendered inside the Page container. Default is just an empty view.
  */
 export default ({ 
   name = 'Page', 
@@ -28,31 +28,34 @@ export default ({
 } = {}) => {
   /**
    * Create the main StyleSheet used throughout the Page.
-   * @param styles: The main StyleSheet.
+   * @param {StyleSheet} styles: The main StyleSheet.
    */
   const styles = StyleSheet.createThemedStyleSheet({
     /**
-     * @param container: The main styles used for the Container of the page. This is generally only used once.
+     * @param {object} container: The main styles used for the Container of the page. This is generally only used once.
      */
     container: {
       backgroundColor: Constants.ThemeColorMap.BACKGROUND_MOBILE_SECONDARY,
       flex: 0.5,
     },
     /**
-     * @param card: The color exclusively for the main Page card.
+     * @param {object} card: The color exclusively for the main Page card.
      */
     card: {
       backgroundColor: Constants.ThemeColorMap.BACKGROUND_MOBILE_PRIMARY,
       color: Constants.ThemeColorMap.TEXT_NORMAL
     },
     /**
-     * @param header: The color used for the Header at the top of the Page View.
+     * @param {object} header: The color used for the Header at the top of the Page View.
      */
     header: {
       backgroundColor: Constants.ThemeColorMap.BACKGROUND_MOBILE_SECONDARY,
       shadowColor: 'transparent',
       elevation: 0,
     },
+    /**
+     * @param {object} close: The main styling for the Close Text Component.
+     */
     close: {
       color: Constants.ThemeColorMap.HEADER_PRIMARY,
       fontFamily: Constants.Fonts.PRIMARY_NORMAL,
@@ -93,6 +96,9 @@ export default ({
           headerLeft: () => (<Text
             style={styles.close}
             onPress={(): void => {
+              /**
+               * @param {callback} Navigation.pop: Pops an item from the stack on the Navigation, effectively closing the latest page.
+               */
               Navigation.pop()
           }}>
             Close

@@ -1,12 +1,12 @@
 /** 
  * Imports
- * @param {* as commands}: Types and methods required for creating Enmity Commands.
+ * @param { * as commands }: Types and methods required for creating Enmity Commands.
  * @param {Dialog, Navigation}: Functions used to @arg {open a Dialog/Pop-up}, and @arg {open a custom Page.}
  * @param React: The main React implementation to do functions such as @arg React.useState or @arg React.useEffect
  * @param Toasts: Function to open a small notification at the top of your discord.
  * @param Storage: Allows you to store and retrive any item.
  * @param {name, plugin}: The name and information about the plugin from @arg manifest.json.
- * @param { format_string, clipboard_toast, Icons, fetch_debug_arguments, map_item }: Utility Functions that Dislate uses.
+ * @param { format_string, toast, Icons, fetch_debug_arguments, map_item }: Utility Functions that Dislate uses.
  * @param {bulk, filters}: Used to import modules in bulk
  * @param Info: The main "@arg debug" page to choose custom parameters to send the @arg debug_info command
  * @param Page: The @arg base / @arg builder page used to render custom @arg Pages out. Contains a simple Close button, and requires additional @arg TSX to render more information.
@@ -42,20 +42,20 @@ const [
 
 /**
  * Returns an object of all available options. To add a new option, just write a new @arg key - @arg value pair with the callback as the value.
- * @param channel_id: The channel id provided by the context to @arg {send messages} and open the @arg Info page
- * @param channel_name: The channel name, used by other components to @arg {render in a toast}.
+ * @param {string} channel_id: The channel id provided by the context to @arg {send messages} and open the @arg Info page
+ * @param {string} channel_name: The channel name, used by other components to @arg {render in a toast}.
  * @returns {any}
  */
 const options = (channel_id: string, channel_name: string): any => {
     return {
         /**
-         * @param debug: The main command that will get run to display important information such as the version of @param Dislate or the @param Discord build.
+         * @param {any} debug: The main command that will get run to display important information such as the version of @param Dislate or the @param Discord build.
          */
         debug: () => {
             /**
              * Opens a dialog informing the user that they may customize the information sent with this command.
              * 
-             * @param Dialog: The main module to open @arg dialogs or @arg popups
+             * @uses @param {callback} Dialog: The main module to open @arg dialogs or @arg popups
              */
             Dialog.show({
                 title: "Choose extra options",
@@ -71,16 +71,16 @@ const options = (channel_id: string, channel_name: string): any => {
                     
                     /**
                      * Push the wrapped page to Navigation, hence opening new page.
-                     * @arg Page: The main default page
-                     * @arg wrapper: The wrapped Info component
-                     * @arg name: The name of the Page, which will show up at the top.
+                     * @arg {TSX} Page: The main default page
+                     * @arg {TSX} wrapper: The wrapped Info component
+                     * @uses @arg {string} name: The name of the Page, which will show up at the top.
                      */
                     Navigation.push(Page, { component: wrapper, name: `${name}: Customize`})
                 },
                 onCancel: async function() {
                     /**
                      * Get the full list of available arguments asynchronously
-                     * @param debug_options: The full list of debug arguments.
+                     * @param {returns object}debug_options: The full list of debug arguments.
                      */
                     const debug_options = await fetch_debug_arguments()
     
@@ -99,7 +99,7 @@ const options = (channel_id: string, channel_name: string): any => {
             })
         },
         /**
-         * @param clear_stores: Allows to user to clear all of their Dislate stores.
+         * @param {any} clear_stores: Allows to user to clear all of their Dislate stores.
          */
          clear_stores: async function() {
             /**
@@ -110,7 +110,7 @@ const options = (channel_id: string, channel_name: string): any => {
 
             /**
              * Loop through the stored items with a custom implementation of a forEach to allow for labels.
-             * @param store_items: List of items to clear the store of, which were explicitly set with the store_item.ts file.
+             * @param {object} store_items: List of items to clear the store of, which were explicitly set with the store_item.ts file.
              */
             for_item(store_items, async function(item: any) {
                 /**
@@ -137,12 +137,12 @@ const options = (channel_id: string, channel_name: string): any => {
             });
         },
         /**
-         * @param download: Allows the user to copy a unique download link of Dislate to the clipboard.
+         * @param {any} download: Allows the user to copy a unique download link of Dislate to the clipboard.
          */
         download: () => {
             /**
              * Set a new download link to clipboard every time the function is called, to prevent the plugin reinstalling with the same code, due to caching.
-             * @param plugin.download: The raw GitHub link of the plugin to install from @arg manifest.json
+             * @param {string} plugin.download: The raw GitHub link of the plugin to install from @arg manifest.json
              */
             Clipboard.setString(`${plugin.download}?${Math.floor(Math.random() * 1001)}.js`);
 
@@ -176,19 +176,19 @@ const command_options: any[] = map_item(
 
 /**
  * Main command to send out debug information for @arg Dislate.
- * @param name: The main name of the plugin in @arg manifest.json
+ * @param {string} name: The main name of the plugin in @arg manifest.json
  * 
  * @returns {void{}}
  */
 const debug_command: Command = {
     /**
-     * @param id: The ID of the command. This is required for identifying the command.
+     * @param {string?} id?: The ID of the command. This is required for identifying the command.
      */
     id: `${name?.toLowerCase()}`,
 
     /**
-     * @param name: The main name of the command
-     * @param displayName: The name of the commmand that would actually display in-app. For example: @arg {</dislate:1>}
+     * @param {string} name: The main name of the command
+     * @param {string?} displayName?: The name of the commmand that would actually display in-app. For example: @arg {</dislate:1>}
      * 
      * These are set to be equal values.
      */
@@ -196,8 +196,8 @@ const debug_command: Command = {
     displayName: `${name?.toLowerCase()}`,
 
     /**
-     * @param description: The main description of the command
-     * @param displayDescription: The description of the commmand that would actually display in-app. For example: @arg {</dislate:1>}
+     * @param {string} description: The main description of the command
+     * @param {string?} displayDescription?: The description of the commmand that would actually display in-app. For example: @arg {</dislate:1>}
      * 
      * These are also set to be equal values.
      */
@@ -205,8 +205,8 @@ const debug_command: Command = {
     displayDescription: `Choose from a list of options for debugging in ${name}.`,
 
     /**
-     * @param type: Determines that this is a Chat command.
-     * @param inputType: Determines the type of input that the commmand is expecting. In this case, it's a keyboard.
+     * @param {ApplicationCommandType} type: Determines that this is a Chat command.
+     * @param {ApplicationCommandInputType} inputType: Determines the type of input that the commmand is expecting. In this case, it's a keyboard.
      */
     type: ApplicationCommandType.Chat,
     inputType: ApplicationCommandInputType.BuiltInText,
@@ -217,11 +217,11 @@ const debug_command: Command = {
      */
     options: [{
         /**
-         * @param {name, displayName}: The name of the option.
-         * @param {description, displayDescription}: The description of the option.
-         * @param type: The kind of value expected by the command. In this case its an @arg string.
-         * @param choices: The list of choices that the option can take. In this case, it's a list of items calculated at the top level of the code.
-         * @param required: Whether the option is required for the command to run or not. As its mandatory to get which type was selected, this has been set to @arg true.
+         * @param {name: string, displayName: string?}: The name of the option.
+         * @param {description: string, displayDescription: string?}: The description of the option.
+         * @param {ApplicationCommandOptionType} type: The kind of value expected by the command. In this case its an @arg string.
+         * @param {object[]} choices: The list of choices that the option can take. In this case, it's a list of items calculated at the top level of the code.
+         * @param {boolean} required: Whether the option is required for the command to run or not. As its mandatory to get which type was selected, this has been set to @arg true.
          */
         name: "type",
         displayName: "type",
@@ -234,14 +234,14 @@ const debug_command: Command = {
 
     execute: async function (args, context) {
         /**
-         * @param command_type: The main option chosen by the user when they ran the command.
+         * @param {string} command_type: The main option chosen by the user when they ran the command.
          */
         const command_type = find_item(args, (o: any) => o.name == "type").value;
 
         /**
-         * @param available_options: The main "@arg hash_map" or @arg object of defined functions that the debug command will execute. If an argument is passed at the top level and isn't added here, a Toast will display showing an error.
+         * @param {string[]} available_options: The main "@arg hash_map" or @arg object of defined functions that the debug command will execute. If an argument is passed at the top level and isn't added here, a Toast will display showing an error.
          * @param throw_toast: A fallback toast, used in case the function from the debug argumetns couldnt be found. As a result, this toast will appear instead.
-                * @param Icons.Debug_Command.Clock: Clock icon imported from ./icons
+                * @uses @param Icons.Debug_Command.Clock: Clock icon imported from ./icons
          */
         const available_options = options(context.channel.id, context.channel.name)
         const throw_toast = () => {
@@ -249,7 +249,7 @@ const debug_command: Command = {
         }
 
         /**
-         * Sets the command callback to either the callback from the @arg available_options function or uses the @arg throw_toast as a fallback
+         * @param {callback ?? throw_toast} chosen_option: Sets the command callback to either the callback from the @arg available_options function or uses the @arg throw_toast as a fallback
          */
         const chosen_option =  available_options[command_type] ?? throw_toast
 

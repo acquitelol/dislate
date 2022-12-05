@@ -1,6 +1,6 @@
 /**
  * Imports
- * @param {getBoolean, set}: The main functions to retrieve and store settings in the Enmity API.
+ * @param { getBoolean, set }: The main functions to retrieve and store settings in the Enmity API.
  * @param FormRow: The React-Native Element which Discord uses as a list item.
  * @param Constants: Used for color and weights etc (mostly styling)
  * @param React: This is used to run proprietary functions such as @arg React.useState or @arg React.useEffect
@@ -24,8 +24,8 @@ const Animated = window.enmity.modules.common.Components.General.Animated
 
 /**
  * This is a component which is part of the Info page which is part of the Debug command.
- * @param option: The current option, as a @arg string, passed from the @arg Info page
- * @param channel: The @arg {Channel ID}, This is passed as a prop to the component for the "Long Press to send a single item" functionality.
+ * @param {string} option: The current option, as a @arg string, passed from the @arg Info page
+ * @param {string} channel: The @arg {Channel ID}, This is passed as a prop to the component for the "Long Press to send a single item" functionality.
  */
 export default ({ option, channel_id, channel_name }) => {
     /**
@@ -37,27 +37,26 @@ export default ({ option, channel_id, channel_name }) => {
 
     /**
      * Create a stylesheet for the icon to force it to be @arg INTERACTIVE_NORMAL
-     * @param styles: StyleSheet exclusively used for the icon.
+     * @param {StyleSheet} styles: StyleSheet exclusively used for the icon.
      */
     const styles = StyleSheet.createThemedStyleSheet({
+        /**
+         * @param {object} icon: The main styling for the Icons to make them all generalized.
+         */
         icon: {
             color: Constants.ThemeColorMap.INTERACTIVE_NORMAL
         },
-        item: {
-            padding: 10
-        },
+        /**
+         * @param item_disabled: The main coloring for an item which has been disabled by the user.
+         */
         item_disabled: {
             color: Constants.ThemeColorMap.TEXT_MUTED,
         },
+        /**
+         * @param item_enabled: The main coloring for an item which has been enabled by the user.
+         */
         item_enabled: {
             color: Constants.ThemeColorMap.INTERACTIVE_NORMAL,
-        },
-        background_enabled: {
-            backgroundColor: "rgba(0, 0, 0, 0.2)",
-            borderRadius: 10,
-        },
-        background_disabled: {
-            backgroundColor: 'transparent'
         },
     })
 
@@ -72,7 +71,7 @@ export default ({ option, channel_id, channel_name }) => {
 
     /**
      * Use React to create a new Ref with @arg Animated
-     * @param animated_button_scale
+     * @param {React.useRef} animated_button_scale
      */
      const animated_button_scale = React.useRef(new Animated.Value(scale_values[getBoolean(name, option, false) ? 1 : 0])).current
 
@@ -98,8 +97,8 @@ export default ({ option, channel_id, channel_name }) => {
 
     
      /** 
-      * The main animated style, which is going to be modified by the Animated property.
-     * @param animated_scale_style: The main scale style applied to the element which has the scale.
+     * The main animated style, which is going to be modified by the Animated property.
+     * @param {object{transform[]}} animated_scale_style: The main scale style applied to the element which has the scale.
      */
     const animated_scale_style = {
         transform: [
@@ -123,8 +122,8 @@ export default ({ option, channel_id, channel_name }) => {
          onPress={() => {
             /**
              * Sets the current value of the option to the opposite of what it is currently, effectively toggling it
-             * @arg name: The name of the file's settings to edit. In this case, it's Dislate.
-             * @arg option: The option's setting to change.
+             * @arg {string} name: The name of the file's settings to edit. In this case, it's Dislate.
+             * @arg {string} option: The option's setting to change.
              * @arg {boolean}: The value to set @arg option to.
              */
             getBoolean(name, option, false) ? set(name, option, false) : set(name, option, true)
@@ -140,7 +139,7 @@ export default ({ option, channel_id, channel_name }) => {
         onLongPress={async function() {
             /**
              * Send a debug log with a single option as the list of options, hence a single log
-             * @param option: The option which will be logged.
+             * @uses @param {string} option: The option which will be logged.
              */
             await send_debug_log(
                 [option], 
@@ -162,7 +161,7 @@ export default ({ option, channel_id, channel_name }) => {
                 leading={<FormRow.Icon style={styles.icon} source={
                     /**
                      * Either set the Icon to Tick or Cross depending on whether @arg isActive is true or false
-                     * @param Icons.Settings.Toasts: Part of the icon dependency to display icons for Toasts, can also be used in this scenario.
+                     * @param {string_id} Icons.Settings.Toasts: Part of the icon dependency to display icons for Toasts, can also be used in this scenario.
                      */
                     isActive
                         ?   Icons.Settings.Toasts.Settings
@@ -170,8 +169,8 @@ export default ({ option, channel_id, channel_name }) => {
                     } 
                 />}
                 trailing={() => 
-                <View style={isActive?styles.background_enabled:styles.background_disabled}>
-                    <Text style={[styles.item, isActive?styles.item_enabled:styles.item_disabled]}>
+                <View>
+                    <Text style={[{padding: 10}, isActive ? styles.item_enabled : styles.item_disabled]}>
                         {options[option]}
                     </Text>
                 </View>}

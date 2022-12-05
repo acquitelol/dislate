@@ -11,7 +11,6 @@ import { name, plugin, version } from "../../manifest.json";
 import { Dialog, REST } from "enmity/metro/common";
 import { reload } from "enmity/api/native";
 import { try_callback } from "./try_callback";
-import { FormDivider, FormRow, FormSection, FormSwitch, Text } from 'enmity/components';
 
 /** 
  * An enumerator to choose whether the type of update is a version or a build update.
@@ -27,7 +26,7 @@ enum updateType {
  * Checks if any updates are available.
  * @returns {void void}
  */
-async function check_for_updates() {
+async function check_for_updates(): Promise<void> {
     await try_callback(async function() {
         /** 
          * Gets a valid installation URL to fetch and see if the version is latest
@@ -84,7 +83,7 @@ async function check_for_updates() {
  * @param update_type: The type of update, which is an @arg enum and has 2 states being @arg version and @arg build.
  * @returns {void}
  */
-const show_update_dialog = (url: string, type: string, update_type: updateType) => {
+const show_update_dialog = (url: string, type: string, update_type: updateType): void => {
     const update_boolean: boolean = update_type==updateType.build
     Dialog.show({
         title: "Update found",
@@ -106,7 +105,7 @@ const show_update_dialog = (url: string, type: string, update_type: updateType) 
  * @param types: This is an array of both the latest version and latest build, which are displayed in the @arg Dialog.
  * @returns {void}
  */
-const no_updates = (name: string, types: string[]) => {
+const no_updates = (name: string, types: string[]): void => {
     console.log(`[${name}] Plugin is on the latest update, which is version ${types[0]} and build ${types[1]}`)
     Dialog.show({
         title: "Already on latest",
@@ -122,12 +121,12 @@ const no_updates = (name: string, types: string[]) => {
  * @param {updateType} update_type: The type of update which is being installed, options are @arg version and @arg build updates.
  * @returns {void}
  */
-async function install_plugin(url: string, type: string, update_type: updateType) {
+async function install_plugin(url: string, type: string, update_type: updateType): Promise<void> {
     await try_callback(async function() {
         /**
          * The main function to install a plugin, inside of Enmity. This function is not exported as a member in the Enmity library, so I have to manually import it.
-         * @param url: The link which is used to install the plugin
-         * @param {data}: The returned data which shows the state of the installation.
+         * @param {string} url: The link which is used to install the plugin
+         * @param {string} data: The returned data which shows the state of the installation.
          * @ts-ignore */
         window.enmity.plugins.installPlugin(url, ({ data }) => {
             /**
@@ -153,4 +152,4 @@ async function install_plugin(url: string, type: string, update_type: updateType
     }, [url, type, update_type], name, 'installing plugin at', 'new version available')
 }
 
-export {check_for_updates}
+export { check_for_updates }

@@ -9,6 +9,13 @@ import { name } from '../../manifest.json'
 import { try_callback } from "./try_callback";
 
 /** 
+ * Removes underscores and converts the first character of it to uppercase
+ * @param {string} text: The string to format.
+ * @returns {string}
+ */
+const format_string = (text: any): string => map_item(text.split("_"), (e: string) => e[0].toUpperCase() + e.slice(1)).join(' ')
+
+/** 
  * Convert a badly formatted string into a JSON-parsable format.
  * @param text: The source text
  * @returns {string} formatted_text
@@ -47,14 +54,14 @@ const format_object = (text: string, label: string): string => {
 
 /**
  * Reverses each key and value pair of an object
- * @param object: The object's keys and values to reverse.
+ * @param {object} object: The object's keys and values to reverse.
  * @returns {object}
  */
 const reverse_object = (object: any, label?: any): any => {
     return try_callback(() => {
         /**
          * Maps over the object's keys and returns the value as the key and the key as the value for each iteration in the Array
-         * @param new_object: The new object which will be populated with the keys as the values and the values as the keys
+         * @param {object} new_object: The new object which will be populated with the keys as the values and the values as the keys
          */
         const new_object: any = {}
 
@@ -74,4 +81,4 @@ const reverse_object = (object: any, label?: any): any => {
     }, [object], name, 'reversing object at', label)
 }
 
-export {format_object, reverse_object}
+export { format_string, format_object, reverse_object }

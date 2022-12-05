@@ -8,7 +8,7 @@
  */
 import { Dialog, Native, REST, Storage } from "enmity/metro/common";
 import { name } from '../../manifest.json'
-import { format_object } from "./object";
+import { format_object } from "./format";
 import { store_item } from "./store_item";
 import { try_callback } from "./try_callback";
 
@@ -21,14 +21,14 @@ async function get_device_list(label?: string): Promise<any> {
     return await try_callback(async function(): Promise<{ [key: string]: string | undefined; }> {
         /** 
          * Attempt to find the existing list in storage. If it exists already then just return that.
-         * @param {object?} existing: The possible list of devices from storage. Can be undefined.
+         * @param {object?} existing: The possible list of devices from storage. May be undefined.
          */
         const existing = await Storage.getItem("device_list")
         if (existing) return JSON.parse(existing);
 
         /** 
          * If it reaches this point, this means that it did not find any existing list in Storage.
-         * @param {JSON} res: The data returned from the API
+         * @param {(string) object} res: The data returned from the API
          * @param {string} device_list: The list of devices as text from the API.
          */
         const res = await REST.get(`https://gist.githubusercontent.com/adamawolf/3048717/raw/1ee7e1a93dff9416f6ff34dd36b0ffbad9b956e9/Apple_mobile_device_types.txt`);
@@ -37,6 +37,8 @@ async function get_device_list(label?: string): Promise<any> {
         /** 
          * Formats the list into a JSON { [key: string]: value } pair
          * @param {string} formatted_list: An array of devices in a  format which can be formatted with @arg JSON.parse
+         * 
+         * @uses @param devices_list: The list of devices fetched from Storage.
          */
         const formatted_list = format_object(devices_list, 'fetching device list')
 
@@ -54,7 +56,7 @@ async function get_device_list(label?: string): Promise<any> {
 
         /** 
          * Fetch the list from storage which it just set. You could just return the formatted_list but this method also ensures that Storage is working correctly.
-         * @param device_list: The list of devices fetched from Storage.
+         * @uses @param device_list: The list of devices fetched from Storage.
          */
         return JSON.parse(await Storage.getItem("device_list"))
     }, [], name, "get the device list", label)
@@ -90,7 +92,7 @@ async function get_device_list(label?: string): Promise<any> {
         const device_float: number | undefined = parseFloat(device)
 
         /** 
-         * Opens a dialog showing that device is incompatible and never shows again after you click "I understand" (Can be cleared by clearing the store in settings)
+         * Opens a @arg Dialog showing that device is incompatible and never shows again after you click "I understand" (Can be cleared by clearing the store in settings)
          * @returns {void}
          */
         async function open_incompatible_dialog(): Promise<void> {
@@ -98,8 +100,8 @@ async function get_device_list(label?: string): Promise<any> {
 
             /** 
              * Open a Dialog with content that your iPhone is incompatible
-             * @param {string} devices[Native.DCDDeviceManager.device]: The user's device in a human readable format.
-             * @param {string} name: The name of the plugin from manifest.json
+             * @uses @param {string} devices[Native.DCDDeviceManager.device]: The user's device in a human readable format.
+             * @uses @param {string} name: The name of the plugin from manifest.json
              */
             shown_already ?? Dialog.show({
                 title: "Incompatible iPhone",
@@ -118,18 +120,17 @@ async function get_device_list(label?: string): Promise<any> {
 
         /**
          * Checks if the device is incompatible (lower than 10,6 but not 10,3 as thats iPhone X Global, and also matches 14.6 and 12.8 as they are SE iPhones)
-         * @param {float} device_float: The user's current device formatted as a float to be compared to other floats.
+         * @uses @param {float} device_float: The user's current device formatted as a float to be compared to other floats.
          * 
          * @if {(@arg device_float is less than @arg {10.6}, but is not equal to @arg {10.3 (iPhone X Global)})} -> Open dialog showing that current device is incompatible.
          * @elif {(@arg device_float is @arg {12.8 (iPhone SE 2nd Gen)} or @arg {14.6 (iPhone SE 3rd Gen)})} -> Open dialog showing that current device is incompatible.
          * @else {()} -> Return @arg null.
          */
-        (device_float < 10.6 && device_float != 10.3) ||
-        (device_float == 14.6 || device_float == 12.8)
+        (device_float < 10.6 && device_float != 10.3) || (device_float == 14.6 || device_float == 12.8)
             ? open_incompatible_dialog()
             : null;
     }, [], name, 'checking if device is compatible', label)
 }
 
 
-export {get_device_list, check_if_compatible_device}
+export { get_device_list, check_if_compatible_device }

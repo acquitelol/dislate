@@ -1,11 +1,11 @@
 /**
  * Imports
- * @param {get}: Allows you to @arg retrieve Settings from your plugin file.
+ * @param { get }: Allows you to @arg retrieve Settings from your plugin file.
  * @param getByName: Allows you to fetch modules from in Discord by their name
  * @param React: The main React implementation to do functions such as @arg React.useState or @arg React.useEffect
  * @param name: The name of the plugin from @arg manifest.json. In this case, it's Dislate.
  * @param language_names: The full list of available full @arg {language names}, which can be mapped over and manipulated
- * @param filter_array: Replication/Custom implementation of the @arg Array.prototype.filter method
+ * @param filter_item: Replication/Custom implementation of the @arg Array.prototype.filter method
  * @param map_item: Replication/Custom implementation of the @arg Array.prototype.map method
  * @param Dialog: Custom Dialog implementation to display a floating Information pop-up at the bottom of your screen.
  * @param ExitWrapper: Used as a wrapped to place @arg components inside of a @arg ScrollView and allow closing the page by swiping to the right.
@@ -40,7 +40,7 @@ export default () => {
    const [query, setQuery] = React.useState([])
 
     /**
-     * Populates the list of available @arg languages with a @arg useEffect hook to only set the state on the initial Mount of the component.
+     * Populates the list of available @arg {string[]} languages with a @arg useEffect hook to only set the state on the initial Mount of the component.
      */
     React.useEffect(() => {
         setLanguages(Object.keys(language_names))
@@ -58,7 +58,7 @@ export default () => {
          * The main part of the component, showing available options to toggle.
          * This is wrapped in an @arg ExitWrapper component to allow the user to close out the page by swiping to the right.
          */}
-        <ExitWrapper Component={<>
+        <ExitWrapper component={<>
             <View style={{marginBottom: 15}}>
                 {/**
                  * Renders a @arg LanguageItem component for each of the available languages. If the page opened was the language to translate to, then the "Detect" option will not be rendered at all.
@@ -77,9 +77,9 @@ export default () => {
          * Renders a custom Dialog implementation to display a tip to help you navigate the page, and informs you that the current selected language has a tick next to it.
          */}
         <Dialog 
-                label="Important" 
-                content={`You can either press or long-press on an item to select it as the language to translate ${get(name, "DislateLangFilter")?'to':'from'}. Your current selected language has a ✓ next to it.\n\nTo hide this dialog, press on it.`} 
-                type={'floating'}
+            label="Important" 
+            content={`You can either press or long-press on an item to select it as the language to translate ${get(name, "DislateLangFilter")?'to':'from'}. Your current selected language has a ✓ next to it.\n\nTo hide this dialog, press on it.`} 
+            type={'floating'}
         />
     </>;
 };

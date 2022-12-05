@@ -10,8 +10,8 @@ const try_callback = (callback: any, args: any, name: string, function_label: st
     try {
         /** 
          * Execute the callback with @arg args spread as arguments for it.
-         * @param callback: The function to call
-         * @param args: The arguments for the function
+         * @uses @param callback: The function to call
+         * @uses @param {any} args: The arguments for the function
          * 
          * @returns {callback(...args)}
          */
@@ -19,8 +19,8 @@ const try_callback = (callback: any, args: any, name: string, function_label: st
     } catch (err) {
         /** 
          * Return undefined and warn in console that an error happened
-         * @param {string} name: The name provided from manifest.json
-         * @param {string} label: THe label provided from when the function was called 
+         * @uses @param {string} name: The name provided from manifest.json
+         * @uses @param {string} label: THe label provided from when the function was called 
          * 
          * @returns {undefined}
          */
