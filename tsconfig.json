@@ -1,0 +1,11 @@
+{
+   "compilerOptions": {
+      "target": "ES2019",
+      "module": "es6",
+      "strict": false,
+      "resolveJsonModule": true,
+      "esModuleInterop": true,
+      "jsx": "react-native",
+      "moduleResolution": "node"
+   }
+}

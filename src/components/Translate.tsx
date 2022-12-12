@@ -7,7 +7,6 @@
  * @param Toasts: Function to open a small notification at the top of your discord.
  * @param { name }: The name from the plugin from @arg manifest.json.
  * @param { find_item, format_string, Icons, map_item, translate_string, filter_item }: Utility Functions that Dislate uses.
- * @param { bulk, filters }: Used to import modules in bulk
  * @param Info: The main "@arg debug" page to choose custom parameters to send the @arg debug_info command
  * @param Page: The @arg base / @arg builder page used to render custom @arg Pages out. Contains a simple Close button, and requires additional @arg TSX to render more information.
  * @param send_debug_log: Allows you to send a debug log.

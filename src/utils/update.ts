@@ -48,7 +48,7 @@ async function check_for_updates(): Promise<void> {
          * @param {string} external_build: The current latest build externally. Example: @arg {patch-1.2.8}. This would be then shortened into a simpler string: @arg {1.2.8}
          */
         const external_version = content.match(/\d\.\d\.\d+/g)[0];
-        const external_build = content.match(/patch\-\d\.\d\.\d+/g)[0];
+        const external_build = content.match(/patch-\d\.\d\.\d+/g)[0];
 
         /** 
          * Returns early if it cannot find either of the versions from online and show the no_update dialog
@@ -77,17 +77,16 @@ async function check_for_updates(): Promise<void> {
 
 /** 
  * Shows a dialog that a new update is a available
- * @param url: The url to update to the newer version
- * @param version: The newer version to update to (may be @arg undefined)
- * @param build: The newer build to update to (may be @arg undefined)
- * @param update_type: The type of update, which is an @arg enum and has 2 states being @arg version and @arg build.
+ * @param {string} url: The url to update to the newer version
+ * @param {string} update_label: The new version/build label to display in the dialogs.
+ * @param {enum} update_type: The type of update, which is an @arg enum and has 2 states being @arg version and @arg build.
  * @returns {void}
  */
-const show_update_dialog = (url: string, type: string, update_type: updateType): void => {
+const show_update_dialog = (url: string, update_label: string, update_type: updateType): void => {
     const update_boolean: boolean = update_type==updateType.build
     Dialog.show({
         title: "Update found",
-        body: `A newer ${update_boolean ? "build" : "version"} is available for ${name}. ${update_boolean ? `\nThe version will remain at ${version}, but the build will update to ${type}.` : ""}\nWould you like to install ${update_boolean ? `build` : `version`} \`${type}\` now?`,
+        body: `A newer ${update_boolean ? "build" : "version"} is available for ${name}. ${update_boolean ? `\nThe version will remain at ${version}, but the build will update to ${update_label}.` : ""}\nWould you like to install ${update_boolean ? `build` : `version`} \`${update_label}\` now?`,
         confirmText: "Update",
         cancelText: "Not now",
         
@@ -95,7 +94,7 @@ const show_update_dialog = (url: string, type: string, update_type: updateType):
          * Run the plugin install function.
          * @returns {void}
          */
-        onConfirm: (): Promise<void> => install_plugin(url, type, update_type),
+        onConfirm: (): Promise<void> => install_plugin(url, update_label, update_type),
     });
 }
 

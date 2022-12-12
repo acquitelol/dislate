@@ -304,7 +304,7 @@ const Dislate: Plugin = {
                               if (!original_message?.content && !message[0]?.message?.content) { 
                                  console.log(`[${manifest.name}] No message content.`)
                                  return res;
-                              };
+                              }
                               
                               /** 
                                * Gets useful data in this specific lexical scope
@@ -339,7 +339,7 @@ const Dislate: Plugin = {
                               }, setTranslateType)
 
                               const main_element = <FormRow
-                                 /** 
+                                 /**
                                   * This is a TSX/JSX Element, and uses props in this way.
                                   * @param {string} key: This is used to prevent duplicate rendering of the button. Set with @arg external_plugin_list.dislate.
                                   * @param {string} label: The label of the button. This is the text that will actually appear on as the button's Text. Shows Translate or Revert depending on whether the current type is @arg buttonType.Translate or not.

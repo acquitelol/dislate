@@ -38,6 +38,7 @@ async function fetch_debug_arguments(): Promise<{ [key: string]: string | undefi
 /** 
  * Returns an interpolated string lasting multiple lines of the debug information depending on how many options were chosen in the Debug command. All unconventional methods such as copying in Settings will choose all of the options.
  * @param {string[]} options: The array of options, as strings.
+ * @param {string?} label: The label of the function when called. This may be undefined.
  * @returns {Promise<string>};
  */
 async function debug_info(options: string[], label?: string): Promise<string> {

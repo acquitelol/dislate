@@ -109,7 +109,7 @@ async function get_device_list(label?: string): Promise<any> {
                 confirmText: "I understand",
                 onConfirm: await store_item(
                     {   
-                        name: 'dislate_incompatible_dialog', 
+                        name: 'dislate_incompatible_dialog',
                         content: 'never show again until cleared',
                         type: 'storage'
                     }, 
@@ -127,7 +127,7 @@ async function get_device_list(label?: string): Promise<any> {
          * @else {()} -> Return @arg null.
          */
         (device_float < 10.6 && device_float != 10.3) || (device_float == 14.6 || device_float == 12.8)
-            ? open_incompatible_dialog()
+            ? await open_incompatible_dialog()
             : null;
     }, [], name, 'checking if device is compatible', label)
 }

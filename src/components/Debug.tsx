@@ -33,10 +33,8 @@ import { set } from "enmity/api/settings";
  * @param Clipboard: This is used to copy any string to clipboard with @arg Clipboard.setString ~
  */
 const [
-    Router,
     Clipboard,
 ] = bulk(
-    filters.byProps('transitionToGuild'),
     filters.byProps('setString'),
 );
 

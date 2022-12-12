@@ -41,7 +41,8 @@ const shadow: Shadow = {
  /** 
   * Open a toast with the text provided saying it has been copied to clipboard or as a tooltip
   * @param {string} source: The text provided to send inside of the toast
-  * 
+  * @param {'clipboard | 'tooltip'} type: The type of toast to show.
+  *
   * @uses @param {string_id} Icons.Clipboard
   * @uses @param {string_id} Icons.Settings.Initial
   * @returns {void}
@@ -57,6 +58,7 @@ const toast = (source: string, type: 'clipboard' | 'tooltip') => Toasts.open({
  * @param {string} light: The light color
  * @param {string} dark: The dark color
  * @param {number?} boundary: The maximum boundary that the color can reach before choosing dark mode.
+ * @param {string?} label: The label of the function when called. May be undefined.
  * @returns {string color}
  */
 const filter_color = (color: string, light: string, dark: string, boundary: number = 186, label?: string): string => {

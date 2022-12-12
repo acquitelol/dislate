@@ -18,9 +18,10 @@ const format_string = (text: any): string => map_item(text.split("_"), (e: strin
 /** 
  * Convert a badly formatted string into a JSON-parsable format.
  * @param text: The source text
+ * @param {string?} label: The label of the function when called. May be undefined.
  * @returns {string} formatted_text
  */
-const format_object = (text: string, label: string): string => {
+const format_object = (text: string, label?: string): string => {
     return try_callback(() => {
         /** 
          * Convert the string into a key value pair. For example {iPhone12,8 : iPhone SE 2nd Gen} -> {"iPhone12,8":" iPhone SE 2nd Gen"}
@@ -55,6 +56,7 @@ const format_object = (text: string, label: string): string => {
 /**
  * Reverses each key and value pair of an object
  * @param {object} object: The object's keys and values to reverse.
+ * @param {string?} label: The label of the function when called. May be undefined.
  * @returns {object}
  */
 const reverse_object = (object: any, label?: any): any => {
