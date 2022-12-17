@@ -309,7 +309,7 @@ export default ({ settings, manifest: { name, version, plugin, authors, release 
                         <FormRow
                             label='Initialisation Toasts'
                             leading={<FormRow.Icon style={styles.icon} source={Icons.Settings.Initial} />}
-                            subLabel={`Toogle initialisation toasts to display loading state of ${name}.`}
+                            subLabel={`Toggle initialisation toasts to display loading state of ${name}.`}
                             onLongPress={()=>toast(`When Enmity is first started, show toasts based on ${name}'s current state (starting, failed, retrying, etc)`, 'tooltip')}
                             trailing={
                                 <FormSwitch

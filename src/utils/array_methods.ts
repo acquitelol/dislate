@@ -150,7 +150,7 @@ const for_item = (array: any[], callback: any, label?: string): void => {
  * @param {any[]} array: The starting array
  * @param {any} callback: The function to run
  * @param {string} label: Optional label to descibe what the function is doing
- * @returns {new_array<array>}
+ * @returns {<array>}
  */
 const map_item = (array: any[], callback: any, label?: string): any[] => {
     return try_callback(() => {

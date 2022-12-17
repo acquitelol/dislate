@@ -13,7 +13,7 @@
    "plugin": {
       "download": "https://raw.githubusercontent.com/acquitelol/dislate/main/dist/Dislate.js",
       "repo": "https://github.com/acquitelol/dislate",
-      "build": "patch-1.6.8"
+      "build": "patch-1.6.9"
    },
    "color": "#ff1f84"
 }
