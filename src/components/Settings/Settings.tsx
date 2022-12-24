@@ -21,12 +21,12 @@ import { get, set } from 'enmity/api/settings';
 import { FormDivider, FormRow, FormSwitch, Text, View } from 'enmity/components';
 import { bulk, filters } from 'enmity/metro';
 import { React, Constants, Navigation, Storage, StyleSheet, Toasts } from 'enmity/metro/common';
-import { toast, debug_info, fetch_debug_arguments, format_string, for_item, Icons, shadow, check_for_updates } from '../utils';
+import { toast, debug_info, fetch_debug_arguments, format_string, for_item, Icons, shadow, check_for_updates } from '../../utils';
 import Credits from './Credits';
-import ExitWrapper from './ExitWrapper';
-import SectionWrapper from './SectionWrapper'
-import Languages from './Languages';
-import Page from './Page';
+import ExitWrapper from '../Wrappers/ExitWrapper';
+import SectionWrapper from '../Wrappers/SectionWrapper'
+import Languages from '../Pages/Languages/Languages';
+import Page from '../Pages/Page';
 
 /** 
  * Main modules being fetched by the plugin to open links externally and copy text to clipboard

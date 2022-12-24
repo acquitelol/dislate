@@ -7,12 +7,12 @@
  * @param {function} push_item: Pushes to an array.
  * @param try_callback: Function to wrap another function in a try-catch
  */
-import { name, release, version, plugin } from '../../manifest.json'
-import { Messages, Native, Navigation, Toasts } from 'enmity/metro/common'
-import { get_device_list } from './devices'
-import { for_item, insert_item } from './array_methods'
-import { try_callback } from './try_callback'
-import { Icons } from './icons'
+import { name, release, version, plugin } from '../../manifest.json';
+import { Messages, Native, Navigation, Toasts } from 'enmity/metro/common';
+import { get_device_list } from './devices';
+import { for_item, insert_item } from './array_methods';
+import { try_callback } from './try_callback';
+import { Icons } from './icons';
 
 /** 
  * Fetches the debug arguments. This is used in a lot of functions, and adding anything here will change it everywhere.

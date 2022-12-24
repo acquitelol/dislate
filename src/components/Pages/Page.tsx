@@ -9,7 +9,7 @@
  * @param { Button, View }: Basic React Native elements used to create Components.
  */
 import { React, Navigation, NavigationNative, NavigationStack, StyleSheet, Constants } from 'enmity/metro/common';
-import { Text, View } from 'enmity/components';
+import { TouchableOpacity, Text, View } from 'enmity/components';
 
 /**
  * Initialize a new @arg {Page Stack Navigator}
@@ -54,16 +54,24 @@ export default ({
       elevation: 0,
     },
     /**
-     * @param {object} close: The main styling for the Close Text Component.
+     * @param {object} text: The main styling for the Close Button's Text Component.
      */
-    close: {
+    text: {
       color: Constants.ThemeColorMap.HEADER_PRIMARY,
       fontFamily: Constants.Fonts.PRIMARY_NORMAL,
       fontSize: 16,
-      marginLeft: 20,
+      marginLeft: 16,
       backgroundColor: 'transparent'
     }
   });
+
+const Button = ({onPress, title}) => {
+      return (
+          <TouchableOpacity onPress={onPress}>
+              <Text style={styles.text}>{title}</Text>
+          </TouchableOpacity>
+      );
+}
 
   /**
    * Opens a new page with the component provided inside of it.
@@ -93,16 +101,12 @@ export default ({
             color: 'white',
             fontFamily: Constants.Fonts.PRIMARY_NORMAL
           },
-          headerLeft: () => (<Text
-            style={styles.close}
+          headerLeft: () => (<Button
+            title={"Close"}
             onPress={(): void => {
-              /**
-               * @param {callback} Navigation.pop: Pops an item from the stack on the Navigation, effectively closing the latest page.
-               */
               Navigation.pop()
-          }}>
-            Close
-          </Text>),
+            }}
+          />),
           ...NavigationStack.TransitionPresets.ModalSlideFromBottomIOS
         }}
       />

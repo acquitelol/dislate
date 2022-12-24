@@ -13,7 +13,7 @@
 import { React, Constants, StyleSheet } from 'enmity/metro/common';
 import { bulk, filters } from 'enmity/metro';
 import { TouchableOpacity, View, Image, Text} from 'enmity/components';
-import { toast, debug_info, fetch_debug_arguments, map_item, shadow } from '../utils';
+import { toast, debug_info, fetch_debug_arguments, map_item, shadow } from '../../utils';
 
 /** 
  * This is the main 'Animated' component of React Native, but for some reason its not exported in Enmity's dependencies so I'm importing it manually.
@@ -29,10 +29,10 @@ const Animated = window.enmity.modules.common.Components.General.Animated
 const [
     Router,
     Clipboard,
- ] = bulk(
+] = bulk(
     filters.byProps('transitionToGuild'),
     filters.byProps('setString'),
- );
+);
 
  /** 
   * Main credits component.

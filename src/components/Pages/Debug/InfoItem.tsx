@@ -12,8 +12,8 @@
 import { getBoolean, set } from "enmity/api/settings"
 import { FormRow, Text, View, TouchableOpacity } from "enmity/components"
 import { Constants, React, StyleSheet } from "enmity/metro/common"
-import { Icons, send_debug_log, fetch_debug_arguments } from "../utils"
-import { name } from '../../manifest.json';
+import { Icons, send_debug_log, fetch_debug_arguments } from "../../../utils"
+import { name } from '../../../../manifest.json';
 
 /** 
  * This is the main 'Animated' component of React Native, but for some reason its not exported in Enmity's dependencies so I'm importing it manually.

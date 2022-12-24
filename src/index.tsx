@@ -31,9 +31,7 @@ import {
    check_if_compatible_device,
    filter_item
 } from './utils';
-import { translate_command } from './components/Translate'
-import { debug_command } from './components/Debug'
-import Settings from './components/Settings';
+import { DebugCommand, TranslateCommand, Settings } from './components/'
 import lang_names from '../modified/translate/src/languages/names';
 
 /**  
@@ -93,8 +91,8 @@ const Dislate: Plugin = {
             * @param {string} Repo: Open the repo of Dislate externally.
        */
       this.commands = [
-         translate_command,
-         debug_command
+         DebugCommand,
+         TranslateCommand
       ];
 
       /** 

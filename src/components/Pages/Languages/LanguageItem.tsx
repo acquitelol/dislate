@@ -15,10 +15,10 @@
  import { get, set } from 'enmity/api/settings';
  import { FormRow, TouchableOpacity } from 'enmity/components';
  import { Constants, Navigation, React, Toasts, StyleSheet } from 'enmity/metro/common';
- import { name } from '../../manifest.json';
- import language_names from '../../modified/translate/src/languages/names';
- import language_names_short from '../../modified/translate/src/languages/iso2';
- import { format_string, Icons, reverse_object } from '../utils';
+ import { name } from '../../../../manifest.json';
+ import language_names from '../../../../modified/translate/src/languages/names';
+ import language_names_short from '../../../../modified/translate/src/languages/iso2';
+ import { format_string, Icons, reverse_object } from '../../../utils';
 
  
  /** 

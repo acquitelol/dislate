@@ -9,8 +9,8 @@
 import { Dialog, Native, REST, Storage } from "enmity/metro/common";
 import { name } from '../../manifest.json'
 import { format_object } from "./format";
-import { store_item } from "./store_item";
-import { try_callback } from "./try_callback";
+import { store_item } from './store_item';
+import { try_callback } from './try_callback';
 
 /** 
  * Fetches the list of clear device names to be used in Debug Information.

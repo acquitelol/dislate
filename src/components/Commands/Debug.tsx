@@ -13,18 +13,17 @@
  * @param send_debug_log: Allows you to send a debug log.
  */
 import {
-  Command,
   ApplicationCommandType,
   ApplicationCommandInputType,
   ApplicationCommandOptionType,
 } from "enmity/api/commands";
 import { Dialog, Navigation } from 'enmity/metro/common'
 import { React, Toasts, Storage } from 'enmity/metro/common';
-import { name, plugin } from '../../manifest.json';
-import { format_string, toast, Icons, fetch_debug_arguments, map_item, send_debug_log, for_item, find_item } from '../utils'
+import { name, plugin } from '../../../manifest.json';
+import { format_string, toast, Icons, fetch_debug_arguments, map_item, send_debug_log, for_item, find_item } from '../../utils'
 import { bulk, filters } from "enmity/metro";
-import Info from "./Info";
-import Page from "./Page";
+import Info from "../Pages/Debug/Info";
+import Page from "../Pages/Page";
 import { set } from "enmity/api/settings";
 
 /** 
@@ -178,7 +177,7 @@ const command_options: any[] = map_item(
  * 
  * @returns {void{}}
  */
-const debug_command: Command = {
+export default {
     /**
      * @param {string?} id?: The ID of the command. This is required for identifying the command.
      */
@@ -259,5 +258,3 @@ const debug_command: Command = {
         return {};
     },
 };
-
-export { debug_command };

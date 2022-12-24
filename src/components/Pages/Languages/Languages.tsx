@@ -14,11 +14,11 @@ import { get } from 'enmity/api/settings';
 import { View } from 'enmity/components';
 import { getByName } from 'enmity/metro';
 import { React } from 'enmity/metro/common';
-import { name } from '../../manifest.json';
-import language_names from '../../modified/translate/src/languages/names';
-import { filter_item, map_item } from '../utils';
-import Dialog from './Dialog';
-import ExitWrapper from './ExitWrapper';
+import { name } from '../../../../manifest.json';
+import language_names from '../../../../modified/translate/src/languages/names';
+import { filter_item, map_item } from '../../../utils';
+import Dialog from '../../Modals/Dialog';
+import ExitWrapper from '../../Wrappers/ExitWrapper';
 import LanguageItem from './LanguageItem';
 
 /**

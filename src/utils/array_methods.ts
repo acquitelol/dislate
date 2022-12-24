@@ -3,8 +3,8 @@
  * @param {string} name: The name from manifest.json.
  * @param try_callback: Function to wrap another function in a try-catch
  */
-import { name } from '../../manifest.json'
-import { try_callback } from './try_callback'
+import { name } from '../../manifest.json';
+import { try_callback } from './try_callback';
 
 /** 
  * Finds an item in an array

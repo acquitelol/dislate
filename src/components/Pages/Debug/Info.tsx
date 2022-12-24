@@ -16,12 +16,12 @@ import { getBoolean } from 'enmity/api/settings';
 import { FormDivider, Text, TouchableOpacity, View } from 'enmity/components';
 import { getByName } from 'enmity/metro';
 import { Constants, React, StyleSheet } from 'enmity/metro/common';
-import { name } from '../../manifest.json';
-import { fetch_debug_arguments, filter_item, filter_color, map_item, send_debug_log, shadow } from '../utils';
+import { name } from '../../../../manifest.json';
+import { fetch_debug_arguments, filter_item, filter_color, map_item, send_debug_log, shadow } from '../../../utils';
 import InfoItem from './InfoItem';
-import Dialog from './Dialog';
-import ExitWrapper from './ExitWrapper';
-import SectionWrapper from './SectionWrapper';
+import Dialog from '../../Modals/Dialog';
+import ExitWrapper from '../../Wrappers/ExitWrapper';
+import SectionWrapper from '../../Wrappers/SectionWrapper';
 
 /**
  * The main Search module, used to input text and store it. This is easy to make from scratch, but because Discord already made one I might aswell use it.

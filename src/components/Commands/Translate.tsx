@@ -14,13 +14,14 @@
 import { sendReply } from "enmity/api/clyde";
 import {
   ApplicationCommandInputType,
-  ApplicationCommandOptionType, ApplicationCommandType, Command
+  ApplicationCommandOptionType, 
+  ApplicationCommandType
 } from "enmity/api/commands";
 import { get } from 'enmity/api/settings';
 import { React, Dialog, Messages, Toasts } from 'enmity/metro/common';
-import { name } from '../../manifest.json';
-import lang_names from '../../modified/translate/src/languages/names';
-import { find_item, format_string, Icons, map_item, translate_string, filter_item } from "../utils";
+import { name } from '../../../manifest.json';
+import lang_names from '../../../modified/translate/src/languages/names';
+import { find_item, format_string, Icons, map_item, translate_string, filter_item } from "../../utils";
 
 /**
  * Creates a new array with the options of languages in a form which is required to render options in Enmity commands.
@@ -45,7 +46,7 @@ const lang_options: any[] = map_item(
     * Allows you to send a message in the current channel with any language (supported by the API).
     * Opens a confirmation dialog before sending the command to ensure that you are sending the correct message. 
  */
-const translate_command: Command = {
+export default {
   /**
    * @param {string?} id?: The id of the command to be identifiable.
    */
@@ -241,5 +242,3 @@ const translate_command: Command = {
     return {};
   },
 };
-
-export { translate_command };
