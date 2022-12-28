@@ -7,12 +7,12 @@
  * @param StyleSheet: Used to create stylesheets which can be used for styling React Native elements.
  * @param Icons: Used for rendering modules which might be used throughout multiple files, and easier to reference.
  * @param name: The name of the plugin, from @arg manifest.json
- * @param send_debug_log: Allows you to send a debug log.
+ * @param Debug: Main class to create Debug Arguments and send Debug Logs.
  */
 import { getBoolean, set } from "enmity/api/settings"
 import { FormRow, Text, View, TouchableOpacity } from "enmity/components"
 import { Constants, React, StyleSheet } from "enmity/metro/common"
-import { Icons, send_debug_log, fetch_debug_arguments } from "../../../utils"
+import { Icons, Debug } from "../../../utils"
 import { name } from '../../../../manifest.json';
 
 /** 
@@ -25,15 +25,15 @@ const Animated = window.enmity.modules.common.Components.General.Animated
 /**
  * This is a component which is part of the Info page which is part of the Debug command.
  * @param {string} option: The current option, as a @arg string, passed from the @arg Info page
- * @param {string} channel: The @arg {Channel ID}, This is passed as a prop to the component for the "Long Press to send a single item" functionality.
+ * @param {string} channelId: The @arg {Channel ID}, This is passed as a prop to the component for the "Long Press to send a single item" functionality.
+ * @param {string} channelName: The @arg {Channel Name}, This is the name of the channel where the message will be sent.
  */
-export default ({ option, channel_id, channel_name }) => {
+export default ({ option, channelId, channelName, debugOptions }) => {
     /**
      * Create a new state for whether the Option is currently active, by default, this is false.
      * @param {Getter, Setter}: Allows you to set and re-render the component to determine whether the option is active or inactive.
      */
     const [isActive, setIsActive] = React.useState<boolean>(getBoolean(name, option, false))
-    const [options, setOptions] = React.useState<string[]>([])
 
     /**
      * Create a stylesheet for the icon to force it to be @arg INTERACTIVE_NORMAL
@@ -47,63 +47,56 @@ export default ({ option, channel_id, channel_name }) => {
             color: Constants.ThemeColorMap.INTERACTIVE_NORMAL
         },
         /**
-         * @param item_disabled: The main coloring for an item which has been disabled by the user.
+         * @param itemDisabled: The main coloring for an item which has been disabled by the user.
          */
-        item_disabled: {
+        itemDisabled: {
             color: Constants.ThemeColorMap.TEXT_MUTED,
         },
         /**
-         * @param item_enabled: The main coloring for an item which has been enabled by the user.
+         * @param itemEnabled: The main coloring for an item which has been enabled by the user.
          */
-        item_enabled: {
+        itemEnabled: {
             color: Constants.ThemeColorMap.INTERACTIVE_NORMAL,
         },
     })
 
-    /**
-     * Use an asynchronous call to fetch the available debug arguments, on the first mount of the component to not cause any refetching on re-renders.
-     */
-     React.useEffect(async function() {
-        setOptions(await fetch_debug_arguments())
-    }, [])
-
-    const scale_values = [1, 1.01]
+    const scaleValues = [1, 1.01]
 
     /**
      * Use React to create a new Ref with @arg Animated
-     * @param {React.useRef} animated_button_scale
+     * @param {React.useRef} animatedButtonScale
      */
-     const animated_button_scale = React.useRef(new Animated.Value(scale_values[getBoolean(name, option, false) ? 1 : 0])).current
+     const animatedButtonScale = React.useRef(new Animated.Value(scaleValues[getBoolean(name, option, false) ? 1 : 0])).current
 
-     /**
-      * Move @param animated_button_scale to @arg {1.1}, in @arg {250ms} with the @arg spring easing type.
+    /**
+      * Move @param animatedButtonScale to @arg {1.1}, in @arg {250ms} with the @arg spring easing type.
       * @returns {void}
       */
-     const onPressIn = (): void => Animated.spring(animated_button_scale, {
-             toValue: scale_values[1],
-             duration: 250,
-             useNativeDriver: true,
-     }).start();
+    const onPressIn = (): void => Animated.spring(animatedButtonScale, {
+        toValue: scaleValues[1],
+        duration: 250,
+        useNativeDriver: true,
+    }).start();
  
-     /**
-      * Move @param animated_button_scale back to @arg {1}, in @arg {250ms} with the @arg spring easing type.
+    /**
+      * Move @param animatedButtonScale back to @arg {1}, in @arg {250ms} with the @arg spring easing type.
       * @returns {void}
       */
-     const onPressOut = (): void => Animated.spring(animated_button_scale, {
-             toValue: scale_values[0],
-             duration: 250,
-             useNativeDriver: true,
-     }).start();
+    const onPressOut = (): void => Animated.spring(animatedButtonScale, {
+        toValue: scaleValues[0],
+        duration: 250,
+        useNativeDriver: true,
+    }).start();
 
     
-     /** 
+    /** 
      * The main animated style, which is going to be modified by the Animated property.
-     * @param {object{transform[]}} animated_scale_style: The main scale style applied to the element which has the scale.
+     * @param {object{transform[]}} animatedScaleStyle: The main scale style applied to the element which has the scale.
      */
-    const animated_scale_style = {
+    const animatedScaleStyle = {
         transform: [
             {
-                scale: animated_button_scale
+                scale: animatedButtonScale
             }
         ]
     }
@@ -141,9 +134,9 @@ export default ({ option, channel_id, channel_name }) => {
              * Send a debug log with a single option as the list of options, hence a single log
              * @uses @param {string} option: The option which will be logged.
              */
-            await send_debug_log(
+            await Debug.sendDebugLog(
                 [option], 
-                {channel_id: channel_id, channel_name: channel_name}, 
+                { channelId, channelName }, 
                 'single', 
                 'single log in DebugItem Component.'
             )
@@ -154,14 +147,14 @@ export default ({ option, channel_id, channel_name }) => {
         {/**
          * The main animated view, which will be affected by the Animation variable.
          */}
-        <Animated.View style={[animated_scale_style]}>
+        <Animated.View style={[animatedScaleStyle]}>
             <FormRow
                 key={option}
                 label={option}
                 leading={<FormRow.Icon style={styles.icon} source={
                     /**
                      * Either set the Icon to Tick or Cross depending on whether @arg isActive is true or false
-                     * @param {string_id} Icons.Settings.Toasts: Part of the icon dependency to display icons for Toasts, can also be used in this scenario.
+                     * @param {stringId} Icons.Settings.Toasts: Part of the icon dependency to display icons for Toasts, can also be used in this scenario.
                      */
                     isActive
                         ?   Icons.Settings.Toasts.Settings
@@ -170,8 +163,8 @@ export default ({ option, channel_id, channel_name }) => {
                 />}
                 trailing={() => 
                 <View>
-                    <Text style={[{padding: 10}, isActive ? styles.item_enabled : styles.item_disabled]}>
-                        {options[option]}
+                    <Text style={[{padding: 10}, isActive ? styles.itemEnabled : styles.itemDisabled]}>
+                        {debugOptions[option]}
                     </Text>
                 </View>}
             />

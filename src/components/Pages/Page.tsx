@@ -66,11 +66,11 @@ export default ({
   });
 
 const Button = ({onPress, title}) => {
-      return (
-          <TouchableOpacity onPress={onPress}>
-              <Text style={styles.text}>{title}</Text>
-          </TouchableOpacity>
-      );
+  return (
+      <TouchableOpacity onPress={onPress}>
+          <Text style={styles.text}>{title}</Text>
+      </TouchableOpacity>
+  );
 }
 
   /**

@@ -17,7 +17,7 @@ import { FormDivider, Text, TouchableOpacity, View } from 'enmity/components';
 import { getByName } from 'enmity/metro';
 import { Constants, React, StyleSheet } from 'enmity/metro/common';
 import { name } from '../../../../manifest.json';
-import { fetch_debug_arguments, filter_item, filter_color, map_item, send_debug_log, shadow } from '../../../utils';
+import { ArrayImplementations as ArrayOps, Miscellaneous, Debug } from '../../../utils';
 import InfoItem from './InfoItem';
 import Dialog from '../../Modals/Dialog';
 import ExitWrapper from '../../Wrappers/ExitWrapper';
@@ -31,10 +31,10 @@ const Search = getByName('StaticSearchBarContainer');
 
 /**
  * Main Info Page Component
- * @param {string} channel_id: The main channel ID, passed as a string from the Debug command/component.
- * @param {string} channel_name: The name of the channel, used to display in the toast if the message is sent.
+ * @param {string} channelId: The main channel ID, passed as a string from the Debug command/component.
+ * @param {string} channelName: The name of the channel, used to display in the toast if the message is sent.
  */
-export default ({ channel_id, channel_name }) => {
+export default ({ channelId, channelName }) => {
     /**
      * Main states used throughout the component to allow storing options and the possible search query.
      * @param {Getter, Setter} options: The list of available options, populated by the @arg React.useEffect
@@ -45,10 +45,10 @@ export default ({ channel_id, channel_name }) => {
 
     /**
      * Use an asynchronous call to fetch the available debug arguments, on the first mount of the component to not cause any refetching on re-renders.
-     * @param {returns string[]} fetch_debug_arguments: Gets a list of debug arguments.
+     * @param {returns string[]} fetchDebugArguments: Gets a list of debug arguments.
      */
     React.useEffect(async function() {
-        setOptions(Object.keys(await fetch_debug_arguments()))
+        setOptions(Object.keys(await Debug.fetchDebugArguments()))
     }, [])
 
     /**
@@ -73,11 +73,11 @@ export default ({ channel_id, channel_name }) => {
         /**
          * @param {object} text: The main styling for the text component
          * 
-         * @func filter_color: Takes an @arg input color and a @arg light and @arg dark color, and calculates whether the color should be the light color or dark color based on the @arg boundary provided as a multiplier (0.8 -> 80% contrast).
+         * @func filterColor: Takes an @arg input color and a @arg light and @arg dark color, and calculates whether the color should be the light color or dark color based on the @arg boundary provided as a multiplier (0.8 -> 80% contrast).
                 * @arg Note: The boundary value provided for this function is based on theory, and not 50%, as that will cause weird side effects.
          */
         text: {
-            color: filter_color(Constants.ThemeColorMap.HEADER_PRIMARY[0], '#f2f2f2', "#121212", 0.8, 'buttons in debug info menu'),
+            color: Miscellaneous.filterColor(Constants.ThemeColorMap.HEADER_PRIMARY[0], '#f2f2f2', "#121212", 0.8, 'buttons in debug info menu'),
             textAlign: 'center',
             paddingLeft : 10,
             paddingRight : 10,
@@ -98,7 +98,7 @@ export default ({ channel_id, channel_name }) => {
             marginLeft: '5%',
             borderRadius: 10,
             backgroundColor: Constants.ThemeColorMap.BACKGROUND_MOBILE_SECONDARY,
-            ...shadow
+            ...Miscellaneous.shadow
         }
     })
     
@@ -134,16 +134,16 @@ export default ({ channel_id, channel_name }) => {
                      * @uses @param {string} query: Any possible text that has been typed in the search box.
                      * @uses @param {TSX} DebugItem: Component to render toggleable options, with independent state.
                      */}
-                    {map_item(
-                        filter_item(options, (option: string) => option.toLowerCase().includes(query)), 
-                        (option: string) => <InfoItem option={option} channel_id={channel_id} channel_name={channel_name} />,
+                    {ArrayOps.mapItem(
+                        ArrayOps.filterItem(options, (option: string) => option.toLowerCase().includes(query)), 
+                        (option: string) => <InfoItem option={option} channelId={channelId} channelName={channelName} debugOptions={options} />,
                         'list of debug information options'
                     )}
                     <FormDivider />
                 </View>
             </>} />
             {/**
-             * Button to send the Full Debug log, hence the text @arg Send_All
+             * Button to send the Full Debug log, hence the text @arg {Send All}
              */}
             <TouchableOpacity
                 style={styles.button}
@@ -152,9 +152,9 @@ export default ({ channel_id, channel_name }) => {
                      * Send a full log in the current channel.
                      * @uses @param {string[]} options: List of available debug options, all are passed to the debug log as this is sending @arg all the options
                      */
-                    await send_debug_log(
+                    await Debug.sendDebugLog(
                         options, 
-                        {channel_id: channel_id, channel_name: channel_name}, 
+                        { channelId, channelName }, 
                         'full', 
                         'full log in Info Component.'
                     )
@@ -162,23 +162,23 @@ export default ({ channel_id, channel_name }) => {
                 <Text style={[styles.text, styles.buttonText]}>Send All</Text>
             </TouchableOpacity>
             {/**
-             * Button to send the Partial Debug log, hence the text @arg Send_Message instead.
+             * Button to send the Partial Debug log, hence the text @arg {Send Message} instead.
              */}
             <TouchableOpacity
                 style={styles.button}
                 onPress={async function() {
                     /**
-                     * @param {string[]} debug_options: Filtered list of options which only includes ones that the user has chosen to be true.
+                     * @param {string[]} debugOptions: Filtered list of options which only includes ones that the user has chosen to be true.
                      */
-                    const debug_options = filter_item(options, (item: string) => getBoolean(name, item, false), 'filtering chosen debug options')
+                    const debugOptions = ArrayOps.filterItem(options, (item: string) => getBoolean(name, item, false), 'filtering chosen debug options')
 
                     /**
                      * Send a partial debug log with the filtered list in the current channel.
-                     * @uses @param {string[]} debug_options: Filtered list of debug options.
+                     * @uses @param {string[]} debugOptions: Filtered list of debug options.
                      */
-                    await send_debug_log(
-                        debug_options, 
-                        { channel_id: channel_id, channel_name: channel_name }, 
+                    await Debug.sendDebugLog(
+                        debugOptions, 
+                        { channelId, channelName }, 
                         'partial', 
                         'partial log in Info Component.'
                     )

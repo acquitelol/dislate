@@ -8,14 +8,14 @@
  * @param Constants: Module for many constant values such as Theme colors etc.
  * @param React: The main React implementation to do functions such as @arg React.useState or @arg React.useEffect
  * @param Dialog: The default Discord Dialog which allows you to render a pop-up on the screen. The component which is being exported is actually a custom implementation.
- * @param store_item: Allows you to store an item into either Settings or the Storage store.
+ * @param Store.item: Allows you to store an item into either Settings or the Storage store.
  * @param shadow: The main shadow implementation, abstracted away so all the different components can use the same shadow simultaneously.
  * @param name: The name of the Plugin, from @arg manifest.json. In this case, it's Dislate.
  * @param get: Allows you to retrieve a Setting from your plugin file.
  */
 import { TouchableOpacity, Text, Image, View } from "enmity/components"
 import { StyleSheet, Constants, React, Dialog } from "enmity/metro/common"
-import { store_item, shadow } from "../../utils"
+import { Store, Miscellaneous } from "../../utils"
 import { name } from '../../../manifest.json'
 import { get } from "enmity/api/settings"
 
@@ -45,7 +45,7 @@ export default ({ label, content, type }) => {
             borderRadius: 10,
             marginLeft: '4%',
             marginRight: '4%',
-            ...shadow
+            ...Miscellaneous.shadow
         },
         /**
          * @param {object} text: The main styling for the text component.
@@ -57,16 +57,16 @@ export default ({ label, content, type }) => {
             padding: 10
         },
         /**
-         * @param {object} text_header: The styling specifically for the title text/label.
+         * @param {object} textHeader: The styling specifically for the title text/label.
          */
-        text_header: {
+        textHeader: {
             fontSize: 20,
             fontFamily: Constants.Fonts.PRIMARY_BOLD
         },
         /**
-         * @param {object} text_content: THe styling for the text content/body.
+         * @param {object} textContent: THe styling for the text content/body.
          */
-        text_content: {
+        textContent: {
             fontSize: 16,
             fontFamily: Constants.Fonts.PRIMARY_NORMAL
         },
@@ -85,19 +85,19 @@ export default ({ label, content, type }) => {
 
     /** 
      * Use React to create a new Ref with @arg Animated
-     * @param {React.useRef} animated_button_scale: The main animated value ref.
+     * @param {React.useRef} animatedButtonScale: The main animated value ref.
      */
-    const animated_button_scale = React.useRef(new Animated.Value(1)).current
+    const animatedButtonScale = React.useRef(new Animated.Value(1)).current
 
     /**
      * @func onPress: Open a pop-up asking the user whether they want to just hide the Dialog or never show it again.
      */
     const onPress = (): void => {
         /**
-         * Move @param animated_button_scale to @arg {0}, in @arg {250ms} with the @arg sinusoidal easing type (@arg Easing.sin).
+         * Move @param animatedButtonScale to @arg {0}, in @arg {250ms} with the @arg sinusoidal easing type (@arg Easing.sin).
          * @returns {void}
          */
-        const animate = () => Animated.timing(animated_button_scale, {
+        const animate = () => Animated.timing(animatedButtonScale, {
             toValue: 0,
             duration: 250,
             useNativeDriver: true,
@@ -122,9 +122,9 @@ export default ({ label, content, type }) => {
             onCancel: async function() {
                 /**
                  * "Cancelling" means that you want the Dialog to never show again. Therefore, set the option in Settings for this specific label to true (hidden).
-                 * @func store_item: Stores a setting or store item asynchronously.
+                 * @func Store.item: Stores a setting or store item asynchronously.
                  */
-                await store_item(
+                await Store.item(
                     {
                         name: label,
                         content: true,
@@ -166,12 +166,12 @@ export default ({ label, content, type }) => {
     }
     /** 
      * The main animated style, which is going to be modified by the Animated property.
-     * @param {object{transform[{}]}}animated_scale_style: The main scale style applied to the element which has the scale.
+     * @param {object{transform[{}]}} animatedScaleStyle: The main scale style applied to the element which has the scale.
      */
-     const animated_scale_style = {
+    const animatedScaleStyle = {
         transform: [
             {
-                scale: animated_button_scale
+                scale: animatedButtonScale
             }
         ]
     }
@@ -179,13 +179,13 @@ export default ({ label, content, type }) => {
 
     /**
      * Renders an empty fragment if the user chose "Don't show again."
-     * @if {(@arg shown_already is true)} -> Render an empty fragment.
+     * @if {(@arg shownAlready is true)} -> Render an empty fragment.
      * @else {()} -> Render the main Dialog TSX.
      * 
      * Also checks if this dialog has been hidden forever before, and doesn't render if it has been shown and the user clicked "Don't Show Again."
      */
     return !get(name, label, false) ? <>
-        <Animated.View style={animated_scale_style}>
+        <Animated.View style={animatedScaleStyle}>
             <TouchableOpacity
                 /**
                  * Has the default "button" styling (@arg styles.button) and also has the styling from whichever type of dialog was passed as a property. 
@@ -205,8 +205,8 @@ export default ({ label, content, type }) => {
                         uri: 'https://i.imgur.com/rl1ga06.png', 
                     }} />
                 </View>
-                <Text style={[styles.text, styles.text_header]}>{label}</Text>
-                <Text style={[styles.text, styles.text_content]}>{content}</Text>
+                <Text style={[styles.text, styles.textHeader]}>{label}</Text>
+                <Text style={[styles.text, styles.textContent]}>{content}</Text>
             </TouchableOpacity>
         </Animated.View>
     </> : <></>

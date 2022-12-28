@@ -1,16 +1,16 @@
 /** 
  * Imports 
  * @param translate: The main Asynchronous translate function.
- * @param language_names: The main list of language names
+ * @param LanguageNames: The main list of language names
  */
 import translate from "../../modified/translate";
-import language_names from '../../modified/translate/src/languages/names'
+import LanguageNames from '../../modified/translate/src/languages/names'
 
 type Serializable = string | number | boolean | null | {
     [key: string | number]: Serializable;
 } | Serializable[];
 
-interface languageType {
+type LanguageType = {
     fromLang: Serializable;
     toLang: Serializable;
 }
@@ -23,16 +23,19 @@ interface languageType {
  * @param {boolean} cancel: Toggles translation. If false will return untranslated text.
  * @returns {string text}
  */
-async function translate_string(text: string, { fromLang = 'detect', toLang = 'english' }: languageType, cancel?: boolean): Promise<string> {
+async function string(text: string, { fromLang = 'detect', toLang = 'english' }: LanguageType, cancel?: boolean): Promise<string> {
     /**
      * Returns the original string early if @arg cancel is @arg true.
      */
     return cancel
         ? text
         : await translate(text, {
-            from: language_names[fromLang],
-            to: language_names[toLang]
+            from: LanguageNames[fromLang],
+            to: LanguageNames[toLang]
         })
 }
 
-export { translate_string };
+export default 
+{
+    string
+}

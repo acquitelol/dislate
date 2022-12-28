@@ -6,11 +6,10 @@
  * @param Toasts: Function to open a small notification at the top of your discord.
  * @param Storage: Allows you to store and retrive any item.
  * @param {name, plugin}: The name and information about the plugin from @arg manifest.json.
- * @param { format_string, toast, Icons, fetch_debug_arguments, map_item }: Utility Functions that Dislate uses.
+ * @param { Format.string, displayToast, Icons, Debug.fetchDebugArguments, Debug.sendDebugLog, mapItem }: Utility Functions that Dislate uses.
  * @param {bulk, filters}: Used to import modules in bulk
- * @param Info: The main "@arg debug" page to choose custom parameters to send the @arg debug_info command
+ * @param Info: The main "@arg debug" page to choose custom parameters to send the @arg Debug.debugInfo command
  * @param Page: The @arg base / @arg builder page used to render custom @arg Pages out. Contains a simple Close button, and requires additional @arg TSX to render more information.
- * @param send_debug_log: Allows you to send a debug log.
  */
 import {
   ApplicationCommandType,
@@ -20,7 +19,13 @@ import {
 import { Dialog, Navigation } from 'enmity/metro/common'
 import { React, Toasts, Storage } from 'enmity/metro/common';
 import { name, plugin } from '../../../manifest.json';
-import { format_string, toast, Icons, fetch_debug_arguments, map_item, send_debug_log, for_item, find_item } from '../../utils'
+import { 
+    Format, 
+    Miscellaneous, 
+    Icons, 
+    ArrayImplementations as ArrayOps, 
+    Debug 
+} from '../../utils'
 import { bulk, filters } from "enmity/metro";
 import Info from "../Pages/Debug/Info";
 import Page from "../Pages/Page";
@@ -39,11 +44,11 @@ const [
 
 /**
  * Returns an object of all available options. To add a new option, just write a new @arg key - @arg value pair with the callback as the value.
- * @param {string} channel_id: The channel id provided by the context to @arg {send messages} and open the @arg Info page
- * @param {string} channel_name: The channel name, used by other components to @arg {render in a toast}.
+ * @param {string} channelId: The channel id provided by the context to @arg {send messages} and open the @arg Info page
+ * @param {string} channelName: The channel name, used by other components to @arg {render in a toast}.
  * @returns {any}
  */
-const options = (channel_id: string, channel_name: string): any => {
+const options = (channelId: string, channelName: string): any => {
     return {
         /**
          * @param {any} debug: The main command that will get run to display important information such as the version of @param Dislate or the @param Discord build.
@@ -64,7 +69,7 @@ const options = (channel_id: string, channel_name: string): any => {
                      * @param wrapper: The main @arg Info page, wrapped as a function to add the channel id as a prop safely.
                      * @returns {Info TSX Page.}
                      */
-                    const wrapper = (): any => <Info channel_id={channel_id} channel_name={channel_name} />
+                    const wrapper = (): any => <Info channelId={channelId} channelName={channelName} />
                     
                     /**
                      * Push the wrapped page to Navigation, hence opening new page.
@@ -77,18 +82,18 @@ const options = (channel_id: string, channel_name: string): any => {
                 onCancel: async function() {
                     /**
                      * Get the full list of available arguments asynchronously
-                     * @param {returns object}debug_options: The full list of debug arguments.
+                     * @param {returns object} debugOptions: The full list of debug arguments.
                      */
-                    const debug_options = await fetch_debug_arguments()
+                    const debugOptions = await Debug.fetchDebugArguments()
     
                     /**
                      * Send a debug log in the current channel with the full log as a parameter.
-                     * @param channel_id: The ID of the current channel.
-                     * @param channel_name: The name of the current channel.
+                     * @param channelId: The ID of the current channel.
+                     * @param channelName: The name of the current channel.
                      */
-                    await send_debug_log(
-                        Object.keys(debug_options), 
-                        {channel_id: channel_id, channel_name: channel_name}, 
+                    await Debug.sendDebugLog(
+                        Object.keys(debugOptions), 
+                        { channelId, channelName }, 
                         'full', 
                         'full log in Info Command.'
                     )
@@ -96,20 +101,20 @@ const options = (channel_id: string, channel_name: string): any => {
             })
         },
         /**
-         * @param {any} clear_stores: Allows to user to clear all of their Dislate stores.
+         * @param {any} clearStores: Allows to user to clear all of their Dislate stores.
          */
-         clear_stores: async function() {
+         clearStores: async function() {
             /**
-             * Fetch any existing stored state inside of the @arg dislate_store_state array.
-             * @param store_items: List of existing items in array form containing objects with name and type.
+             * Fetch any existing stored state inside of the @arg dislateStoreState array.
+             * @param storeItems: List of existing items in array form containing objects with name and type.
              */
-            const store_items: any = JSON.parse(await Storage.getItem("dislate_store_state")) ?? []
+            const storeItems: any = JSON.parse(await Storage.getItem("dislate_store_state")) ?? []
 
             /**
              * Loop through the stored items with a custom implementation of a forEach to allow for labels.
-             * @param {object} store_items: List of items to clear the store of, which were explicitly set with the store_item.ts file.
+             * @param {object} storeItems: List of items to clear the store of, which were explicitly set with the store_item.ts file.
              */
-            for_item(store_items, async function(item: any) {
+            ArrayOps.forItem(storeItems, async function(item: any) {
                 /**
                  * Either removes the item or sets it to false depending on whether the item type is storage or not
                  * @if {(@arg item.type) is equal to @arg {string} storage} -> Remove the item's name from storage.
@@ -146,25 +151,25 @@ const options = (channel_id: string, channel_name: string): any => {
             /**
              * Opens a toast saying that the "@arg {download link}" has been copied to clipboard.
              * 
-             * @func clipboard_toast: Opens a toast with a specified string as the argument saying that it has been copied to clipboard.
+             * @func displayToast: Opens a toast with a specified string as the argument saying that it has been copied to clipboard.
              * @returns {void}
              */
-            toast("download link", 'clipboard')
+            Miscellaneous.displayToast("download link", 'clipboard')
         }
     }
 }
 
 /**
- * @param {any[]} command_options: The list of command options set as a simple array instead of hardcoding all of the values.
+ * @param {any[]} commandOptions: The list of command options set as a simple array instead of hardcoding all of the values.
  * 
- * @func map_item: Takes in an @arg array and returns a new value for each item in the @arg array, in a @arg {new array}.
+ * @func ArrayOps.mapItem: Takes in an @arg array and returns a new value for each item in the @arg array, in a @arg {new array}.
  */
-const command_options: any[] = map_item(
-    Object.keys(options("8008135", "placebo")), 
+const commandOptions: any[] = ArrayOps.mapItem(
+    Object.keys(options("8008135", "placeholder")), 
     (item: string) => {
         return {
-            name: format_string(item),
-            displayName: format_string(item),
+            name: Format.string(item),
+            displayName: Format.string(item),
             value: item
         }
     }, 
@@ -225,36 +230,36 @@ export default {
         description: "The type of command to execute.",
         displayDescription: "The type of command to execute.",
         type: ApplicationCommandOptionType.String,
-        choices: [...command_options],
+        choices: [...commandOptions],
         required: true,
-    },],
+    }],
 
     execute: async function (args, context) {
         /**
-         * @param {string} command_type: The main option chosen by the user when they ran the command.
+         * @param {string} commandType: The main option chosen by the user when they ran the command.
          */
-        const command_type = find_item(args, (o: any) => o.name == "type").value;
+        const commandType = ArrayOps.findItem(args, (o: any) => o.name == "type").value;
 
         /**
-         * @param {string[]} available_options: The main "@arg hash_map" or @arg object of defined functions that the debug command will execute. If an argument is passed at the top level and isn't added here, a Toast will display showing an error.
-         * @param throw_toast: A fallback toast, used in case the function from the debug argumetns couldnt be found. As a result, this toast will appear instead.
-                * @uses @param Icons.Debug_Command.Clock: Clock icon imported from ./icons
+         * @param {string[]} availableOptions: The main "@arg hashMap" or @arg object of defined functions that the debug command will execute. If an argument is passed at the top level and isn't added here, a Toast will display showing an error.
+         * @param throwToast: A fallback toast, used in case the function from the debug argumetns couldnt be found. As a result, this toast will appear instead.
+                * @uses @param Icons.Clock: Clock icon imported from ./icons
          */
-        const available_options = options(context.channel.id, context.channel.name)
-        const throw_toast = () => {
-            Toasts.open({ content: 'Invalid command argument.', source: Icons.Debug_Command.Clock });
+        const availableOptions = options(context.channel.id, context.channel.name)
+        const throwToast = () => {
+            Toasts.open({ content: 'Invalid command argument.', source: Icons.Clock });
         }
 
         /**
-         * @param {callback ?? throw_toast} chosen_option: Sets the command callback to either the callback from the @arg available_options function or uses the @arg throw_toast as a fallback
+         * @param {callback ?? throwToast} chosenOption: Sets the command callback to either the callback from the @arg availableOptions function or uses the @arg throwToast as a fallback
          */
-        const chosen_option =  available_options[command_type] ?? throw_toast
+        const chosenOption =  availableOptions[commandType] ?? throwToast
 
         /**
-         * Finally, call this @arg chosen_option function with no arguments, as none are needed.
+         * Finally, call this @arg chosenOption function with no arguments, as none are needed.
          * Afterwards, return an empty object.
          */
-        chosen_option()
+        chosenOption()
         return {};
     },
 };

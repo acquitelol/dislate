@@ -21,7 +21,7 @@ import { get, set } from 'enmity/api/settings';
 import { FormDivider, FormRow, FormSwitch, Text, View } from 'enmity/components';
 import { bulk, filters } from 'enmity/metro';
 import { React, Constants, Navigation, Storage, StyleSheet, Toasts } from 'enmity/metro/common';
-import { toast, debug_info, fetch_debug_arguments, format_string, for_item, Icons, shadow, check_for_updates } from '../../utils';
+import { Miscellaneous, Debug, Format, ArrayImplementations as ArrayOps, Icons, Updater } from '../../utils';
 import Credits from './Credits';
 import ExitWrapper from '../Wrappers/ExitWrapper';
 import SectionWrapper from '../Wrappers/SectionWrapper'
@@ -33,15 +33,15 @@ import Page from '../Pages/Page';
  * @param Router: This is used to open a url externally with @arg Router.openURL ~
  * @param Clipboard: This is used to copy any string to clipboard with @arg Clipboard.setString ~
  */
- const [
-    Router,
-    Clipboard,
- ] = bulk(
-    filters.byProps('transitionToGuild'),
-    filters.byProps('setString'),
- );
+const [
+Router,
+Clipboard,
+] = bulk(
+filters.byProps('transitionToGuild'),
+filters.byProps('setString'),
+);
 
- /**
+/**
   * Main Settings Page for Dislate.
   * This page takes settings and a manifest to prevent having to re-import it again in this file.
   * @param {any} settings: The main prop of available methods to use for settings.
@@ -77,7 +77,7 @@ export default ({ settings, manifest: { name, version, plugin, authors, release 
             marginLeft: '5%',
             borderRadius: 10,
             backgroundColor: Constants.ThemeColorMap.BACKGROUND_MOBILE_SECONDARY,
-            ...shadow /** @param shadow: Main shadow implementation */
+            ...Miscellaneous.shadow /** @param shadow: Main shadow implementation */
         },
         /**
          * @param {object} subheaderText: Main styling for the text right at the bottom of the settings page, showing build and release channel.
@@ -134,16 +134,16 @@ export default ({ settings, manifest: { name, version, plugin, authors, release 
                     <View style={styles.container}>
                         {/**
                          * The main component to allow the user to open a page and choose what language they would like to translate from.
-                         * @uses @param {string_id} Icons.Settings.Translate_From: The main icon for the translate "from" component.
+                         * @uses @param {stringId} Icons.Settings.TranslateFrom: The main icon for the translate "from" component.
                          */}
                         <FormRow
                             label='Translate From'
-                            leading={<FormRow.Icon style={styles.icon} source={Icons.Settings.Translate_From} />}
+                            leading={<FormRow.Icon style={styles.icon} source={Icons.Settings.TranslateFrom} />}
                             trailing={() => <Text style={styles.item}>
                                     {/**
                                      * Renders the language that the user current selected. If the setting call returns undefined, use N/A
                                      */}
-                                    {format_string(get(name, "DislateLangFrom", "detect")) ?? "N/A"}
+                                    {Format.string(get(name, "DislateLangFrom", "detect")) ?? "N/A"}
                                 </Text>}
                             onPress={()=>{
                                 /**
@@ -160,21 +160,21 @@ export default ({ settings, manifest: { name, version, plugin, authors, release 
                                  */
                                 Navigation.push(Page, { component: Languages, name: `${name}: Language From` })
                             }}
-                            onLongPress={()=>toast('Open a new page allowing you to choose a language that you can translate from. The default is "Detect".', 'tooltip')}
+                            onLongPress={() => Miscellaneous.displayToast('Open a new page allowing you to choose a language that you can translate from. The default is "Detect".', 'tooltip')}
                         />
                         <FormDivider/>
                         {/**
                          * The main component to allow the user to open a page and choose what language they would like to translate to.
-                         * @param Icons.Settings.Translate_To: The main icon for the translate "to" component.
+                         * @uses @param {stringId} Icons.Settings.TranslateTo: The main icon for the translate "to" component.
                          */}
                         <FormRow
                             label='Translate To'
-                            leading={<FormRow.Icon style={styles.icon} source={Icons.Settings.Translate_To} />}
+                            leading={<FormRow.Icon style={styles.icon} source={Icons.Settings.TranslateTo} />}
                             trailing={() => <Text style={styles.item}>
                                     {/**
                                      * Renders the language that the user current selected. If the setting call returns undefined, use N/A
                                      */}
-                                    {format_string(get(name, "DislateLangTo", "english")) ?? "N/A"}
+                                    {Format.string(get(name, "DislateLangTo", "english")) ?? "N/A"}
                                 </Text>}
                             onPress={()=>{
                                 /**
@@ -191,7 +191,7 @@ export default ({ settings, manifest: { name, version, plugin, authors, release 
                                  */
                                 Navigation.push(Page, { component: Languages, name: `${name}: Language To` })
                             }}
-                            onLongPress={()=>toast('Open a new page allowing you to choose a language that you can translate to. The default is "English".', 'tooltip')}
+                            onLongPress={() => Miscellaneous.displayToast('Open a new page allowing you to choose a language that you can translate to. The default is "English".', 'tooltip')}
                         />
                         <FormDivider/>
                         {/**
@@ -201,14 +201,14 @@ export default ({ settings, manifest: { name, version, plugin, authors, release 
                          * The abbreviated method will render it as @arg {ロージーは本当に背が高い} -> @arg {rosie is really tall [EN]}
                          * 
                          * It is a very minor customizability but allows more control from the user. Furthermore, this option only sets the setting, the main code controls what is displayed through fetching its current state.
-                         * @uses @param {string_id} Icons.Retry: The main @arg retry icon.
-                         * @uses @param {string_id} Icons.Settings.Toasts.Settings: The main @arg tick icon.
+                         * @uses @param {stringId} Icons.Retry: The main @arg retry icon.
+                         * @uses @param {stringId} Icons.Settings.Toasts.Settings: The main @arg tick icon.
                          */}
                         <FormRow
                             label='Abbreviate Language'
                             leading={<FormRow.Icon style={styles.icon} source={Icons.Retry} />}
                             subLabel={`Label language in a shorter form when translating (English ➝ EN).`}
-                            onLongPress={()=>toast('Convert the full language name to an abbreviation when translating someone else\'s message. (test [English] ➝ test [EN])', 'tooltip')}
+                            onLongPress={() => Miscellaneous.displayToast('Convert the full language name to an abbreviation when translating someone else\'s message. (test [English] ➝ test [EN])', 'tooltip')}
                             trailing={
                                 <FormSwitch
                                     /**
@@ -228,7 +228,7 @@ export default ({ settings, manifest: { name, version, plugin, authors, release 
 
                                             /**
                                              * Open a @arg Toast displaying to the user that the Language Abbreviation option has been @arg enabled or @arg disabled.
-                                             * @uses @param {string_id} Icons.Settings.Toasts.Settings: The tick state of a toast from the Icons package.
+                                             * @uses @param {stringId} Icons.Settings.Toasts.Settings: The tick state of a toast from the Icons package.
                                              */
                                             Toasts.open({ 
                                                 content: `Successfully ${settings.getBoolean('DislateLangAbbr', false) ? 'enabled' : 'disabled'} language abbreviations.`, 
@@ -249,14 +249,14 @@ export default ({ settings, manifest: { name, version, plugin, authors, release 
                                                                                     * ロージーは本当に背が高い
                                                                                     * }
                          * 
-                         * @uses @param {string_id} Icons.Settings.Locale: The main @arg locale icon.
-                         * @uses @param {string_id} Icons.Settings.Toasts.Settings: The main @arg tick icon.
+                         * @uses @param {stringId} Icons.Settings.Locale: The main @arg locale icon.
+                         * @uses @param {stringId} Icons.Settings.Toasts.Settings: The main @arg tick icon.
                          */}
                         <FormRow
                             label='Send Original'
                             leading={<FormRow.Icon style={styles.icon} source={Icons.Settings.Locale} />}
                             subLabel={`Send both the Original and Translated message when using /translate.`}
-                            onLongPress={()=>toast('When using the /translate command, send both the original message and the translated message at once.', 'tooltip')}
+                            onLongPress={() => Miscellaneous.displayToast('When using the /translate command, send both the original message and the translated message at once.', 'tooltip')}
                             trailing={
                                 <FormSwitch
                                     /**
@@ -276,7 +276,7 @@ export default ({ settings, manifest: { name, version, plugin, authors, release 
 
                                             /**
                                              * Open a @arg Toast displaying to the user that the Send Original option has been @arg enabled or @arg disabled.
-                                             * @uses @param {string_id} Icons.Settings.Toasts.Settings: The tick state of a toast from the Icons package.
+                                             * @uses @param {stringId} Icons.Settings.Toasts.Settings: The tick state of a toast from the Icons package.
                                              */
                                             Toasts.open({ 
                                                 content: `Now sending ${settings.getBoolean('DislateBothLangToggle', false) ? 'original and translated' : 'only translated'} message.`, 
@@ -303,14 +303,14 @@ export default ({ settings, manifest: { name, version, plugin, authors, release 
                     <View style={styles.container}>
                         {/**
                          * The main initliasation toast toggle. This would control whether you would like toasts to appear at the runtime of Dislate, and if any errors are caught.
-                         * @uses @param {string_id} Icons.Settings.Initial: The @arg {toast} initialisation icon.
-                         * @uses @param {string_id} Icons.Settings.Toasts.Settings: The @arg tick icon.
+                         * @uses @param {stringId} Icons.Settings.Initial: The @arg {toast} initialisation icon.
+                         * @uses @param {stringId} Icons.Settings.Toasts.Settings: The @arg tick icon.
                          */}
                         <FormRow
                             label='Initialisation Toasts'
                             leading={<FormRow.Icon style={styles.icon} source={Icons.Settings.Initial} />}
                             subLabel={`Toggle initialisation toasts to display loading state of ${name}.`}
-                            onLongPress={()=>toast(`When Enmity is first started, show toasts based on ${name}'s current state (starting, failed, retrying, etc)`, 'tooltip')}
+                            onLongPress={() => Miscellaneous.displayToast(`When Enmity is first started, show toasts based on ${name}'s current state (starting, failed, retrying, etc)`, 'tooltip')}
                             trailing={
                                 <FormSwitch
                                     /**
@@ -330,7 +330,7 @@ export default ({ settings, manifest: { name, version, plugin, authors, release 
 
                                             /**
                                              * Open a @arg Toast displaying to the user that the Language Abbreviation option has been @arg enabled or @arg disabled.
-                                             * @uses @param {string_id} Icons.Settings.Toasts.Settings: The tick state of a toast from the Icons package.
+                                             * @uses @param {stringId} Icons.Settings.Toasts.Settings: The tick state of a toast from the Icons package.
                                              */
                                             Toasts.open({ 
                                                 content: `Successfully ${settings.getBoolean('toastEnable', false) ? 'enabled' : 'disabled'} Load Toasts.`, 
@@ -344,13 +344,13 @@ export default ({ settings, manifest: { name, version, plugin, authors, release 
                         <FormDivider />
                         {/**
                          * The main debug info log. This would allow the user to copy the entire debug log to clipboard. Of course, they could use the </dislate type:Debug :1> command to choose, but this copies the full log.
-                         * @uses @param {string_id} Icons.Copy: The @arg toast initialisation icon.
-                         * @uses @param {string_id} Icons.Settings.Toasts.Settings: The @arg tick icon.
+                         * @uses @param {stringId} Icons.Copy: The @arg toast initialisation icon.
+                         * @uses @param {stringId} Icons.Settings.Toasts.Settings: The @arg tick icon.
                          */}
                         <FormRow
                             label='Copy Debug Info'
                             subLabel={`Copy useful debug information like version and build of ${name} to clipboard.`}
-                            onLongPress={()=>toast(`Copy the full debug log to clipboard including ${name}'s Version, Build, and Release, Enmity's Version and Build, etc.`, 'tooltip')}
+                            onLongPress={() => Miscellaneous.displayToast(`Copy the full debug log to clipboard including ${name}'s Version, Build, and Release, Enmity's Version and Build, etc.`, 'tooltip')}
                             leading={<FormRow.Icon style={styles.icon} source={Icons.Copy} />}
                             trailing={FormRow.Arrow}
                             onPress={ async function() {
@@ -358,43 +358,43 @@ export default ({ settings, manifest: { name, version, plugin, authors, release 
                                  * Fetch the full list of @arg {debug} arguments. This is asynchronous because it needs to fetch the device as an async string from storage.
                                  * @param {returns string[]} options: The full list of available debug arguments
                                  */
-                                const options = await fetch_debug_arguments()
+                                const options = await Debug.fetchDebugArguments()
 
                                 /**
                                  * Set the full list of arguments wrapped in a @arg {debug} info function to format the message in a way that you can paste into Discord.
                                  */
-                                Clipboard.setString(await debug_info(Object.keys(options)));
+                                Clipboard.setString(await Debug.debugInfo(Object.keys(options)));
 
                                 /**
                                  * Finally, show a @arg Toast informing the user that the debug information text has been copied to clipboard.
                                  */
-                                toast('debug information', 'clipboard')
+                                Miscellaneous.displayToast('debug information', 'clipboard')
                             }}
                         />
                         <FormDivider />
                         {/**
                          * The main clear state store button. This would allow the user to clear any state from the custom dialog implementations, clear their device list, and clear their agreement to the incompatible device notice.
-                         * @uses @param {string_id} Icons.Delete: The main @arg delete icon.
-                         * @uses @param {string_id} Icons.Settings.Toasts.Settings: The @arg tick icon.
+                         * @uses @param {stringId} Icons.Delete: The main @arg delete icon.
+                         * @uses @param {stringId} Icons.Settings.Toasts.Settings: The @arg tick icon.
                          */}
                         <FormRow
                             label='Clear Stores'
                             subLabel={`Void most of the settings and stores used throughout ${name} to store data locally.`}
-                            onLongPress={()=>toast(`Clear stores and settings throughout ${name} including the settings to hide popups forever and the list of device codes.`, 'tooltip')}
+                            onLongPress={() => Miscellaneous.displayToast(`Clear stores and settings throughout ${name} including the settings to hide popups forever and the list of device codes.`, 'tooltip')}
                             leading={<FormRow.Icon style={styles.icon} source={Icons.Delete} />}
                             trailing={FormRow.Arrow}
                             onPress={async function() {
                                 /**
-                                 * Fetch any existing stored state inside of the @arg dislate_store_state array.
-                                 * @param {object} store_items: List of existing items in array form containing objects with name and type.
+                                 * Fetch any existing stored state inside of the @arg dislateStoreState array.
+                                 * @param {object} storeItems: List of existing items in array form containing objects with name and type.
                                  */
-                                const store_items: any = JSON.parse(await Storage.getItem("dislate_store_state")) ?? []
+                                const storeItems: any = JSON.parse(await Storage.getItem("dislate_store_state")) ?? []
 
                                 /**
                                  * Loop through the stored items with a custom implementation of a forEach to allow for labels.
-                                 * @uses @param {object} store_items: List of items to clear the store of, which were explicitly set with the @arg store_item.ts file.
+                                 * @uses @param {object} storeItems: List of items to clear the store of, which were explicitly set with the @arg store_item.ts file.
                                  */
-                                for_item(store_items, async function(item: any) {
+                                ArrayOps.forItem(storeItems, async function(item: any) {
                                     /**
                                      * Either removes the item or sets it to false depending on whether the item type is storage or not
                                      * @if {(@arg item.type) is equal to @arg {string} storage} -> Remove the item's name from storage.
@@ -434,31 +434,31 @@ export default ({ settings, manifest: { name, version, plugin, authors, release 
                     <View style={styles.container}>
                         {/**
                          * The main update button. This would allow the user to search the github for the latest release and check if it is the current release installed, and prompts the user to update if it isnt.
-                         * @uses @param {string_id} Icons.Settings.Update: The main @arg update icon.
+                         * @uses @param {stringId} Icons.Settings.Update: The main @arg update icon.
                          */}
                         <FormRow
                             label="Check for Updates"
                             subLabel={`Search for any ${name} updates and notify you if an update is available.`}
-                            onLongPress={()=>toast(`Search GitHub for any new version or build of ${name} and prompts you to update, and then prompts you to restart Enmity afterwards.`, 'tooltip')}
+                            onLongPress={() => Miscellaneous.displayToast(`Search GitHub for any new version or build of ${name} and prompts you to update, and then prompts you to restart Enmity afterwards.`, 'tooltip')}
                             leading={<FormRow.Icon style={styles.icon} source={Icons.Settings.Update} />}
                             trailing={FormRow.Arrow}
                             onPress={ async function() {
                                 /**
-                                 * Simply calls the @func check_for_updates function asynchronously. This is a whole seperate documented script located at src/utils/update.ts 
+                                 * Simply calls the @func Updater.checkForUpdates function asynchronously. This is a whole seperate documented script located at src/utils/update.ts 
                                  * This would check for any updates to the version or build and prompt the user to update if any are found.
                                  */
-                                await check_for_updates();
+                                await Updater.checkForUpdates();
                             }}
                         />
                         <FormDivider />
                         {/**
                         * The main repository. This would allow the user to open an external window inside of Discord using Router and display the current dislate repo, on GitHub.
-                        * @uses @param {string_id} Icons.Open: The main @arg {external} open icon.
+                        * @uses @param {stringId} Icons.Open: The main @arg {external} open icon.
                         */}
                         <FormRow
                             label="Source"
                             subLabel={`Open the repository of ${name} externally.`}
-                            onLongPress={()=>toast(`Opens the repository of ${name} on GitHub in an external page to view any source code of the plugin.`, 'tooltip')}
+                            onLongPress={() => Miscellaneous.displayToast(`Opens the repository of ${name} on GitHub in an external page to view any source code of the plugin.`, 'tooltip')}
                             leading={<FormRow.Icon style={styles.icon} source={Icons.Open} />}
                             trailing={FormRow.Arrow}
                             onPress={() => {
