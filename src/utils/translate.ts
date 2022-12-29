@@ -32,10 +32,10 @@ async function string(text: string, { fromLang = 'detect', toLang = 'english' }:
         : await translate(text, {
             from: LanguageNames[fromLang],
             to: LanguageNames[toLang]
-        })
-}
+        });
+};
 
 export default 
 {
     string
-}
+};

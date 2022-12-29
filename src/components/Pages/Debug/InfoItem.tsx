@@ -9,10 +9,10 @@
  * @param name: The name of the plugin, from @arg manifest.json
  * @param Debug: Main class to create Debug Arguments and send Debug Logs.
  */
-import { getBoolean, set } from "enmity/api/settings"
-import { FormRow, Text, View, TouchableOpacity } from "enmity/components"
-import { Constants, React, StyleSheet } from "enmity/metro/common"
-import { Icons, Debug } from "../../../utils"
+import { getBoolean, set } from "enmity/api/settings";
+import { FormRow, Text, View, TouchableOpacity } from "enmity/components";
+import { Constants, React, StyleSheet } from "enmity/metro/common";
+import { Icons, Debug } from "../../../utils";
 import { name } from '../../../../manifest.json';
 
 /** 
@@ -20,7 +20,7 @@ import { name } from '../../../../manifest.json';
  * @param Animated: The main 'Animated' component of React Native.import { TouchableOpacity } from 'enmity/components';
 
  * @ts-ignore */
-const Animated = window.enmity.modules.common.Components.General.Animated
+const Animated = window.enmity.modules.common.Components.General.Animated;
 
 /**
  * This is a component which is part of the Info page which is part of the Debug command.
@@ -33,7 +33,7 @@ export default ({ option, channelId, channelName, debugOptions }) => {
      * Create a new state for whether the Option is currently active, by default, this is false.
      * @param {Getter, Setter}: Allows you to set and re-render the component to determine whether the option is active or inactive.
      */
-    const [isActive, setIsActive] = React.useState<boolean>(getBoolean(name, option, false))
+    const [isActive, setIsActive] = React.useState<boolean>(getBoolean(name, option, false));
 
     /**
      * Create a stylesheet for the icon to force it to be @arg INTERACTIVE_NORMAL
@@ -58,7 +58,7 @@ export default ({ option, channelId, channelName, debugOptions }) => {
         itemEnabled: {
             color: Constants.ThemeColorMap.INTERACTIVE_NORMAL,
         },
-    })
+    });
 
     const scaleValues = [1, 1.01]
 
@@ -66,7 +66,7 @@ export default ({ option, channelId, channelName, debugOptions }) => {
      * Use React to create a new Ref with @arg Animated
      * @param {React.useRef} animatedButtonScale
      */
-     const animatedButtonScale = React.useRef(new Animated.Value(scaleValues[getBoolean(name, option, false) ? 1 : 0])).current
+    const animatedButtonScale = React.useRef(new Animated.Value(scaleValues[getBoolean(name, option, false) ? 1 : 0])).current;
 
     /**
       * Move @param animatedButtonScale to @arg {1.1}, in @arg {250ms} with the @arg spring easing type.
@@ -99,7 +99,7 @@ export default ({ option, channelId, channelName, debugOptions }) => {
                 scale: animatedButtonScale
             }
         ]
-    }
+    };
 
     /**
      * Return a Discord-Native FormRow with the onPress allowing you to @arg toggle the value, and onLongPress allowing you to send @arg only that log.
@@ -119,15 +119,14 @@ export default ({ option, channelId, channelName, debugOptions }) => {
              * @arg {string} option: The option's setting to change.
              * @arg {boolean}: The value to set @arg option to.
              */
-            getBoolean(name, option, false) ? set(name, option, false) : set(name, option, true)
-            getBoolean(name, option, false) ? onPressIn() : onPressOut()
+            getBoolean(name, option, false) ? set(name, option, false) : set(name, option, true);
+            getBoolean(name, option, false) ? onPressIn() : onPressOut();
 
             /**
              * Set the current state to whatever the new value of the setting is, effectively re-rendering the component to show the new icon.
              * @func getBoolean: Gets a boolean value from a file's setting.
              */
-            setIsActive(getBoolean(name, option, false))
-            
+            setIsActive(getBoolean(name, option, false));
         }}
         onLongPress={async function() {
             /**
@@ -139,7 +138,7 @@ export default ({ option, channelId, channelName, debugOptions }) => {
                 { channelId, channelName }, 
                 'single', 
                 'single log in DebugItem Component.'
-            )
+            );
         }}
         onPressIn={onPressIn}
         onPressOut={onPressOut}
@@ -161,8 +160,7 @@ export default ({ option, channelId, channelName, debugOptions }) => {
                         :   Icons.Settings.Toasts.Failed
                     } 
                 />}
-                trailing={() => 
-                <View>
+                trailing={() => <View>
                     <Text style={[{padding: 10}, isActive ? styles.itemEnabled : styles.itemDisabled]}>
                         {debugOptions[option]}
                     </Text>

@@ -10,7 +10,7 @@ import Translate from "./translate";
  * @param fetchDebugArguments: Asynchronously fetches the full list of debug arguments. This is its own function for ease of use.
  * @param sendDebugLog: Sends a debug log into the current channel with a list of options.
  */
-import Debug from './debug'
+import Debug from './debug';
 
 
 /**
@@ -20,7 +20,7 @@ import Debug from './debug'
  * @param filterColor: Takes an input color and returns a dark or light color if the contrast of the given color reaches a threshold.
  * @param displayToast: Opens a @arg Toast which informs the user that @arg {any} something has been copied to clipboard or @arg {opens} tooltip
  */
-import Miscellaneous from './misc'
+import Miscellaneous from './misc';
 
 /**
  * @param ArrayImplementations: Main Custom Array Manipulation Implementations class which contains a bunch of static methods defined below
@@ -31,7 +31,7 @@ import Miscellaneous from './misc'
  * @param mapItem: Loops through an array and executes a callback for each iteration, then concatenates the result of that callback to a new array. This returns a mapped array.
  * @param filterItem: Loops through an array and only adds the items on which the callback returns true. Returns a filtered array.
  */
-import ArrayImplementations from './array_methods' 
+import ArrayImplementations from './array_methods';
 
 /**
  * @param Devices: Main Class to fetch device list and check if current device is compatible

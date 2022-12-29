@@ -5,7 +5,7 @@
  * @param tryCallback: Function to wrap another function in a try-catch
  */
 import ArrayOps from "./array_methods";
-import { name } from '../../manifest.json'
+import { name } from '../../manifest.json';
 import tryCallback from "./try_callback";
 
 /** 
@@ -90,4 +90,4 @@ export default
    string,
    object,
    reverse 
-}
+};

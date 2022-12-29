@@ -34,11 +34,11 @@ import Page from '../Pages/Page';
  * @param Clipboard: This is used to copy any string to clipboard with @arg Clipboard.setString ~
  */
 const [
-Router,
-Clipboard,
+    Router,
+    Clipboard,
 ] = bulk(
-filters.byProps('transitionToGuild'),
-filters.byProps('setString'),
+    filters.byProps('transitionToGuild'),
+    filters.byProps('setString'),
 );
 
 /**
@@ -239,6 +239,7 @@ export default ({ settings, manifest: { name, version, plugin, authors, release 
                                 />
                             }
                         />
+                        <FormDivider/>
                         {/**
                          * This option allows you to send both the original and translated message when using @arg {/translate}
                          * For example, let's say that you send a translated message with content @arg {rosie is really tall}

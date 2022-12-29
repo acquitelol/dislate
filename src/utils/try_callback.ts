@@ -15,7 +15,7 @@ export default (callback: any, args: any, name: string, functionLabel: string, c
          * 
          * @returns {callback(...args)}
          */
-        return callback(...args)
+        return callback(...args);
     } catch (err) {
         /** 
          * Return undefined and warn in console that an error happened
@@ -24,7 +24,7 @@ export default (callback: any, args: any, name: string, functionLabel: string, c
          * 
          * @returns {undefined}
          */
-        console.warn(`[${name}] The following error happened when trying to ${functionLabel} ${callLabel ?? "unspecificied label"}: ${err}`)
+        console.warn(`[${name}] The following error happened when trying to ${functionLabel} ${callLabel ?? "unspecificied label"}: ${err}`);
         return undefined;
     }
-}
+};

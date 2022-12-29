@@ -26,7 +26,7 @@
   * @param Animated: The main 'Animated' component of React Native.import { TouchableOpacity } from 'enmity/components';
  
   * @ts-ignore */
-const Animated = window.enmity.modules.common.Components.General.Animated
+const Animated = window.enmity.modules.common.Components.General.Animated;
  
  /**
   * Main Languages Page Item Component.
@@ -37,7 +37,7 @@ export default ({ language }) => {
      * Use React to create a new Ref with @arg Animated
      * @param {React.useRef} animatedButtonScale: The main button scale Ref.
      */
-    const animatedButtonScale = React.useRef(new Animated.Value(1)).current
+    const animatedButtonScale = React.useRef(new Animated.Value(1)).current;
 
     /**
      * Move @param animatedButtonScale to @arg {1.1}, in @arg {250ms} with the @arg spring easing type.
@@ -70,7 +70,7 @@ export default ({ language }) => {
                 scale: animatedButtonScale
             }
         ]
-    }
+    };
 
     /**
      * @param {StyleSheet} styles: StyleSheet of generic styles used throughout the component.
@@ -86,7 +86,7 @@ export default ({ language }) => {
             marginTop: 15,
             backgroundColor: Constants.ThemeColorMap.BACKGROUND_MOBILE_SECONDARY
         }
-    })
+    });
  
     /**
      * Takes a language as an argument and sets the current language based on the page which was opened to the one that was pressed.
@@ -98,7 +98,7 @@ export default ({ language }) => {
          * Sets the language as the one to translate to or from depending on which page was opened.
          * @param {set, get}: Store and retrieve settings from the plugin.
          */
-        set(name, `DislateLang${get(name, "DislateLangFilter") ? "To" : "From"}`, language) 
+        set(name, `DislateLang${get(name, "DislateLangFilter") ? "To" : "From"}`, language);
 
         /**
          * Afterwards, open a toast stating that the language chosen has been set as the language to translate to or from.
@@ -107,12 +107,12 @@ export default ({ language }) => {
          */
         Toasts.open({ content: `Set ${(LanguageNames[language]).toUpperCase()} as Language to Translate ${get("Dislate", "DislateLangFilter") ? "to" : "from"}.`, 
             source: get(name, "DislateLangFilter") ? Icons.Settings.TranslateTo : Icons.Settings.TranslateFrom
-        })
+        });
 
         /**
          * Finally, close the page.
          */
-        Navigation.pop()
+        Navigation.pop();
     }
  
     return <>

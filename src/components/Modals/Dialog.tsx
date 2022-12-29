@@ -13,201 +13,211 @@
  * @param name: The name of the Plugin, from @arg manifest.json. In this case, it's Dislate.
  * @param get: Allows you to retrieve a Setting from your plugin file.
  */
-import { TouchableOpacity, Text, Image, View } from "enmity/components"
-import { StyleSheet, Constants, React, Dialog } from "enmity/metro/common"
-import { Store, Miscellaneous } from "../../utils"
-import { name } from '../../../manifest.json'
-import { get } from "enmity/api/settings"
+import { TouchableOpacity, Text, Image, View } from "enmity/components";
+import { StyleSheet, Constants, React, Dialog } from "enmity/metro/common";
+import { Store, Miscellaneous } from "../../utils";
+import { name } from "../../../manifest.json";
+import { get } from "enmity/api/settings";
 
-/** 
+/**
  * This is the main 'Animated' component of React Native, but for some reason its not exported in Enmity's dependencies so I'm importing it manually.
  * @param Animated: The main 'Animated' component of React Native.
  * @ts-ignore */
-const Animated = window.enmity.modules.common.Components.General.Animated
+const Animated = window.enmity.modules.common.Components.General.Animated;
 
 /**
  * This is the "Easing" Module exported by React Native. It allows you to use constant Easing types such as @arg Exponential or @arg Cubic
  * @param Easing: The main easing library of React Native, which is built to be used with the @arg Animated library.
  * @ts-ignore */
-const Easing = window.enmity.modules.common.Components.General.Easing
+const Easing = window.enmity.modules.common.Components.General.Easing;
 
 export default ({ label, content, type }) => {
+  /**
+   * @param {StyleSheet} styles: StyleSheet of generic styles used throughout the component.
+   */
+  const styles = StyleSheet.createThemedStyleSheet({
     /**
-     * @param {StyleSheet} styles: StyleSheet of generic styles used throughout the component.
+     * @param {object} button: The main button styling, to make it look cute and pretty :D
+     * The values for @arg width, @arg marginLeft, and @arg marginRight may seem quite random, but the margins are just (100 (%) - @arg width) / 2 each. This evenly splits the available space on each side of the button.
      */
-     const styles = StyleSheet.createThemedStyleSheet({
-        /**
-         * @param {object} button: The main button styling, to make it look cute and pretty :D
-         * The values for @arg width, @arg marginLeft, and @arg marginRight may seem quite random, but the margins are just (100 (%) - @arg width) / 2 each. This evenly splits the available space on each side of the button.
-         */
-        button: {
-            width: '92%',
-            borderRadius: 10,
-            marginLeft: '4%',
-            marginRight: '4%',
-            ...Miscellaneous.shadow
-        },
-        /**
-         * @param {object} text: The main styling for the text component.
-         */
-        text: {
-            color: "#f2f2f2",
-            textAlign: 'left',
-            letterSpacing: 0.25,
-            padding: 10
-        },
-        /**
-         * @param {object} textHeader: The styling specifically for the title text/label.
-         */
-        textHeader: {
-            fontSize: 20,
-            fontFamily: Constants.Fonts.PRIMARY_BOLD
-        },
-        /**
-         * @param {object} textContent: THe styling for the text content/body.
-         */
-        textContent: {
-            fontSize: 16,
-            fontFamily: Constants.Fonts.PRIMARY_NORMAL
-        },
-        /**
-         * @param {object} image: Style for the @arg {<Image>} component. Pretty self explanatory.
-         */
-         image: {
-            width: 25,
-            height: 25,
-            borderRadius: 4,
-            position: 'absolute',
-            right: 0,
-            margin: 10
-        },
-    })
-
-    /** 
-     * Use React to create a new Ref with @arg Animated
-     * @param {React.useRef} animatedButtonScale: The main animated value ref.
-     */
-    const animatedButtonScale = React.useRef(new Animated.Value(1)).current
-
+    button: {
+      width: "92%",
+      borderRadius: 10,
+      marginLeft: "4%",
+      marginRight: "4%",
+      ...Miscellaneous.shadow,
+    },
     /**
-     * @func onPress: Open a pop-up asking the user whether they want to just hide the Dialog or never show it again.
+     * @param {object} text: The main styling for the text component.
      */
-    const onPress = (): void => {
-        /**
-         * Move @param animatedButtonScale to @arg {0}, in @arg {250ms} with the @arg sinusoidal easing type (@arg Easing.sin).
-         * @returns {void}
-         */
-        const animate = () => Animated.timing(animatedButtonScale, {
-            toValue: 0,
-            duration: 250,
-            useNativeDriver: true,
-            easing: Easing.sin
-        }).start();
+    text: {
+      color: "#f2f2f2",
+      textAlign: "left",
+      letterSpacing: 0.25,
+      padding: 10,
+    },
+    /**
+     * @param {object} textHeader: The styling specifically for the title text/label.
+     */
+    textHeader: {
+      fontSize: 20,
+      fontFamily: Constants.Fonts.PRIMARY_BOLD,
+    },
+    /**
+     * @param {object} textContent: THe styling for the text content/body.
+     */
+    textContent: {
+      fontSize: 16,
+      fontFamily: Constants.Fonts.PRIMARY_NORMAL,
+    },
+    /**
+     * @param {object} image: Style for the @arg {<Image>} component. Pretty self explanatory.
+     */
+    image: {
+      width: 25,
+      height: 25,
+      borderRadius: 4,
+      position: "absolute",
+      right: 0,
+      margin: 10,
+    },
+  });
 
-        /**
-         * @param {callback} Dialog: Open a Discord-Native pop-up prompting the user whether they want to hide the Dialog forever (until it is cleared in Settings) or just hide it.
-         */
-        Dialog.show({
-            title: "Close Tip?",
-            body: `You can either hide this information box forever, or just hide it until you open this page again.`,
-            confirmText: "Hide",
-            cancelText: "Don't show again",
-            onConfirm: () => {
-                /**
-                 * "Confirming" means that you just want the Dialog to hide for this instance. Therefore, play the animation to scale down the Dialog, and nothing else.
-                 * @func animate: Moves the scale of the dialog to 0 with sinusoidal easing.
-                 */
-                animate()
-            },
-            onCancel: async function() {
-                /**
-                 * "Cancelling" means that you want the Dialog to never show again. Therefore, set the option in Settings for this specific label to true (hidden).
-                 * @func Store.item: Stores a setting or store item asynchronously.
-                 */
-                await Store.item(
-                    {
-                        name: label,
-                        content: true,
-                        type: 'setting'
-                    },
-                    `storing dialog at ${label} in Dialog component`
-                )
+  /**
+   * Use React to create a new Ref with @arg Animated
+   * @param {React.useRef} animatedButtonScale: The main animated value ref.
+   */
+  const animatedButtonScale = React.useRef(new Animated.Value(1)).current;
 
-                /**
-                 * Finally, call the @arg animate function to hide the Dialog.
-                 * @func animate: Moves the scale of the dialog to 0 with sinusoidal easing.
-                 */
-                animate()
-            },
-        })
-    }
+  /**
+   * @func onPress: Open a pop-up asking the user whether they want to just hide the Dialog or never show it again.
+   */
+  const onPress = (): void => {
+    /**
+     * Move @param animatedButtonScale to @arg {0}, in @arg {250ms} with the @arg sinusoidal easing type (@arg Easing.sin).
+     * @returns {void}
+     */
+    const animate = () => Animated.timing(animatedButtonScale, {
+        toValue: 0,
+        duration: 250,
+        useNativeDriver: true,
+        easing: Easing.sin,
+    }).start();
 
     /**
-     * Allows you to open a Dialog with a specific type
-     * @param {object} types: The hashmap of possible types that the Dialog could display as. If an invalid type is passed as a prop, @arg standard will be chosen by default.
+     * @param {callback} Dialog: Open a Discord-Native pop-up prompting the user whether they want to hide the Dialog forever (until it is cleared in Settings) or just hide it.
      */
-    const types = {
+    Dialog.show({
+      title: "Close Tip?",
+      body: `You can either hide this information box forever, or just hide it until you open this page again.`,
+      confirmText: "Hide",
+      cancelText: "Don't show again",
+      onConfirm: () => {
         /**
-         * @param standard: The standard display type. Shows the dialog in a relative position to the rest of the page, and does not float above content.
+         * "Confirming" means that you just want the Dialog to hide for this instance. Therefore, play the animation to scale down the Dialog, and nothing else.
+         * @func animate: Moves the scale of the dialog to 0 with sinusoidal easing.
          */
-        standard: {
-            backgroundColor: "rgba(0, 0, 0, 0.5)",
-            marginTop: 20
-        },
+        animate();
+      },
+      onCancel: async function () {
         /**
-         * @param floating: This type of Dialog floats above content, at the bottom of the page. The background is also slightly darker so that the text is more visible
+         * "Cancelling" means that you want the Dialog to never show again. Therefore, set the option in Settings for this specific label to true (hidden).
+         * @func Store.item: Stores a setting or store item asynchronously.
          */
-        floating: {
-            position: 'absolute',
-            bottom: 0,
-            marginBottom: 30,
-            backgroundColor: "rgba(0, 0, 0, 0.8)"
-        },
-    }
-    /** 
-     * The main animated style, which is going to be modified by the Animated property.
-     * @param {object{transform[{}]}} animatedScaleStyle: The main scale style applied to the element which has the scale.
-     */
-    const animatedScaleStyle = {
-        transform: [
-            {
-                scale: animatedButtonScale
-            }
-        ]
-    }
+        await Store.item(
+          {
+            name: label,
+            content: true,
+            type: "setting",
+          },
+          `storing dialog at ${label} in Dialog component`
+        );
 
+        /**
+         * Finally, call the @arg animate function to hide the Dialog.
+         * @func animate: Moves the scale of the dialog to 0 with sinusoidal easing.
+         */
+        animate();
+      },
+    });
+  };
 
+  /**
+   * Allows you to open a Dialog with a specific type
+   * @param {object} types: The hashmap of possible types that the Dialog could display as. If an invalid type is passed as a prop, @arg standard will be chosen by default.
+   */
+  const types = {
     /**
-     * Renders an empty fragment if the user chose "Don't show again."
-     * @if {(@arg shownAlready is true)} -> Render an empty fragment.
-     * @else {()} -> Render the main Dialog TSX.
-     * 
-     * Also checks if this dialog has been hidden forever before, and doesn't render if it has been shown and the user clicked "Don't Show Again."
+     * @param standard: The standard display type. Shows the dialog in a relative position to the rest of the page, and does not float above content.
      */
-    return !get(name, label, false) ? <>
-        <Animated.View style={animatedScaleStyle}>
-            <TouchableOpacity
+    standard: {
+      backgroundColor: "rgba(0, 0, 0, 0.5)",
+      marginTop: 20,
+    },
+    /**
+     * @param floating: This type of Dialog floats above content, at the bottom of the page. The background is also slightly darker so that the text is more visible
+     */
+    floating: {
+      position: "absolute",
+      bottom: 0,
+      marginBottom: 30,
+      backgroundColor: "rgba(0, 0, 0, 0.8)",
+    },
+  };
+
+  /**
+   * The main animated style, which is going to be modified by the Animated property.
+   * @param {object{transform[{}]}} animatedScaleStyle: The main scale style applied to the element which has the scale.
+   */
+  const animatedScaleStyle = {
+    transform: [
+      {
+        scale: animatedButtonScale,
+      },
+    ],
+  };
+
+  /**
+   * Renders an empty fragment if the user chose "Don't show again."
+   * @if {(@arg shownAlready is true)} -> Render an empty fragment.
+   * @else {()} -> Render the main Dialog TSX.
+   *
+   * Also checks if this dialog has been hidden forever before, and doesn't render if it has been shown and the user clicked "Don't Show Again."
+   */
+  return !get(name, label, false) ? (
+    <>
+      <Animated.View style={animatedScaleStyle}>
+        <TouchableOpacity
+          /**
+           * Has the default "button" styling (@arg styles.button) and also has the styling from whichever type of dialog was passed as a property.
+           * If this returns undefined (it couldn't find the type in the array) then use @arg standard instead.
+           */
+          style={[styles.button, types[type] ?? types["standard"]]}
+          onPress={onPress}
+        >
+          <View
+            style={{
+              width: "100%",
+              flexDirection: "row",
+            }}
+          >
+            <Image
+              style={styles.image}
+              source={{
                 /**
-                 * Has the default "button" styling (@arg styles.button) and also has the styling from whichever type of dialog was passed as a property. 
-                 * If this returns undefined (it couldn't find the type in the array) then use @arg standard instead.
+                 * The image used for the @arg Image.
+                 * @param uri: Can be either a @arg URI, which is what is provided, or it can be a @arg require.
                  */
-                style={[styles.button, types[type] ?? types["standard"]]}
-                onPress={onPress}>
-                <View style={{
-                    width: "100%",
-                    flexDirection: 'row'
-                }}>
-                    <Image style={styles.image} source={{
-                        /**
-                         * The image used for the @arg Image.
-                         * @param uri: Can be either a @arg URI, which is what is provided, or it can be a @arg require.
-                         */
-                        uri: 'https://i.imgur.com/rl1ga06.png', 
-                    }} />
-                </View>
-                <Text style={[styles.text, styles.textHeader]}>{label}</Text>
-                <Text style={[styles.text, styles.textContent]}>{content}</Text>
-            </TouchableOpacity>
-        </Animated.View>
-    </> : <></>
-}
+                uri: "https://i.imgur.com/rl1ga06.png",
+              }}
+            />
+          </View>
+          <Text style={[styles.text, styles.textHeader]}>{label}</Text>
+          <Text style={[styles.text, styles.textContent]}>{content}</Text>
+        </TouchableOpacity>
+      </Animated.View>
+    </>
+  ) : (
+    <></>
+  );
+};

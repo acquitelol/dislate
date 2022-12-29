@@ -16,7 +16,7 @@ import {
   ApplicationCommandInputType,
   ApplicationCommandOptionType,
 } from "enmity/api/commands";
-import { Dialog, Navigation } from 'enmity/metro/common'
+import { Dialog, Navigation } from 'enmity/metro/common';
 import { React, Toasts, Storage } from 'enmity/metro/common';
 import { name, plugin } from '../../../manifest.json';
 import { 
@@ -25,7 +25,7 @@ import {
     Icons, 
     ArrayImplementations as ArrayOps, 
     Debug 
-} from '../../utils'
+} from '../../utils';
 import { bulk, filters } from "enmity/metro";
 import Info from "../Pages/Debug/Info";
 import Page from "../Pages/Page";
@@ -69,7 +69,7 @@ const options = (channelId: string, channelName: string): any => {
                      * @param wrapper: The main @arg Info page, wrapped as a function to add the channel id as a prop safely.
                      * @returns {Info TSX Page.}
                      */
-                    const wrapper = (): any => <Info channelId={channelId} channelName={channelName} />
+                    const wrapper = (): any => <Info channelId={channelId} channelName={channelName} />;
                     
                     /**
                      * Push the wrapped page to Navigation, hence opening new page.
@@ -77,7 +77,7 @@ const options = (channelId: string, channelName: string): any => {
                      * @arg {TSX} wrapper: The wrapped Info component
                      * @uses @arg {string} name: The name of the Page, which will show up at the top.
                      */
-                    Navigation.push(Page, { component: wrapper, name: `${name}: Customize`})
+                    Navigation.push(Page, { component: wrapper, name: `${name}: Customize`});
                 },
                 onCancel: async function() {
                     /**
@@ -96,7 +96,7 @@ const options = (channelId: string, channelName: string): any => {
                         { channelId, channelName }, 
                         'full', 
                         'full log in Info Command.'
-                    )
+                    );
                 },
             })
         },
@@ -108,7 +108,7 @@ const options = (channelId: string, channelName: string): any => {
              * Fetch any existing stored state inside of the @arg dislateStoreState array.
              * @param storeItems: List of existing items in array form containing objects with name and type.
              */
-            const storeItems: any = JSON.parse(await Storage.getItem("dislate_store_state")) ?? []
+            const storeItems: any = JSON.parse(await Storage.getItem("dislate_store_state")) ?? [];
 
             /**
              * Loop through the stored items with a custom implementation of a forEach to allow for labels.
@@ -123,12 +123,12 @@ const options = (channelId: string, channelName: string): any => {
                 item.type==='storage'
                     ? await Storage.removeItem(item.name)
                     : set(name, item.name, false)
-            }, 'clearing state store')
+            }, 'clearing state store');
 
             /**
              * Remove the store to ensure it doesnt get cleared twice.
              */
-            await Storage.removeItem('dislate_store_state')
+            await Storage.removeItem('dislate_store_state');
 
             /**
              * Finally, open a @arg Toast to notify the user that all of the stores have been cleared.
@@ -154,7 +154,7 @@ const options = (channelId: string, channelName: string): any => {
              * @func displayToast: Opens a toast with a specified string as the argument saying that it has been copied to clipboard.
              * @returns {void}
              */
-            Miscellaneous.displayToast("download link", 'clipboard')
+            Miscellaneous.displayToast("download link", 'clipboard');
         }
     }
 }
@@ -174,7 +174,7 @@ const commandOptions: any[] = ArrayOps.mapItem(
         }
     }, 
     "debug options formatted as a command format"
-)
+);
 
 /**
  * Main command to send out debug information for @arg Dislate.
@@ -245,21 +245,21 @@ export default {
          * @param throwToast: A fallback toast, used in case the function from the debug argumetns couldnt be found. As a result, this toast will appear instead.
                 * @uses @param Icons.Clock: Clock icon imported from ./icons
          */
-        const availableOptions = options(context.channel.id, context.channel.name)
+        const availableOptions = options(context.channel.id, context.channel.name);
         const throwToast = () => {
             Toasts.open({ content: 'Invalid command argument.', source: Icons.Clock });
-        }
+        };
 
         /**
          * @param {callback ?? throwToast} chosenOption: Sets the command callback to either the callback from the @arg availableOptions function or uses the @arg throwToast as a fallback
          */
-        const chosenOption =  availableOptions[commandType] ?? throwToast
+        const chosenOption =  availableOptions[commandType] ?? throwToast;
 
         /**
          * Finally, call this @arg chosenOption function with no arguments, as none are needed.
          * Afterwards, return an empty object.
          */
-        chosenOption()
+        chosenOption();
         return {};
     },
 };

@@ -30,7 +30,7 @@ export default ({label, component}) => {
             fontFamily: Constants.Fonts.PRIMARY_BOLD,
             fontSize: 12
         },
-    })
+    });
 
     /**
      * Render a view with a margin at the top

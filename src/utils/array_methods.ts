@@ -177,7 +177,7 @@ const mapItem = (array: any[], callback: any, label?: string): any[] => {
          */
         return newArray
     }, [array, callback], name, 'map an array at', label)
-}
+};
 
 export default 
 {
@@ -186,4 +186,4 @@ export default
     forItem,
     mapItem,
     insertItem
-}
+};

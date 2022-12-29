@@ -37,7 +37,7 @@ const languageOptions: any[] = ArrayOps.mapItem(
       value: item
   }), 
   "language names"
-)
+);
 
 /**
  * Main Translate Command.
@@ -124,9 +124,7 @@ export default {
        * @param {boolean} required: This is set to true because there needs to be a language to translate to.
        */
       type: ApplicationCommandOptionType.String,
-      choices: [
-        ...languageOptions
-      ],
+      choices: [...languageOptions],
       required: true
     },
   ],
@@ -153,7 +151,7 @@ export default {
         fromLang: get(name, "DislateLangFrom", "detect"),
         toLang: language
       }
-    )
+    );
 
     /**
      * Next, translate the content which was returned from the other translate callback into the language that the user chose in Settings.
@@ -168,7 +166,7 @@ export default {
         fromLang: get(name, "DislateLangFrom", "detect"),
         toLang: get(name, "DislateLangTo", 'english')
       }
-    )
+    );
     
     /**
      * Returns early if either of the calls are undefined.
@@ -177,7 +175,7 @@ export default {
     if (!translatedContent || !translatedBack) {
       sendReply(context.channel.id, `Failed to send message in #${context.channel.name}`);
       return {};
-    }
+    };
 
     /**
      * Open a native Enmity Dialog to prompt the user and confirm that they actually want to send this message.
@@ -221,7 +219,7 @@ export default {
         Toasts.open({ 
           content: `Sent message in #${context.channel.name}, which was translated into ${Format.string(language)}.`, 
           source: Icons.Translate
-        })
+        });
       },
       onCancel: () => {
         /**
@@ -231,7 +229,7 @@ export default {
         Toasts.open({ 
           content: `Cancelled translated message request.`, 
           source: Icons.Cancel
-        })
+        });
       },
     })
     

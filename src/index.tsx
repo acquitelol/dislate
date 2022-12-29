@@ -28,7 +28,7 @@ import {
    Icons, 
    Devices
 } from './utils';
-import { DebugCommand, TranslateCommand, Settings } from './components/'
+import { DebugCommand, TranslateCommand, Settings } from './components/';
 import LanguageNames from '../modified/translate/src/languages/names';
 
 /**  
@@ -53,13 +53,13 @@ const Patcher = create('dislate');
 enum buttonType {
    Translate,
    Revert
-}
+};
 
 /** 
  * Top Level Cache Variables --
  * @param {object} cachedData: The main object which holds cached data. This data persists for only each instance of Enmity, so if you restart the app it will clear. It stores this data so that it can detect if a message has been translated yet and change the button (based on {buttonType}) to Revert.
  */
-let cachedData: object[] = [{"invalid_id": "acquite sucks"}]
+let cachedData: object[] = [{"invalid_id": "acquite sucks"}];
 
 /** 
  * Main Dislate Plugin Source --
@@ -441,7 +441,9 @@ const Dislate: Plugin = {
                                      * @function LazyActionSheet.hideActionSheet: Hides an action sheet.
                                      */
                                     LazyActionSheet.hideActionSheet();
-                                 } catch (err) { console.log(`[Dislate Local Err At Hidden Level ${err}]`); }
+                                 } catch (err) { 
+                                    console.error(`[${manifest.name}] Local ${err} At Inner Level`); 
+                                 }
                               } } />;
 
                            /**
@@ -467,7 +469,7 @@ const Dislate: Plugin = {
                   }
                });
             } catch (err) {
-               console.log(`[${manifest.name} Local Err At Intermediate Level ${err}]`);
+               console.error(`[${manifest.name}] Local ${err} At Intermediate Level`);
                /**
                 * Opens an error as a Toast
                 * @if {(@param {boolean} enableToasts is true)} -> Open a toast declaring an error.
@@ -482,12 +484,12 @@ const Dislate: Plugin = {
                   : null;
             }
          } catch (err) {
-            console.error(`[${manifest.name} Local Err At Top Level ${err}]`);
+            console.error(`[${manifest.name}] Local ${err} At Top Level`);
             let enableToasts = getBoolean(manifest.name, "toastEnable", false);
 
             if (attempt < maxAttempts) {
                console.warn(
-                  `[${manifest.name}] failed to start. Trying again in ${attempt}0s.`
+                  `[${manifest.name}] failed to initialise. Trying again in ${attempt}0s.`
                );
                /**
                 * Opens an error as a Toast declaring that it is trying again in an amount of secords.
@@ -497,7 +499,7 @@ const Dislate: Plugin = {
                 */
                enableToasts
                   ? Toasts.open({
-                     content: `[${manifest.name}] failed to start. Trying again in ${attempt}0s.`,
+                     content: `[${manifest.name}] failed to initialise. Trying again in ${attempt}0s.`,
                      source: Icons.Retry,
                   })
                   : null;
@@ -509,7 +511,7 @@ const Dislate: Plugin = {
                 */
                setTimeout(patchActionSheet, attempt * 10000);
             } else {
-               console.error(`[${manifest.name}] failed to start. Giving up.`);
+               console.error(`[${manifest.name}] failed to initialise. Giving up.`);
                /**
                 * Opens an error as a Toast declaring giving up on Initialising Dislate.
                 * @if ((@param {boolean} enableToasts is true)) -> Open a toast declaring an error.
@@ -518,7 +520,7 @@ const Dislate: Plugin = {
                 */
                enableToasts
                   ? Toasts.open({
-                     content: `[${manifest.name}] failed to start. Giving up.`,
+                     content: `[${manifest.name}] failed to initialise. Giving up.`,
                      source: Icons.Failed,
                   })
                   : null;

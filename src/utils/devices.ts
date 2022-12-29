@@ -7,7 +7,7 @@
  * @param tryCallback: Function to wrap another function in a try-catch
  */
 import { Dialog, Native, REST, Storage } from "enmity/metro/common";
-import { name } from '../../manifest.json'
+import { name } from '../../manifest.json';
 import Format from "./format";
 import Store from './store_item';
 import tryCallback from './try_callback';
@@ -128,10 +128,10 @@ async function isCompatibleDevice(label?: string): Promise<void> {
             ? await openIncompatibleDialog()
             : null;
     }, [], name, 'checking if device is compatible', label)
-}
+};
 
 export default 
 {
     getDeviceList,
     isCompatibleDevice
-}
+};

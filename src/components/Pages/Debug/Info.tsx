@@ -40,16 +40,16 @@ export default ({ channelId, channelName }) => {
      * @param {Getter, Setter} options: The list of available options, populated by the @arg React.useEffect
      * @param {Getter, Setter} query: The query that has been searched with the Search module.
      */
-    const [options, setOptions] = React.useState<string[]>([])
-    const [query, setQuery] = React.useState([])
+    const [options, setOptions] = React.useState<string[]>([]);
+    const [query, setQuery] = React.useState([]);
 
     /**
      * Use an asynchronous call to fetch the available debug arguments, on the first mount of the component to not cause any refetching on re-renders.
      * @param {returns string[]} fetchDebugArguments: Gets a list of debug arguments.
      */
     React.useEffect(async function() {
-        setOptions(Object.keys(await Debug.fetchDebugArguments()))
-    }, [])
+        setOptions(Object.keys(await Debug.fetchDebugArguments()));
+    }, []);
 
     /**
      * @param {StyleSheet} styles: StyleSheet of generic styles used throughout the component.
@@ -100,7 +100,7 @@ export default ({ channelId, channelName }) => {
             backgroundColor: Constants.ThemeColorMap.BACKGROUND_MOBILE_SECONDARY,
             ...Miscellaneous.shadow
         }
-    })
+    });
     
     /**
      * Main return element of the Component.
@@ -157,7 +157,7 @@ export default ({ channelId, channelName }) => {
                         { channelId, channelName }, 
                         'full', 
                         'full log in Info Component.'
-                    )
+                    );
             }}>
                 <Text style={[styles.text, styles.buttonText]}>Send All</Text>
             </TouchableOpacity>
@@ -170,7 +170,7 @@ export default ({ channelId, channelName }) => {
                     /**
                      * @param {string[]} debugOptions: Filtered list of options which only includes ones that the user has chosen to be true.
                      */
-                    const debugOptions = ArrayOps.filterItem(options, (item: string) => getBoolean(name, item, false), 'filtering chosen debug options')
+                    const debugOptions = ArrayOps.filterItem(options, (item: string) => getBoolean(name, item, false), 'filtering chosen debug options');
 
                     /**
                      * Send a partial debug log with the filtered list in the current channel.
@@ -181,7 +181,7 @@ export default ({ channelId, channelName }) => {
                         { channelId, channelName }, 
                         'partial', 
                         'partial log in Info Component.'
-                    )
+                    );
             }}>
                 <Text style={[styles.text, styles.buttonText]}>Send Message</Text>
             </TouchableOpacity>

@@ -7,7 +7,7 @@
  * @param set: Allows you to store a setting in the plugin file.
  */
 import { Storage } from 'enmity/metro/common';
-import ArrayOps from './array_methods'
+import ArrayOps from './array_methods';
 import tryCallback from './try_callback';
 import { name } from '../../manifest.json'
 import { set } from 'enmity/api/settings';
@@ -46,9 +46,9 @@ async function item(item: { name: string; content: any; type: string; }, label?:
          */
         await Storage.setItem("dislate_store_state", JSON.stringify(stateStore)) 
     }, [item], name, 'storing an item in plugin file or storage at', label) 
-}
+};
 
 export default 
 {
     item
-}
+};

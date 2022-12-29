@@ -17,8 +17,8 @@ export default ({component}) => {
      * @param {Getter, Setter}: The X position change of your finger.
      * @param {Getter, Setter}: The Y position change of your finger.
      */
-    const [touchX, setTouchX] = React.useState()
-    const [touchY, setTouchY] = React.useState()
+    const [touchX, setTouchX] = React.useState();
+    const [touchY, setTouchY] = React.useState();
 
     return <ScrollView
         onTouchStart={(e: any) => {
@@ -44,4 +44,4 @@ export default ({component}) => {
     >
         {component}
     </ScrollView>
-}
+};

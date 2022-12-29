@@ -22,10 +22,7 @@ export const PageNavigator = NavigationStack.createStackNavigator();
  * @param {string} name: The name of the page, which will be shown at the top. Default is @arg Page.
  * @param {TSX} component: The component which will be rendered inside the Page container. Default is just an empty view.
  */
-export default ({ 
-  name = 'Page', 
-  component = View,
-} = {}) => {
+export default ({ name = 'Page', component = View } = {}) => {
   /**
    * Create the main StyleSheet used throughout the Page.
    * @param {StyleSheet} styles: The main StyleSheet.
@@ -71,7 +68,7 @@ const Button = ({onPress, title}) => {
           <Text style={styles.text}>{title}</Text>
       </TouchableOpacity>
   );
-}
+};
 
   /**
    * Opens a new page with the component provided inside of it.
@@ -112,4 +109,4 @@ const Button = ({onPress, title}) => {
       />
     </PageNavigator.Navigator>
   </NavigationNative.NavigationContainer>;
-}
+};

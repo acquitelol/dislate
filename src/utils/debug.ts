@@ -102,11 +102,11 @@ async function sendDebugLog(options: string[], {channelId, channelName}, type: s
             source: Icons.Settings.Toasts.Settings
         })
     }, [options, type], name, 'sending debug log at', label)
-}
+};
 
 export default 
 {
     fetchDebugArguments,
     debugInfo,
     sendDebugLog
-}
+};

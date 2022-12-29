@@ -36,15 +36,15 @@ export default () => {
      * @param {Getter, Setter} languages: The list of available languages, populated by the @arg React.useEffect hook.
      * @param {Getter, Setter} query: The query that has been inputted by the user in the search box. By default this is []. and as @arg {[] == true}, which can be shown by logging @arg {!![]}, by default all options will be showing because the filter will evaluate to true on all instances.
      */
-    const [languages, setLanguages] = React.useState([])
-    const [query, setQuery] = React.useState([])
+    const [languages, setLanguages] = React.useState([]);
+    const [query, setQuery] = React.useState([]);
 
     /**
      * Populates the list of available @arg {string[]} languages with a @arg useEffect hook to only set the state on the initial Mount of the component.
      */
     React.useEffect(() => {
-        setLanguages(Object.keys(LanguageNames))
-    }, [])
+        setLanguages(Object.keys(LanguageNames));
+    }, []);
 
     return <>
         {/**

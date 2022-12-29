@@ -108,7 +108,7 @@ export default ({name, version, plugin, authors}): void => {
      * Use React to create a new Ref with @arg Animated
      * @param {React.useRef} animatedButtonScale: The main animation scale ref.
      */
-    const animatedButtonScale = React.useRef(new Animated.Value(1)).current
+    const animatedButtonScale = React.useRef(new Animated.Value(1)).current;
 
     /**
      * Move @param animatedButtonScale to @arg {1.1}, in @arg {250ms} with the @arg spring easing type.
@@ -146,7 +146,7 @@ export default ({name, version, plugin, authors}): void => {
                 scale: animatedButtonScale
             }
         ]
-    }
+    };
     
     /** 
      * Main component

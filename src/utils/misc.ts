@@ -5,7 +5,7 @@
  * @param {function} Toasts: The function to open a toast on the screen
  * @param {object} Icons: The icons exported in ./Icons
  */
-import { name } from '../../manifest.json'
+import { name } from '../../manifest.json';
 import tryCallback from "./try_callback";
 import { Toasts } from "enmity/metro/common";
 import Icons from "./icons";
@@ -20,7 +20,7 @@ const externalPlugins: { [key: string]: string | undefined; } = {
     invisChat: "420",
     cutMessage: "512",
     dislate: "1002"
-}
+};
 
 /**
  * @param shadow: Native shadow implementation that is used throughout the entire plugin.
@@ -35,7 +35,7 @@ const shadow: Shadow = {
     shadowOpacity: 0.10,
     shadowRadius: 4.65,
     elevation: 8
-}
+};
 
 /** 
  * Open a toast with the text provided saying it has been copied to clipboard or as a tooltip
@@ -50,8 +50,8 @@ const displayToast = (source: string, type: 'clipboard' | 'tooltip'): void => {
     Toasts.open({ 
         content: type=='clipboard' ? `Copied ${source} to clipboard.` : source, 
         source: type=='clipboard' ? Icons.Clipboard : Icons.Settings.Initial 
-    })
-}
+    });
+};
 
 /** 
  * Chooses whether the color should be Dark or Light depending on the background color of the element.
@@ -97,8 +97,8 @@ const filterColor = (color: string, light: string, dark: string, boundary: numbe
         return (((red + green + blue) / (255 * 3)) > boundary)
             ?   dark 
             :   light
-    }, [color, light, dark, boundary], name, 'checking if color should be light or dark at', label)
-}
+    }, [color, light, dark, boundary], name, 'checking if color should be light or dark at', label);
+};
 
 export default 
 {
@@ -106,4 +106,4 @@ export default
     shadow,
     displayToast,
     filterColor
-}
+};
