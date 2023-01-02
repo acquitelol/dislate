@@ -1,30 +1,16 @@
 {
   "name": "translate",
-  "version": "1.4.3",
-  "description": "Translate text to different languages on node.js and the browser - modified by Acquite",
-  "homepage": "https://github.com/franciscop/translate#readme",
-  "repository": "https://github.com/franciscop/translate.git",
-  "bugs": "https://github.com/franciscop/translate/issues",
-  "funding": {
-    "url": "https://www.paypal.me/franciscopresencia/19"
-  },
-  "author": "Francisco Presencia <public@francisco.io> (https://francisco.io/)",
-  "license": "MIT",
+  "version": "1.0.0",
+  "description": "Translate text to different languages based on the Google Translate Engine",
+  "author": "",
   "scripts": {
     "start": "npm run watch # Start ~= Start dev",
     "build": "rollup src/index.js --name translate --output.format umd | uglifyjs -o translate.min.js",
+    "minify-build": "rollup -c --configPlugin esbuild | uglifyjs --compress --mangle -- dist/translate.min.js > translate.min.js",
     "test": "jest --coverage --collectCoverageFrom=src/**/*.js",
     "watch": "nodemon --exec \"npm run build && npm test && npm run gzip\" --watch src --watch test --watch webpack.config.js --watch package.json",
     "gzip": "gzip -c translate.min.js | wc -c && echo 'bytes' # Only for Unix"
   },
-  "keywords": [
-    "translate",
-    "languages",
-    "i18n",
-    "internationalization",
-    "async",
-    "google"
-  ],
   "main": "./src/index.js",
   "dependencies": {
     "@babel/preset-env": "^7.15.6",
