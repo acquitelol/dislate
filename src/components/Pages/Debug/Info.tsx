@@ -13,7 +13,7 @@
  * @param ExitWrapper: A component to wrap the rest of the components into a ScrollView with capibility to close the page upon swiping right. Used by passing the TSX to render inside the Component prop. Can be a single component or a Fragment <>.
  */
 import { getBoolean } from 'enmity/api/settings';
-import { FormDivider, Text, TouchableOpacity, View } from 'enmity/components';
+import { Form, FormDivider, Text, TouchableOpacity, View } from 'enmity/components';
 import { getByName } from 'enmity/metro';
 import { Constants, React, StyleSheet } from 'enmity/metro/common';
 import { name } from '../../../../manifest.json';
@@ -48,7 +48,7 @@ export default ({ channelId, channelName }) => {
      * @param {returns string[]} fetchDebugArguments: Gets a list of debug arguments.
      */
     React.useEffect(async function() {
-        setOptions(Object.keys(await Debug.fetchDebugArguments()));
+        setOptions(await Debug.fetchDebugArguments());
     }, []);
 
     /**
@@ -135,11 +135,13 @@ export default ({ channelId, channelName }) => {
                      * @uses @param {TSX} DebugItem: Component to render toggleable options, with independent state.
                      */}
                     {ArrayOps.mapItem(
-                        ArrayOps.filterItem(options, (option: string) => option.toLowerCase().includes(query)), 
-                        (option: string) => <InfoItem option={option} channelId={channelId} channelName={channelName} debugOptions={options} />,
+                        ArrayOps.filterItem(Object.keys(options), (option: string) => option.toLowerCase().includes(query)), 
+                        (option: string, index: number, array: any[]) => <>
+                            <InfoItem option={option} channelId={channelId} channelName={channelName} debugOptions={options} />
+                            {index !== (array.length - 1) ? <FormDivider/> : null}
+                        </>,
                         'list of debug information options'
                     )}
-                    <FormDivider />
                 </View>
             </>} />
             {/**
@@ -153,7 +155,7 @@ export default ({ channelId, channelName }) => {
                      * @uses @param {string[]} options: List of available debug options, all are passed to the debug log as this is sending @arg all the options
                      */
                     await Debug.sendDebugLog(
-                        options, 
+                        Object.keys(options), 
                         { channelId, channelName }, 
                         'full', 
                         'full log in Info Component.'
@@ -170,7 +172,7 @@ export default ({ channelId, channelName }) => {
                     /**
                      * @param {string[]} debugOptions: Filtered list of options which only includes ones that the user has chosen to be true.
                      */
-                    const debugOptions = ArrayOps.filterItem(options, (item: string) => getBoolean(name, item, false), 'filtering chosen debug options');
+                    const debugOptions = ArrayOps.filterItem(Object.keys(options), (item: string) => getBoolean(name, item, false), 'filtering chosen debug options');
 
                     /**
                      * Send a partial debug log with the filtered list in the current channel.

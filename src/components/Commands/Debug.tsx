@@ -168,8 +168,8 @@ const commandOptions: any[] = ArrayOps.mapItem(
     Object.keys(options("8008135", "placeholder")), 
     (item: string) => {
         return {
-            name: Format.string(item),
-            displayName: Format.string(item),
+            name: Format.string(item, true),
+            displayName: Format.string(item, true),
             value: item
         }
     }, 
