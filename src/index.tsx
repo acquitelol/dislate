@@ -35,13 +35,16 @@ import LanguageNames from '../modified/translate/src/languages/names';
  * Top Level Bulk-Filter Variable Declaration --
  * @param {any} LazyActionSheet: The main ActionSheet which I would patch into
  * @param {any} ChannelStore: Allows you to get the current channel
+ * @param {any} Icon: Component used for icons in action sheets
 */
 const [
    LazyActionSheet,
-   ChannelStore
+   ChannelStore,
+   Icon
 ] = bulk(
    filters.byProps("openLazy", "hideActionSheet"),
    filters.byProps("getChannel", "getDMFromUserId"),
+   filters.byName("Icon")
 );
 
 /** 
@@ -344,7 +347,7 @@ const Dislate: Plugin = {
                                */
                               key={Miscellaneous.externalPlugins.dislate}
                               label={`${translateType === buttonType.Translate ? "Translate" : "Revert"}`}
-                              leading={<FormRow.Icon source={translateType === buttonType.Translate
+                              leading={<Icon source={translateType === buttonType.Translate
                                  ? Icons.Translate
                                  : Icons.Revert} />}
                               onPress={() => {
