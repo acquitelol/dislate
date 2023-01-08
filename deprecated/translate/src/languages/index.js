@@ -19,7 +19,7 @@ export default language => {
 
   // make the language lowercase and try to find if it exists in any of the ISO lists by mapping
   language = language.toLowerCase();
-  language = languageNames[language] || iso2[language] || language;
+  language = languageNames[language] || language;
 
   // if the language isnt included in the generic iso then throw
   if (!iso.includes(language)) {

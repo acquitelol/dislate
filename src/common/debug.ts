@@ -67,46 +67,8 @@ async function debugInfo(options: string[], label?: string): Promise<string> {
     }, [options], name, 'creating debug info at', label)
 }
 
-/**
- * Sends a debug log with the specific parameters into a channel.
- * @param {string[]} options: The list of debug options to be sent by the command.
- * @param {~ channelId: string, channelName: string}: The channel name and id, used for sending the message in a specific channel and displaying the correct channel name in the toast.
- * @param {string} type: The type of log that has been called. An example would be @arg partial or @arg full.
- * @param {string?} label?: The label which describes what this function was doing. May be undefined.
- * @returns {Promise<void>}
- */
-async function sendDebugLog(options: string[], {channelId, channelName}, type: string, label?: string): Promise<void> {
-    await tryCallback(async function() {
-        /**
-         * This closes the most top-level item in the Navigation stack. As the current @arg Info page is at the top, because this button is visible, This method will close the page.
-         * @param Navigation.pop: Removes the top item from the Navigation stack, closing the top level page.
-         */
-        Navigation.pop()
-
-        /**
-         * Pass the list of options as a parameter to the @func debugInfo function, and then send it to the channel where the command was triggered.
-         * @uses @param {string} channelId: The ID of the channel where the message should be sent.
-         * @uses @param {string[]} options: The list of options to render out on the page, from the parameters passed.
-         */
-        Messages.sendMessage(channelId, {
-            content: await debugInfo(options)
-        });
-
-        /**
-         * Opens a toast saying that a Log with the specific type has been sent to the channelName.
-         * @uses @param {string} type: The type of log that has been sent
-         * @uses @param {string} channelName: The name of the channel where the message has been sent.
-         */
-        Toasts.open({ 
-            content: `Sent ${type} log in #${channelName}.`, 
-            source: Icons.Settings.Toasts.Settings
-        })
-    }, [options, type], name, 'sending debug log at', label)
-};
-
 export default 
 {
     fetchDebugArguments,
     debugInfo,
-    sendDebugLog
 };

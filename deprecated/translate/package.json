@@ -2,6 +2,7 @@
   "name": "translate",
   "version": "1.0.0",
   "description": "Translate text to different languages based on the Google Translate Engine",
+  "type": "module",
   "author": "",
   "scripts": {
     "start": "npm run watch # Start ~= Start dev",

@@ -85,8 +85,7 @@ const reverse = (object: any, label?: any): any => {
     }, [object], name, 'reversing object at', label)
 }
 
-export default 
-{
+export default {
    string,
    object,
    reverse 

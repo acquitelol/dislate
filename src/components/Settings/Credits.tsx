@@ -13,7 +13,7 @@
 import { React, Constants, StyleSheet } from 'enmity/metro/common';
 import { bulk, filters } from 'enmity/metro';
 import { TouchableOpacity, View, Image, Text} from 'enmity/components';
-import { Debug, ArrayImplementations as ArrayOps, Miscellaneous} from '../../utils';
+import { Debug, ArrayImplementations as ArrayOps, Miscellaneous} from '../../common';
 
 /** 
  * This is the main 'Animated' component of React Native, but for some reason its not exported in Enmity's dependencies so I'm importing it manually.

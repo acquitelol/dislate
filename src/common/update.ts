@@ -138,9 +138,7 @@ async function installPlugin(url: string, type: string, updateType: string): Pro
                          */
                         onConfirm: (): void => reload(),
                     })
-                : console.log(
-                        `[Dislate] Plugin failed to update to ${updateType} ${type}.`
-                    );
+                : console.log(`[Dislate] Plugin failed to update to ${updateType} ${type}.`);
         });
     }, [url, type, updateType], name, 'installing plugin at', 'new version available');
 }

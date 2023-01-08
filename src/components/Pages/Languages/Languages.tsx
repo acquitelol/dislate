@@ -15,8 +15,7 @@ import { View } from 'enmity/components';
 import { getByName } from 'enmity/metro';
 import { React } from 'enmity/metro/common';
 import { name } from '../../../../manifest.json';
-import LanguageNames from '../../../../modified/translate/src/languages/names';
-import { ArrayImplementations as ArrayOps } from '../../../utils';
+import { ArrayImplementations as ArrayOps } from '../../../common';
 import Dialog from '../../Modals/Dialog';
 import ExitWrapper from '../../Wrappers/ExitWrapper';
 import LanguageItem from './LanguageItem';
@@ -30,21 +29,13 @@ const Search = getByName('StaticSearchBarContainer');
 /**
  * Main Languages Page Component.
  */
-export default () => {
+export default ({ languages }) => {
     /**
      * States used throughout the Page
      * @param {Getter, Setter} languages: The list of available languages, populated by the @arg React.useEffect hook.
      * @param {Getter, Setter} query: The query that has been inputted by the user in the search box. By default this is []. and as @arg {[] == true}, which can be shown by logging @arg {!![]}, by default all options will be showing because the filter will evaluate to true on all instances.
      */
-    const [languages, setLanguages] = React.useState([]);
     const [query, setQuery] = React.useState([]);
-
-    /**
-     * Populates the list of available @arg {string[]} languages with a @arg useEffect hook to only set the state on the initial Mount of the component.
-     */
-    React.useEffect(() => {
-        setLanguages(Object.keys(LanguageNames));
-    }, []);
 
     return <>
         {/**
@@ -64,11 +55,11 @@ export default () => {
                  * Renders a @arg LanguageItem component for each of the available languages. If the page opened was the language to translate to, then the "Detect" option will not be rendered at all.
                  */}
                 {ArrayOps.mapItem(
-                    ArrayOps.filterItem(languages, (language: string) => language.toLowerCase().includes(query), 'getting searched languages'), 
-                    (language: string) => 
-                    (get(name, "DislateLangFilter") && language=='detect') 
+                    ArrayOps.filterItem(Object.keys(languages), (language: string) => language.toLowerCase().includes(query), 'getting searched languages'), 
+                    (language: string) => (get(name, "DislateLangFilter") && language=='detect') 
                         ? <></> 
-                        : <LanguageItem language={language}/>,
+                        : <LanguageItem language={language} languages={languages} />,
+                    
                     "listing different possible languages"
                 )}
             </View>

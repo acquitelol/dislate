@@ -10,7 +10,7 @@
  * @param Storage: Allows you to store and retrieve Serializable items asynchronously.
  * @param StyleSheet: Allows you to create custom React Native stylesheets.
  * @param Toasts: Allows you to open a small notification.
- * @param {*} utils: Custom implementations and functions used throughout Dislate, stored away to abstract the source
+ * @param {* from common}: Custom implementations and functions used throughout Dislate, stored away to abstract the source
  * @param Credits: The main Credits UI allowing for Name, Authors, etc
  * @param ExitWrapper: Allows a component to be wrapped in a gesture to swipe right and close the page.
  * @param SectionWrapper: Allows you to split components into sections, similar to FormSection from Discord.
@@ -21,7 +21,7 @@ import { get, set } from 'enmity/api/settings';
 import { FormDivider, FormRow, FormSwitch, Text, View } from 'enmity/components';
 import { bulk, filters } from 'enmity/metro';
 import { React, Constants, Navigation, Storage, StyleSheet, Toasts } from 'enmity/metro/common';
-import { Miscellaneous, Debug, Format, ArrayImplementations as ArrayOps, Icons, Updater } from '../../utils';
+import { Miscellaneous, Debug, Format, ArrayImplementations as ArrayOps, Icons, Updater } from '../../common';
 import Credits from './Credits';
 import ExitWrapper from '../Wrappers/ExitWrapper';
 import SectionWrapper from '../Wrappers/SectionWrapper'
@@ -52,7 +52,7 @@ const [
         * @uses @param authors: List of authors with their Discord ID and a link to their GitHub profile.
         * @uses @param release: The current release channel of the plugin. This is generally a toggle between @arg stable and @arg development
   */
-export default ({ settings, manifest: { name, version, plugin, authors, release } }) => {
+export default ({ settings, manifest: { name, version, plugin, authors, release }, languages }) => {
     /**
      * @param {StyleSheet} styles: The main stylesheet for the items in the UI.
      */
@@ -134,7 +134,7 @@ export default ({ settings, manifest: { name, version, plugin, authors, release 
                     <View style={styles.container}>
                         {/**
                          * The main component to allow the user to open a page and choose what language they would like to translate from.
-                         * @uses @param {stringId} Icons.Settings.TranslateFrom: The main icon for the translate "from" component.
+                         * @uses @param {number} Icons.Settings.TranslateFrom: The main icon for the translate "from" component.
                          */}
                         <FormRow
                             label='Translate From'
@@ -156,16 +156,22 @@ export default ({ settings, manifest: { name, version, plugin, authors, release 
                                 set(name, "DislateLangFilter", false)
                                 
                                 /**
+                                 * @param wrapper: The main @arg Language page, wrapped as a function to add the languages list as a prop safely.
+                                 * @returns {Languages TSX Page.}
+                                 */
+                                const wrapper = (): any => <Languages languages={languages} />;
+                                
+                                /**
                                  * Finally, push the @arg Languages page out to the user, using the @arg NavigationStack, and allow them to pick the @arg from language.
                                  */
-                                Navigation.push(Page, { component: Languages, name: `${name}: Language From` })
+                                Navigation.push(Page, { component: wrapper, name: `${name}: Language From` });
                             }}
                             onLongPress={() => Miscellaneous.displayToast('Open a new page allowing you to choose a language that you can translate from. The default is "Detect".', 'tooltip')}
                         />
                         <FormDivider/>
                         {/**
                          * The main component to allow the user to open a page and choose what language they would like to translate to.
-                         * @uses @param {stringId} Icons.Settings.TranslateTo: The main icon for the translate "to" component.
+                         * @uses @param {number} Icons.Settings.TranslateTo: The main icon for the translate "to" component.
                          */}
                         <FormRow
                             label='Translate To'
@@ -187,9 +193,15 @@ export default ({ settings, manifest: { name, version, plugin, authors, release 
                                 set(name, "DislateLangFilter", true)
 
                                 /**
+                                 * @param wrapper: The main @arg Languages page, wrapped as a function to add the languages list as a prop safely.
+                                 * @returns {Languages TSX Page.}
+                                 */
+                                const wrapper = (): any => <Languages languages={languages} />;
+                                
+                                /**
                                  * Finally, push the @arg Languages page out to the user, using the @arg NavigationStack, and allow them to pick the @arg to language.
                                  */
-                                Navigation.push(Page, { component: Languages, name: `${name}: Language To` })
+                                Navigation.push(Page, { component: wrapper, name: `${name}: Language To` });
                             }}
                             onLongPress={() => Miscellaneous.displayToast('Open a new page allowing you to choose a language that you can translate to. The default is "English".', 'tooltip')}
                         />
@@ -201,8 +213,8 @@ export default ({ settings, manifest: { name, version, plugin, authors, release 
                          * The abbreviated method will render it as @arg {ロージーは本当に背が高い} -> @arg {rosie is really tall [EN]}
                          * 
                          * It is a very minor customizability but allows more control from the user. Furthermore, this option only sets the setting, the main code controls what is displayed through fetching its current state.
-                         * @uses @param {stringId} Icons.Retry: The main @arg retry icon.
-                         * @uses @param {stringId} Icons.Settings.Toasts.Settings: The main @arg tick icon.
+                         * @uses @param {number} Icons.Retry: The main @arg retry icon.
+                         * @uses @param {number} Icons.Settings.Toasts.Settings: The main @arg tick icon.
                          */}
                         <FormRow
                             label='Abbreviate Language'
@@ -228,7 +240,7 @@ export default ({ settings, manifest: { name, version, plugin, authors, release 
 
                                             /**
                                              * Open a @arg Toast displaying to the user that the Language Abbreviation option has been @arg enabled or @arg disabled.
-                                             * @uses @param {stringId} Icons.Settings.Toasts.Settings: The tick state of a toast from the Icons package.
+                                             * @uses @param {number} Icons.Settings.Toasts.Settings: The tick state of a toast from the Icons package.
                                              */
                                             Toasts.open({ 
                                                 content: `Successfully ${settings.getBoolean('DislateLangAbbr', false) ? 'enabled' : 'disabled'} language abbreviations.`, 
@@ -250,8 +262,8 @@ export default ({ settings, manifest: { name, version, plugin, authors, release 
                                                                                     * ロージーは本当に背が高い
                                                                                     * }
                          * 
-                         * @uses @param {stringId} Icons.Settings.Locale: The main @arg locale icon.
-                         * @uses @param {stringId} Icons.Settings.Toasts.Settings: The main @arg tick icon.
+                         * @uses @param {number} Icons.Settings.Locale: The main @arg locale icon.
+                         * @uses @param {number} Icons.Settings.Toasts.Settings: The main @arg tick icon.
                          */}
                         <FormRow
                             label='Send Original'
@@ -277,7 +289,7 @@ export default ({ settings, manifest: { name, version, plugin, authors, release 
 
                                             /**
                                              * Open a @arg Toast displaying to the user that the Send Original option has been @arg enabled or @arg disabled.
-                                             * @uses @param {stringId} Icons.Settings.Toasts.Settings: The tick state of a toast from the Icons package.
+                                             * @uses @param {number} Icons.Settings.Toasts.Settings: The tick state of a toast from the Icons package.
                                              */
                                             Toasts.open({ 
                                                 content: `Now sending ${settings.getBoolean('DislateBothLangToggle', false) ? 'original and translated' : 'only translated'} message.`, 
@@ -304,8 +316,8 @@ export default ({ settings, manifest: { name, version, plugin, authors, release 
                     <View style={styles.container}>
                         {/**
                          * The main initliasation toast toggle. This would control whether you would like toasts to appear at the runtime of Dislate, and if any errors are caught.
-                         * @uses @param {stringId} Icons.Settings.Initial: The @arg {toast} initialisation icon.
-                         * @uses @param {stringId} Icons.Settings.Toasts.Settings: The @arg tick icon.
+                         * @uses @param {number} Icons.Settings.Initial: The @arg {toast} initialisation icon.
+                         * @uses @param {number} Icons.Settings.Toasts.Settings: The @arg tick icon.
                          */}
                         <FormRow
                             label='Initialisation Toasts'
@@ -331,7 +343,7 @@ export default ({ settings, manifest: { name, version, plugin, authors, release 
 
                                             /**
                                              * Open a @arg Toast displaying to the user that the Language Abbreviation option has been @arg enabled or @arg disabled.
-                                             * @uses @param {stringId} Icons.Settings.Toasts.Settings: The tick state of a toast from the Icons package.
+                                             * @uses @param {number} Icons.Settings.Toasts.Settings: The tick state of a toast from the Icons package.
                                              */
                                             Toasts.open({ 
                                                 content: `Successfully ${settings.getBoolean('toastEnable', false) ? 'enabled' : 'disabled'} Load Toasts.`, 
@@ -345,8 +357,8 @@ export default ({ settings, manifest: { name, version, plugin, authors, release 
                         <FormDivider />
                         {/**
                          * The main debug info log. This would allow the user to copy the entire debug log to clipboard. Of course, they could use the </dislate type:Debug :1> command to choose, but this copies the full log.
-                         * @uses @param {stringId} Icons.Copy: The @arg toast initialisation icon.
-                         * @uses @param {stringId} Icons.Settings.Toasts.Settings: The @arg tick icon.
+                         * @uses @param {number} Icons.Copy: The @arg toast initialisation icon.
+                         * @uses @param {number} Icons.Settings.Toasts.Settings: The @arg tick icon.
                          */}
                         <FormRow
                             label='Copy Debug Info'
@@ -375,8 +387,8 @@ export default ({ settings, manifest: { name, version, plugin, authors, release 
                         <FormDivider />
                         {/**
                          * The main clear state store button. This would allow the user to clear any state from the custom dialog implementations, clear their device list, and clear their agreement to the incompatible device notice.
-                         * @uses @param {stringId} Icons.Delete: The main @arg delete icon.
-                         * @uses @param {stringId} Icons.Settings.Toasts.Settings: The @arg tick icon.
+                         * @uses @param {number} Icons.Delete: The main @arg delete icon.
+                         * @uses @param {number} Icons.Settings.Toasts.Settings: The @arg tick icon.
                          */}
                         <FormRow
                             label='Clear Stores'
@@ -435,7 +447,7 @@ export default ({ settings, manifest: { name, version, plugin, authors, release 
                     <View style={styles.container}>
                         {/**
                          * The main update button. This would allow the user to search the github for the latest release and check if it is the current release installed, and prompts the user to update if it isnt.
-                         * @uses @param {stringId} Icons.Settings.Update: The main @arg update icon.
+                         * @uses @param {number} Icons.Settings.Update: The main @arg update icon.
                          */}
                         <FormRow
                             label="Check for Updates"
@@ -445,7 +457,7 @@ export default ({ settings, manifest: { name, version, plugin, authors, release 
                             trailing={FormRow.Arrow}
                             onPress={ async function() {
                                 /**
-                                 * Simply calls the @func Updater.checkForUpdates function asynchronously. This is a whole seperate documented script located at src/utils/update.ts 
+                                 * Simply calls the @func Updater.checkForUpdates function asynchronously. This is a whole seperate documented script located at src/commmon/update.ts 
                                  * This would check for any updates to the version or build and prompt the user to update if any are found.
                                  */
                                 await Updater.checkForUpdates();
@@ -454,7 +466,7 @@ export default ({ settings, manifest: { name, version, plugin, authors, release 
                         <FormDivider />
                         {/**
                         * The main repository. This would allow the user to open an external window inside of Discord using Router and display the current dislate repo, on GitHub.
-                        * @uses @param {stringId} Icons.Open: The main @arg {external} open icon.
+                        * @uses @param {number} Icons.Open: The main @arg {external} open icon.
                         */}
                         <FormRow
                             label="Source"

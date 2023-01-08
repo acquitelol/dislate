@@ -10,9 +10,9 @@
  * @param Debug: Main class to create Debug Arguments and send Debug Logs.
  */
 import { getBoolean, set } from "enmity/api/settings";
-import { FormRow, Text, View, TouchableOpacity } from "enmity/components";
+import { FormRow, Text } from "enmity/components";
 import { Constants, React, StyleSheet } from "enmity/metro/common";
-import { Icons, Debug, Format } from "../../../utils";
+import { Icons, Debug } from "../../../common";
 import { name } from '../../../../manifest.json';
 
 /**
@@ -21,7 +21,7 @@ import { name } from '../../../../manifest.json';
  * @param {string} channelId: The @arg {Channel ID}, This is passed as a prop to the component for the "Long Press to send a single item" functionality.
  * @param {string} channelName: The @arg {Channel Name}, This is the name of the channel where the message will be sent.
  */
-export default ({ option, channelId, channelName, debugOptions }) => {
+export default ({ option, channelId, channelName, debugOptions, onConfirmCallback }) => {
     /**
      * Create a new state for whether the Option is currently active, by default, this is false.
      * @param {Getter, Setter}: Allows you to set and re-render the component to determine whether the option is active or inactive.
@@ -80,17 +80,12 @@ export default ({ option, channelId, channelName, debugOptions }) => {
              * Send a debug log with a single option as the list of options, hence a single log
              * @uses @param {string} option: The option which will be logged.
              */
-            await Debug.sendDebugLog(
-                [option], 
-                { channelId, channelName }, 
-                'single', 
-                'single log in DebugItem Component.'
-            );
+            await onConfirmCallback(await Debug.debugInfo([option]), "single log");
         }}
         leading={<FormRow.Icon style={styles.icon} source={
             /**
              * Either set the Icon to Tick or Cross depending on whether @arg isActive is true or false
-             * @param {stringId} Icons.Settings.Toasts: Part of the icon dependency to display icons for Toasts, can also be used in this scenario.
+             * @param {number} Icons.Settings.Toasts: Part of the icon dependency to display icons for Toasts, can also be used in this scenario.
              */
             isActive
                 ?   Icons.Settings.Toasts.Settings

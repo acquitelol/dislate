@@ -9,7 +9,6 @@
  * @param { ArrayOps.findItem, Format.string, Icons, ArrayOps.mapItem, Translate.string, ArrayOps.filterItem }: Utility Functions that Dislate uses.
  * @param Info: The main "@arg debug" page to choose custom parameters to send the @arg debugInfo command
  * @param Page: The @arg base / @arg builder page used to render custom @arg Pages out. Contains a simple Close button, and requires additional @arg TSX to render more information.
- * @param sendDebugLog: Allows you to send a debug log.
  */
 import { sendReply } from "enmity/api/clyde";
 import {
@@ -18,10 +17,11 @@ import {
   ApplicationCommandType
 } from "enmity/api/commands";
 import { get } from 'enmity/api/settings';
-import { React, Dialog, Messages, Toasts } from 'enmity/metro/common';
+import { React, Dialog, Toasts } from 'enmity/metro/common';
 import { name } from '../../../manifest.json';
-import LanguageNames from '../../../modified/translate/src/languages/names';
-import { ArrayImplementations as ArrayOps, Format, Icons, Translate } from "../../utils";
+import LanguageNames from '../../translate/languages/names';
+import ISO from "../../translate/languages/iso";
+import { ArrayImplementations as ArrayOps, Format, Icons, Translate } from "../../common";
 
 /**
  * Creates a new array with the options of languages in a form which is required to render options in Enmity commands.
@@ -30,7 +30,7 @@ import { ArrayImplementations as ArrayOps, Format, Icons, Translate } from "../.
  * @param {any[]} languageOptions: The list of available languages in a format which can be used to create Enmity command options.
  */
 const languageOptions: any[] = ArrayOps.mapItem(
-  ArrayOps.filterItem(Object.keys(LanguageNames), (e: string) => e!=='detect', 'filter for everything except for detect'), 
+  ArrayOps.filterItem(LanguageNames, (e: string) => e!=='detect', 'filter for everything except for detect'), 
   (item: string) => ({
       name: Format.string(item),
       displayName: Format.string(item),
@@ -137,7 +137,8 @@ export default {
      */
     const message = ArrayOps.findItem(args, (o: any) => o.name == "text", 'translate text').value;
     const language = ArrayOps.findItem(args, (o: any) => o.name == "language", 'translate language').value;
-    
+    const languageMap = Object.assign({}, ...LanguageNames.map((k, i) => ({ [k]: ISO[i] })));
+
     /**
      * First, translate the original message into the language provided, using the language to @arg {translate from}, from the @arg Dislate settings.
      * @param {Promise<string>} translatedContent: awaits a translation into the language provided from the message content.
@@ -148,9 +149,10 @@ export default {
     const translatedContent = await Translate.string(
       message,
       {
-        fromLang: get(name, "DislateLangFrom", "detect"),
-        toLang: language
-      }
+        fromLang: get(name, "DislateLangFrom", "detect") as string,
+        toLang: language,
+      },
+      languageMap
     );
 
     /**
@@ -163,9 +165,10 @@ export default {
     const translatedBack = await Translate.string(
       translatedContent, 
       {
-        fromLang: get(name, "DislateLangFrom", "detect"),
-        toLang: get(name, "DislateLangTo", 'english')
-      }
+        fromLang: get(name, "DislateLangFrom", "detect") as string,
+        toLang: get(name, "DislateLangTo", 'english') as string,
+      },
+      languageMap
     );
     
     /**
@@ -177,66 +180,62 @@ export default {
       return {};
     };
 
-    /**
-     * Open a native Enmity Dialog to prompt the user and confirm that they actually want to send this message.
-     */
-    Dialog.show({
-      title: "Are you sure?",
-      /**
-       * @param {string} body: The main content of the Dialog. This is a formatted version of it:
-       * 
-       * @arg {
-       * The message **about to be sent** is:
-       * \`${translatedContent}\`
-       * 
-       * In **${preferredLanguage}**, this will translate to:
-       * \`${translatedBack}\`
-       * 
-       * [OPTIONAL if user chose to send both translated and original:
-       * **Note: Sending original and translated**]
-       * Are you sure you want to send this?
-       * }
-       */
-      body: `The message **about to be sent** is:\n\`${translatedContent}\`\n\nIn **${Format.string(get(name, "DislateLangTo", 'english'))}**, this will translate to:\n\`${translatedBack}\`\n\n${get(name, "DislateBothLangToggle", false) ? `**Note: Sending original and translated**\n` : ''}Are you sure you want to send this?`,
-      confirmText: "Yeah, send it",
-      cancelText: "Nope, don't send it",
-      onConfirm: () => {
-        /**
-         * Send the message into the channel where the command was executed, and use the @arg translatedContent as the body of the message.
-         * @uses @param {string?} message?: The original text message that the user wrote.
-         * @uses @param {string} translatedContent: The main content of the message, from the text and language provided as parameters to the command.
-         */
-        Messages.sendMessage(context.channel.id, {
-          content: get(name, "DislateBothLangToggle", false) ? `${message}\n\n${translatedContent}` : translatedContent
-        });
-
-        /**
-         * Then, open a @arg Toast declaring that the message has been sent into the context channel and the language that it was sent as.
-         * @uses @param {string} context.channel.name: The name of the channel where the command was executed
-         * @uses @param {string} language: The language that the user provided when running the command.
-         * @uses @param {stringId} Icons.Translate: The icon from Discord that I have picked for Translating.
-         */
-        Toasts.open({ 
-          content: `Sent message in #${context.channel.name}, which was translated into ${Format.string(language)}.`, 
-          source: Icons.Translate
-        });
-      },
-      onCancel: () => {
-        /**
-         * Instead, open a seperate @arg Toast declaring that the message has not been send and the request was voided.
-         * @uses @param {stringId} Icons.Cancel:  The icon from Discord picked for cancel of requests.
-         */
-        Toasts.open({ 
-          content: `Cancelled translated message request.`, 
-          source: Icons.Cancel
-        });
-      },
-    })
     
     /** 
-     * Lastly, return an empty object.
+     * Lastly, return an empty object if cancelled or the translated content if confirmed.
      * @returns {object}
      */
-    return {};
+    return await new Promise((resolve): void => {
+      /**
+       * Open a native Enmity Dialog to prompt the user and confirm that they actually want to send this message.
+       */
+      Dialog.show({
+        title: "Are you sure?",
+        /**
+         * @param {string} body: The main content of the Dialog. This is a formatted version of it:
+         * 
+         * @arg {
+         * The message **about to be sent** is:
+         * \`${translatedContent}\`
+         * 
+         * In **${preferredLanguage}**, this will translate to:
+         * \`${translatedBack}\`
+         * 
+         * [OPTIONAL if user chose to send both translated and original:
+         * **Note: Sending original and translated**]
+         * Are you sure you want to send this?
+         * }
+         */
+        body: `The message **about to be sent** is:\n\`${translatedContent}\`\n\nIn **${Format.string(get(name, "DislateLangTo", 'english'))}**, this will translate to:\n\`${translatedBack}\`\n\n${get(name, "DislateBothLangToggle", false) ? `**Note: Sending original and translated**\n` : ''}Are you sure you want to send this? :3`,
+        confirmText: "Yep, send it!",
+        cancelText: "Nope, don't send it",
+        onConfirm: () => {
+          /**
+           * Then, open a @arg Toast declaring that the message has been sent into the context channel and the language that it was sent as.
+           * @uses @param {string} context.channel.name: The name of the channel where the command was executed
+           * @uses @param {string} language: The language that the user provided when running the command.
+           * @uses @param {number} Icons.Translate: The icon from Discord that I have picked for Translating.
+           */
+          Toasts.open({ 
+            content: `Sent message in #${context.channel.name}, which was translated into ${Format.string(language)}.`, 
+            source: Icons.Translate
+          });
+
+          resolve({ content: get(name, "DislateBothLangToggle", false) ? `${message}\n\n${translatedContent}` : translatedContent });
+        },
+        onCancel: () => {
+          /**
+           * Instead, open a seperate @arg Toast declaring that the message has not been send and the request was voided.
+           * @uses @param {number} Icons.Cancel:  The icon from Discord picked for cancel of requests.
+           */
+          Toasts.open({ 
+            content: `Cancelled translated message request.`, 
+            source: Icons.Cancel
+          });
+
+          resolve({})
+        },
+      })
+    })
   },
 };

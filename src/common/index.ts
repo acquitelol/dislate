@@ -8,7 +8,6 @@ import Translate from "./translate";
  * 
  * @param debugInfo: Formats the possible arguments into a format that can be sent as a Discord Message.
  * @param fetchDebugArguments: Asynchronously fetches the full list of debug arguments. This is its own function for ease of use.
- * @param sendDebugLog: Sends a debug log into the current channel with a list of options.
  */
 import Debug from './debug';
 

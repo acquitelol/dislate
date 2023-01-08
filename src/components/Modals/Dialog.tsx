@@ -15,7 +15,7 @@
  */
 import { TouchableOpacity, Text, Image, View } from "enmity/components";
 import { StyleSheet, Constants, React, Dialog } from "enmity/metro/common";
-import { Store, Miscellaneous } from "../../utils";
+import { Store, Miscellaneous } from "../../common";
 import { name } from "../../../manifest.json";
 import { get } from "enmity/api/settings";
 

@@ -42,8 +42,8 @@ const shadow: Shadow = {
  * @param {string} source: The text provided to send inside of the toast
  * @param {'clipboard | 'tooltip'} type: The type of toast to show.
  *
- * @uses @param {stringId} Icons.Clipboard
- * @uses @param {stringId} Icons.Settings.Initial
+ * @uses @param {number} Icons.Clipboard
+ * @uses @param {number} Icons.Settings.Initial
  * @returns {void}
  */
 const displayToast = (source: string, type: 'clipboard' | 'tooltip'): void => {

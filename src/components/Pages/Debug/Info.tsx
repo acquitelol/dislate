@@ -8,16 +8,16 @@
  * @param StyleSheet: Used to create React Native StyleSheeets, for styling components.
  * @param Constants: Used for constant values which may differ between themes like colors and font weights.
  * @param name: The name of the plugin, from @arg manifest.json
- * @param { * from utils }: Utility functions used throughout the component.
+ * @param { * from common }: Utility functions used throughout the component.
  * @param DebugItem: A component to render a toggleable option state. This is its own component so that it can have independent state.
  * @param ExitWrapper: A component to wrap the rest of the components into a ScrollView with capibility to close the page upon swiping right. Used by passing the TSX to render inside the Component prop. Can be a single component or a Fragment <>.
  */
 import { getBoolean } from 'enmity/api/settings';
-import { Form, FormDivider, Text, TouchableOpacity, View } from 'enmity/components';
+import { FormDivider, Text, TouchableOpacity, View } from 'enmity/components';
 import { getByName } from 'enmity/metro';
 import { Constants, React, StyleSheet } from 'enmity/metro/common';
 import { name } from '../../../../manifest.json';
-import { ArrayImplementations as ArrayOps, Miscellaneous, Debug } from '../../../utils';
+import { ArrayImplementations as ArrayOps, Miscellaneous, Debug } from '../../../common';
 import InfoItem from './InfoItem';
 import Dialog from '../../Modals/Dialog';
 import ExitWrapper from '../../Wrappers/ExitWrapper';
@@ -34,7 +34,7 @@ const Search = getByName('StaticSearchBarContainer');
  * @param {string} channelId: The main channel ID, passed as a string from the Debug command/component.
  * @param {string} channelName: The name of the channel, used to display in the toast if the message is sent.
  */
-export default ({ channelId, channelName }) => {
+export default ({ channelId, channelName, onConfirmCallback }) => {
     /**
      * Main states used throughout the component to allow storing options and the possible search query.
      * @param {Getter, Setter} options: The list of available options, populated by the @arg React.useEffect
@@ -137,7 +137,13 @@ export default ({ channelId, channelName }) => {
                     {ArrayOps.mapItem(
                         ArrayOps.filterItem(Object.keys(options), (option: string) => option.toLowerCase().includes(query)), 
                         (option: string, index: number, array: any[]) => <>
-                            <InfoItem option={option} channelId={channelId} channelName={channelName} debugOptions={options} />
+                            <InfoItem 
+                                option={option} 
+                                channelId={channelId} 
+                                channelName={channelName} 
+                                debugOptions={options} 
+                                onConfirmCallback={onConfirmCallback}
+                            />
                             {index !== (array.length - 1) ? <FormDivider/> : null}
                         </>,
                         'list of debug information options'
@@ -154,13 +160,9 @@ export default ({ channelId, channelName }) => {
                      * Send a full log in the current channel.
                      * @uses @param {string[]} options: List of available debug options, all are passed to the debug log as this is sending @arg all the options
                      */
-                    await Debug.sendDebugLog(
-                        Object.keys(options), 
-                        { channelId, channelName }, 
-                        'full', 
-                        'full log in Info Component.'
-                    );
-            }}>
+                    await onConfirmCallback(await Debug.debugInfo(Object.keys(options)), "full log");
+                }
+            }>
                 <Text style={[styles.text, styles.buttonText]}>Send All</Text>
             </TouchableOpacity>
             {/**
@@ -178,13 +180,9 @@ export default ({ channelId, channelName }) => {
                      * Send a partial debug log with the filtered list in the current channel.
                      * @uses @param {string[]} debugOptions: Filtered list of debug options.
                      */
-                    await Debug.sendDebugLog(
-                        debugOptions, 
-                        { channelId, channelName }, 
-                        'partial', 
-                        'partial log in Info Component.'
-                    );
-            }}>
+                    await onConfirmCallback(await Debug.debugInfo(debugOptions), "partial log");
+                }
+            }>
                 <Text style={[styles.text, styles.buttonText]}>Send Message</Text>
             </TouchableOpacity>
             {/**

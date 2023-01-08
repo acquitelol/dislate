@@ -6,7 +6,7 @@
  * @param Toasts: Function to open a small notification at the top of your discord.
  * @param Storage: Allows you to store and retrive any item.
  * @param {name, plugin}: The name and information about the plugin from @arg manifest.json.
- * @param { Format.string, displayToast, Icons, Debug.fetchDebugArguments, Debug.sendDebugLog, mapItem }: Utility Functions that Dislate uses.
+ * @param { Format.string, displayToast, Icons, Debug.fetchDebugArguments, mapItem }: Utility Functions that Dislate uses.
  * @param {bulk, filters}: Used to import modules in bulk
  * @param Info: The main "@arg debug" page to choose custom parameters to send the @arg Debug.debugInfo command
  * @param Page: The @arg base / @arg builder page used to render custom @arg Pages out. Contains a simple Close button, and requires additional @arg TSX to render more information.
@@ -24,12 +24,15 @@ import {
     Miscellaneous, 
     Icons, 
     ArrayImplementations as ArrayOps, 
-    Debug 
-} from '../../utils';
+    Debug, 
+    Translate
+} from '../../common';
 import { bulk, filters } from "enmity/metro";
 import Info from "../Pages/Debug/Info";
 import Page from "../Pages/Page";
 import { set } from "enmity/api/settings";
+import LanguageNames from '../../translate/languages/names';
+import ISO from '../../translate/languages/iso';
 
 /** 
  * Main modules being fetched by the plugin to open links externally and copy text to clipboard
@@ -53,51 +56,78 @@ const options = (channelId: string, channelName: string): any => {
         /**
          * @param {any} debug: The main command that will get run to display important information such as the version of @param Dislate or the @param Discord build.
          */
-        debug: () => {
+        debug: async function() {
             /**
-             * Opens a dialog informing the user that they may customize the information sent with this command.
-             * 
-             * @uses @param {callback} Dialog: The main module to open @arg dialogs or @arg popups
+             * Get the full debug log asynchronously
+             * @param {returns object} debugOptions: The full list of debug arguments.
              */
-            Dialog.show({
-                title: "Choose extra options",
-                body: "You can customize the information sent with this command. If you do not want to customize the debug log, press \"\`Ignore\`\" instead to send the full log.",
-                confirmText: "Customize",
-                cancelText: "Ignore",
-                onConfirm: async function() {
-                    /**
-                     * @param wrapper: The main @arg Info page, wrapped as a function to add the channel id as a prop safely.
-                     * @returns {Info TSX Page.}
-                     */
-                    const wrapper = (): any => <Info channelId={channelId} channelName={channelName} />;
-                    
-                    /**
-                     * Push the wrapped page to Navigation, hence opening new page.
-                     * @arg {TSX} Page: The main default page
-                     * @arg {TSX} wrapper: The wrapped Info component
-                     * @uses @arg {string} name: The name of the Page, which will show up at the top.
-                     */
-                    Navigation.push(Page, { component: wrapper, name: `${name}: Customize`});
-                },
-                onCancel: async function() {
-                    /**
-                     * Get the full list of available arguments asynchronously
-                     * @param {returns object} debugOptions: The full list of debug arguments.
-                     */
-                    const debugOptions = await Debug.fetchDebugArguments()
-    
-                    /**
-                     * Send a debug log in the current channel with the full log as a parameter.
-                     * @param channelId: The ID of the current channel.
-                     * @param channelName: The name of the current channel.
-                     */
-                    await Debug.sendDebugLog(
-                        Object.keys(debugOptions), 
-                        { channelId, channelName }, 
-                        'full', 
-                        'full log in Info Command.'
-                    );
-                },
+            const fullDebugLog = await Debug.debugInfo(
+                Object.keys(await Debug.fetchDebugArguments()), 
+                "full log"
+            );
+
+            return await new Promise(resolve => {
+                /**
+                 * Opens a dialog informing the user that they may customize the information sent with this command.
+                 * 
+                 * @uses @param {callback} Dialog: The main module to open @arg dialogs or @arg popups
+                 */
+                Dialog.show({
+                    title: "Choose extra options",
+                    body: "You can customize the information sent with this command. If you do not want to customize the debug log, press \"\`Ignore\`\" instead to send the full log.",
+                    confirmText: "Customize",
+                    cancelText: "Ignore",
+                    onConfirm: () => {
+                        /**
+                         * @param wrapper: The main @arg Info page, wrapped as a function to add the channel id as a prop safely.
+                         * @returns {Info TSX Page.}
+                         */
+                        const wrapper = (): any => <Info channelId={channelId} channelName={channelName} onConfirmCallback={(debugLog: string, type: string) => {
+                            /**
+                             * This closes the most top-level item in the Navigation stack. As the current @arg Info page is at the top, because this button is visible, This method will close the page.
+                             * @param Navigation.pop: Removes the top item from the Navigation stack, closing the top level page.
+                             */
+                            Navigation.pop();
+
+                            /**
+                             * Opens a toast saying that a Log with the specific type has been sent to the channelName.
+                             * @uses @param {string} type: The type of log that has been sent
+                             * @uses @param {string} channelName: The name of the channel where the message has been sent.
+                             */
+                            Toasts.open({ 
+                                content: `Sent ${type} log in #${channelName}.`, 
+                                source: Icons.Settings.Toasts.Settings
+                            })
+
+                            resolve({
+                                content: debugLog
+                            })
+                        }} />;
+                        
+                        /**
+                         * Push the wrapped page to Navigation, hence opening new page.
+                         * @arg {TSX} Page: The main default page
+                         * @arg {TSX} wrapper: The wrapped Info component
+                         * @uses @arg {string} name: The name of the Page, which will show up at the top.
+                         */
+                        Navigation.push(Page, { component: wrapper, name: `${name}: Customize`});
+                    },
+                    onCancel: () => {
+                        /**
+                         * Opens a toast saying that a Log with the specific type has been sent to the channelName.
+                         * @uses @param {string} type: The type of log that has been sent
+                         * @uses @param {string} channelName: The name of the channel where the message has been sent.
+                         */
+                        Toasts.open({ 
+                            content: `Sent full log in #${channelName}.`, 
+                            source: Icons.Settings.Toasts.Settings
+                        })
+
+                        resolve({
+                            content: fullDebugLog
+                        })
+                    },
+                })
             })
         },
         /**
@@ -129,32 +159,97 @@ const options = (channelId: string, channelName: string): any => {
              * Remove the store to ensure it doesnt get cleared twice.
              */
             await Storage.removeItem('dislate_store_state');
+            
+            return await new Promise(async function(resolve) {
+                /**
+                 * Finally, open a @arg Toast to notify the user that all of the stores have been cleared.
+                 */
+                Toasts.open({ 
+                    content: `Cleared all ${name} stores.`, 
+                    source: Icons.Settings.Toasts.Settings 
+                });
 
-            /**
-             * Finally, open a @arg Toast to notify the user that all of the stores have been cleared.
-             */
-            Toasts.open({ 
-                content: `Cleared all ${name} stores.`, 
-                source: Icons.Settings.Toasts.Settings 
-            });
+                resolve({});
+            })
         },
         /**
          * @param {any} download: Allows the user to copy a unique download link of Dislate to the clipboard.
          */
-        download: () => {
-            /**
-             * Set a new download link to clipboard every time the function is called, to prevent the plugin reinstalling with the same code, due to caching.
-             * @param {string} plugin.download: The raw GitHub link of the plugin to install from @arg manifest.json
-             */
-            Clipboard.setString(`${plugin.download}?${Math.floor(Math.random() * 1001)}.js`);
+        download: async function() {
+            return await new Promise(resolve => {
+                /**
+                 * Set a new download link to clipboard every time the function is called, to prevent the plugin reinstalling with the same code, due to caching.
+                 * @param {string} plugin.download: The raw GitHub link of the plugin to install from @arg manifest.json
+                 */
+                Clipboard.setString(`${plugin.download}?${Math.floor(Math.random() * 1001)}.js`);
+
+                /**
+                 * Opens a toast saying that the "@arg {download link}" has been copied to clipboard.
+                 * 
+                 * @func displayToast: Opens a toast with a specified string as the argument saying that it has been copied to clipboard.
+                 * @returns {void}
+                 */
+                Miscellaneous.displayToast("download link", 'clipboard');
+                resolve({})
+            })
+        },
+        /**
+         * @param {any} test: Tests by attempting to send a translated message
+         */
+        Example: async function() {
+            const englishContent = "Example Message. Enmity is a state or feeling of active opposition or hostility.";
+            const randomLanguageIndex = Math.floor(Math.random() * (LanguageNames.length));
+            const randomLanguageName = LanguageNames[randomLanguageIndex];
 
             /**
-             * Opens a toast saying that the "@arg {download link}" has been copied to clipboard.
-             * 
-             * @func displayToast: Opens a toast with a specified string as the argument saying that it has been copied to clipboard.
-             * @returns {void}
+             * First, translate the test message into a random language.
+             * @param {Promise<string>} content: Translated text
              */
-            Miscellaneous.displayToast("download link", 'clipboard');
+            const translatedContent = await Translate.string(
+                englishContent,
+                { 
+                    fromLang: "detect", 
+                    toLang: randomLanguageName,  
+                },
+                Object.assign({}, ...LanguageNames.map((k, i) => ({ [k]: ISO[i] })))
+            );
+
+            /**
+             * Open a native Enmity Dialog to prompt the user and confirm that they actually want to send this message.
+             */
+            return await new Promise(resolve => {
+                Dialog.show({
+                    title: "Are you sure?",
+                    body: `**This is a testing message.**\nYou are about to send the following:\n\n**English:** ${englishContent}\n\n**${Format.string(randomLanguageName)}:** ${translatedContent}\n\nAre you sure you want to send this? :3`,
+                    confirmText: "Yep, send it!",
+                    cancelText: "Nope, don't send it",
+                    onConfirm: () => {                
+                        /**
+                         * Then, open a @arg Toast declaring that the test message has been sent into the context channel
+                         * @uses @param {string} channelName: The name of the channel where the command was executed
+                         * @uses @param {number} Icons.Translate: The icon from Discord that I have picked for Translating.
+                         */
+                        Toasts.open({ 
+                            content: `Sent test message in #${channelName}.`, 
+                            source: Icons.Translate
+                        });
+
+                        resolve({ content: `**[${name}] Test Message**\n\n**English:** ${englishContent}\n**${Format.string(randomLanguageName)}:** ${translatedContent}` })
+                    },
+                    onCancel: () => {
+                        /**
+                         * Instead, open a seperate @arg Toast declaring that the message has not been send and the request was voided.
+                         * @uses @param {number} Icons.Cancel:  The icon from Discord picked for cancel of requests.
+                         */
+                        Toasts.open({ 
+                            content: `Cancelled translated message request.`, 
+                            source: Icons.Cancel
+                        });
+
+                        resolve({});
+                    },
+                })
+            })
         }
     }
 }
@@ -253,13 +348,12 @@ export default {
         /**
          * @param {callback ?? throwToast} chosenOption: Sets the command callback to either the callback from the @arg availableOptions function or uses the @arg throwToast as a fallback
          */
-        const chosenOption =  availableOptions[commandType] ?? throwToast;
+        const chosenOption = availableOptions[commandType] ?? throwToast;
 
         /**
          * Finally, call this @arg chosenOption function with no arguments, as none are needed.
          * Afterwards, return an empty object.
          */
-        chosenOption();
-        return {};
+        return await chosenOption();
     },
 };
