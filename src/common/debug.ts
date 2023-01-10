@@ -65,7 +65,7 @@ async function debugInfo(options: any, label?: string): Promise<string> {
              * Only add the Option as a title if at least 1 of the values of the subOptions are true.
              * This is done using the @arg Array.prototype.some method.
              */
-            Object.values(options[option]).some(subOptionValue => subOptionValue === true)
+            Object.values(options[option]).some(subOptionValue => subOptionValue)
                 ? ArrayOps.insertItem(finalDebug, `[**${option}**]`, finalDebug.length, 'pushing to debug argument array')
                 : null;
 
