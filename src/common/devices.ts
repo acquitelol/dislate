@@ -130,8 +130,7 @@ async function isCompatibleDevice(label?: string): Promise<void> {
     }, [], name, 'checking if device is compatible', label)
 };
 
-export default 
-{
+export default {
     getDeviceList,
     isCompatibleDevice
 };

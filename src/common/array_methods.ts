@@ -179,8 +179,7 @@ const mapItem = (array: any[], callback: any, label?: string): any[] => {
     }, [array, callback], name, 'map an array at', label)
 };
 
-export default 
-{
+export default {
     filterItem,
     findItem,
     forItem,

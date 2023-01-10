@@ -62,7 +62,6 @@ import Icons from "./icons";
  * 
  * @param string: Adds a capital letter to the beginning and replaces underscores with spaces in a @arg string.
  * @param object: Formats the specific return from the Device List GitHub Gist as a valid JSON object.
- * @param reverse: Returns a given object with the keys as the values and the values as the keys.
  */
 import Format from "./format";
 

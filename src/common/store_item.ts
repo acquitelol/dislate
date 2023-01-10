@@ -17,7 +17,13 @@ import { set } from 'enmity/api/settings';
  * @param {any} item: The item that will be used as a parameter in the function. Must have a name, content, and type.
  * @param {string} label: Optional label, to determine what the function does. This may be undefined.
  */
-async function item(item: { name: string; content: any; type: string; }, label?: string) {
+async function item(item: { 
+        name: string; 
+        content: any; 
+        type: string; 
+        override?: any;
+    }, label?: string
+) {
     await tryCallback(async function() {
         /**
          * Either sets the item in Storage to never show again or sets the item in Settings to true, depending on the type passed in @arg item
@@ -48,7 +54,4 @@ async function item(item: { name: string; content: any; type: string; }, label?:
     }, [item], name, 'storing an item in plugin file or storage at', label) 
 };
 
-export default 
-{
-    item
-};
+export default { item };

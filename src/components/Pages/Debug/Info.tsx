@@ -1,6 +1,6 @@
 /**
  * Imports
- * @param getBoolean: Fetches a boolean setting from a file.
+ * @param get: Fetches a setting from a file.
  * @param { FormDivider }: Used to render Form Items on the screen.
  * @param Text: Used to render styleable text on the screen.
  * @param TouchableOpacity: Used to render a component child inside of this component, but adds a small opacity effect upon press.
@@ -12,7 +12,7 @@
  * @param DebugItem: A component to render a toggleable option state. This is its own component so that it can have independent state.
  * @param ExitWrapper: A component to wrap the rest of the components into a ScrollView with capibility to close the page upon swiping right. Used by passing the TSX to render inside the Component prop. Can be a single component or a Fragment <>.
  */
-import { getBoolean } from 'enmity/api/settings';
+import { get } from 'enmity/api/settings';
 import { FormDivider, Text, TouchableOpacity, View } from 'enmity/components';
 import { getByName } from 'enmity/metro';
 import { Constants, React, StyleSheet } from 'enmity/metro/common';
@@ -31,10 +31,9 @@ const Search = getByName('StaticSearchBarContainer');
 
 /**
  * Main Info Page Component
- * @param {string} channelId: The main channel ID, passed as a string from the Debug command/component.
- * @param {string} channelName: The name of the channel, used to display in the toast if the message is sent.
+ * @param onConfirmCallback: The function to run when the User clicks @arg {Send} All or @arg {Send} Message. This is usually a promise resolve.
  */
-export default ({ channelId, channelName, onConfirmCallback }) => {
+export default ({ onConfirmCallback }) => {
     /**
      * Main states used throughout the component to allow storing options and the possible search query.
      * @param {Getter, Setter} options: The list of available options, populated by the @arg React.useEffect
@@ -122,34 +121,40 @@ export default ({ channelId, channelName, onConfirmCallback }) => {
             style={{
                 marginBottom: 100
             }}
-        >
-            <SectionWrapper label='Options' component={<>
+        >  
+            {/**
+             * Map through each of the options, and add a new SectionWrapper for each option, which will contain the subOptions.
+             */}
+            {ArrayOps.mapItem(Object.keys(options), (option: string) => <SectionWrapper label={option} component={<>
                 {/**
                  * The main section of available options to be selected by the User.
                  */}
                 <View style={styles.container}>
                     {/**
-                     * Maps through the list of filtered available items, and returns a @arg DebugItem component for each one.
+                     * Maps through the list of filtered available items, and returns a @arg InfoItem component for each one.
                      * @uses @param {string[]} options: The list of available options.
                      * @uses @param {string} query: Any possible text that has been typed in the search box.
-                     * @uses @param {TSX} DebugItem: Component to render toggleable options, with independent state.
+                     * @uses @param {TSX} InfoItem: Component to render toggleable options, with independent state.
                      */}
                     {ArrayOps.mapItem(
-                        ArrayOps.filterItem(Object.keys(options), (option: string) => option.toLowerCase().includes(query)), 
-                        (option: string, index: number, array: any[]) => <>
+                        ArrayOps.filterItem(Object.keys(options[option]), (subOption: string) => subOption.toLowerCase().includes(query)), 
+                        (subOption: string, index: number, array: any[]) => <>
                             <InfoItem 
-                                option={option} 
-                                channelId={channelId} 
-                                channelName={channelName} 
+                                option={subOption}
+                                parent={option}
                                 debugOptions={options} 
                                 onConfirmCallback={onConfirmCallback}
                             />
+                            {/**
+                             * Only adds a FormDivider if the index of the item is not the last.
+                             */}
                             {index !== (array.length - 1) ? <FormDivider/> : null}
                         </>,
-                        'list of debug information options'
+                        `list of debug information options in ${option}`
                     )}
                 </View>
-            </>} />
+            </>} />)}
+            
             {/**
              * Button to send the Full Debug log, hence the text @arg {Send All}
              */}
@@ -160,7 +165,7 @@ export default ({ channelId, channelName, onConfirmCallback }) => {
                      * Send a full log in the current channel.
                      * @uses @param {string[]} options: List of available debug options, all are passed to the debug log as this is sending @arg all the options
                      */
-                    await onConfirmCallback(await Debug.debugInfo(Object.keys(options)), "full log");
+                    await onConfirmCallback(await Debug.debugInfo(await Debug.fetchDebugArguments()), 'full log');
                 }
             }>
                 <Text style={[styles.text, styles.buttonText]}>Send All</Text>
@@ -174,13 +179,15 @@ export default ({ channelId, channelName, onConfirmCallback }) => {
                     /**
                      * @param {string[]} debugOptions: Filtered list of options which only includes ones that the user has chosen to be true.
                      */
-                    const debugOptions = ArrayOps.filterItem(Object.keys(options), (item: string) => getBoolean(name, item, false), 'filtering chosen debug options');
-
+                    const debugOptions = ArrayOps
+                        .mapItem(Object.keys(options), (option: string) => ({ [option]: (get(name, option, {}) as object ?? {}) }))
+                        .reduce((acc, obj) => ({ ...acc, ...obj }), {});;
+            
                     /**
-                     * Send a partial debug log with the filtered list in the current channel.
-                     * @uses @param {string[]} debugOptions: Filtered list of debug options.
+                     * Send a partial log in the current channel.
+                     * @uses @param {string[]} options: List of available debug options, all are passed to the debug log as this is sending @arg part of the options
                      */
-                    await onConfirmCallback(await Debug.debugInfo(debugOptions), "partial log");
+                    await onConfirmCallback(await Debug.debugInfo(debugOptions), 'partial log');
                 }
             }>
                 <Text style={[styles.text, styles.buttonText]}>Send Message</Text>

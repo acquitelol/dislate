@@ -47,22 +47,21 @@ const [
 
 /**
  * Returns an object of all available options. To add a new option, just write a new @arg key - @arg value pair with the callback as the value.
- * @param {string} channelId: The channel id provided by the context to @arg {send messages} and open the @arg Info page
  * @param {string} channelName: The channel name, used by other components to @arg {render in a toast}.
  * @returns {any}
  */
-const options = (channelId: string, channelName: string): any => {
+const options = (channelName: string): any => {
     return {
         /**
          * @param {any} debug: The main command that will get run to display important information such as the version of @param Dislate or the @param Discord build.
          */
         debug: async function() {
             /**
-             * Get the full debug log asynchronously
+             * Get the full debug log message asynchronously
              * @param {returns object} debugOptions: The full list of debug arguments.
              */
             const fullDebugLog = await Debug.debugInfo(
-                Object.keys(await Debug.fetchDebugArguments()), 
+                await Debug.fetchDebugArguments(), 
                 "full log"
             );
 
@@ -82,7 +81,7 @@ const options = (channelId: string, channelName: string): any => {
                          * @param wrapper: The main @arg Info page, wrapped as a function to add the channel id as a prop safely.
                          * @returns {Info TSX Page.}
                          */
-                        const wrapper = (): any => <Info channelId={channelId} channelName={channelName} onConfirmCallback={(debugLog: string, type: string) => {
+                        const wrapper = (): any => <Info onConfirmCallback={(debugLog: string, type: string) => {
                             /**
                              * This closes the most top-level item in the Navigation stack. As the current @arg Info page is at the top, because this button is visible, This method will close the page.
                              * @param Navigation.pop: Removes the top item from the Navigation stack, closing the top level page.
@@ -99,6 +98,11 @@ const options = (channelId: string, channelName: string): any => {
                                 source: Icons.Settings.Toasts.Settings
                             })
 
+                            /**
+                             * The user has either clicked Send All from the Debug page, or has customized the options and clicked Send Message.
+                             * Therefore, get the Debug Log passed as a parameter in the child component, and resolve the promise with it.
+                             * @param debugLog: The partial or full debug log message, as a @arg string.
+                             */
                             resolve({
                                 content: debugLog
                             })
@@ -123,6 +127,10 @@ const options = (channelId: string, channelName: string): any => {
                             source: Icons.Settings.Toasts.Settings
                         })
 
+                        /**
+                         * As the user has cancelled customizing the Debug Log, send the full log, fetched beforehand.
+                         * @param fullDebugLog: The full debug log message.
+                         */
                         resolve({
                             content: fullDebugLog
                         })
@@ -148,11 +156,11 @@ const options = (channelId: string, channelName: string): any => {
                 /**
                  * Either removes the item or sets it to false depending on whether the item type is storage or not
                  * @if {(@arg item.type) is equal to @arg {string} storage} -> Remove the item's name from storage.
-                 * @else {()} -> Set the item name to false as a setting.
+                 * @else {()} -> Set the item name to @arg {override} value or @arg false as a setting.
                  */
                 item.type==='storage'
                     ? await Storage.removeItem(item.name)
-                    : set(name, item.name, false)
+                    : set(name, item.name, item.override ?? false)
             }, 'clearing state store');
 
             /**
@@ -260,7 +268,7 @@ const options = (channelId: string, channelName: string): any => {
  * @func ArrayOps.mapItem: Takes in an @arg array and returns a new value for each item in the @arg array, in a @arg {new array}.
  */
 const commandOptions: any[] = ArrayOps.mapItem(
-    Object.keys(options("8008135", "placeholder")), 
+    Object.keys(options("placeholder")), 
     (item: string) => {
         return {
             name: Format.string(item, true),
@@ -340,7 +348,7 @@ export default {
          * @param throwToast: A fallback toast, used in case the function from the debug argumetns couldnt be found. As a result, this toast will appear instead.
                 * @uses @param Icons.Clock: Clock icon imported from ./icons
          */
-        const availableOptions = options(context.channel.id, context.channel.name);
+        const availableOptions = options(context.channel.name);
         const throwToast = () => {
             Toasts.open({ content: 'Invalid command argument.', source: Icons.Clock });
         };

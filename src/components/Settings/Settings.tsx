@@ -411,11 +411,11 @@ export default ({ settings, manifest: { name, version, plugin, authors, release 
                                     /**
                                      * Either removes the item or sets it to false depending on whether the item type is storage or not
                                      * @if {(@arg item.type) is equal to @arg {string} storage} -> Remove the item's name from storage.
-                                     * @else {()} -> Set the item name to false as a setting.
+                                     * @else {()} -> Set the item name to @arg {override} value or @arg false as a setting.
                                      */
                                     item.type==='storage'
                                         ? await Storage.removeItem(item.name)
-                                        : set(name, item.name, false)
+                                        : set(name, item.name, item.override ?? false)
                                 }, 'clearing state store')
 
                                 /**

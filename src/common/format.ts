@@ -55,38 +55,7 @@ const object = (text: string, label?: string): string => {
     }, [text], name, 'formatting object at', label)
 }
 
-/**
- * Reverses each key and value pair of an object
- * @param {object} object: The object's keys and values to reverse.
- * @param {string?} label: The label of the function when called. May be undefined.
- * @returns {object}
- */
-const reverse = (object: any, label?: any): any => {
-    return tryCallback(() => {
-        /**
-         * Maps over the object's keys and returns the value as the key and the key as the value for each iteration in the Array
-         * @param {object} newObject: The new object which will be populated with the keys as the values and the values as the keys
-         */
-        const newObject: any = {}
-
-        /**
-         * Loops through the keys of the object. The values of the object arent required, as they're already accessible by using @arg {object[key]}
-         * This uses a custom for loop implementation. It is identical in functionality to @arg Array.prototype.forEach, but i can assign labels to it.
-         */
-        ArrayOps.forItem(Object.keys(object), (key: string) => {
-            Object.assign(newObject, { [object[key]] : key })
-        }, 'reversing object')
-
-        /**
-         * Finally, return the new object.
-         * @returns {~ new object}
-         */
-        return newObject
-    }, [object], name, 'reversing object at', label)
-}
-
 export default {
    string,
-   object,
-   reverse 
+   object
 };
