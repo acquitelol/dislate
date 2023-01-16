@@ -7,8 +7,9 @@
  */
 import { name } from '../../manifest.json';
 import tryCallback from "./try_callback";
-import { Toasts } from "enmity/metro/common";
+import { Constants, Toasts } from "enmity/metro/common";
 import Icons from "./icons";
+import { StyleSheet } from 'enmity/metro/common';
 
 /** 
  * Fetch a list of all external plugins that Dislate might need to account for, including itself.
@@ -25,8 +26,8 @@ const externalPlugins: { [key: string]: string | undefined; } = {
 /**
  * @param shadow: Native shadow implementation that is used throughout the entire plugin.
  */
-type Shadow = { [key: string]: string | number | Shadow }
-const shadow: Shadow = {
+type DefaultObject = { [key: string]: string | number | DefaultObject }
+const shadow: DefaultObject = {
     shadowColor: "#000",
     shadowOffset: {
         width: 1,
@@ -36,6 +37,63 @@ const shadow: Shadow = {
     shadowRadius: 4.65,
     elevation: 8
 };
+
+/**
+ * @param PageStyles: Common styling for Card and Stack pages rendered by Dislate.
+ */
+const PageStyles: DefaultObject = StyleSheet.createThemedStyleSheet({
+    /**
+     * @param {object} container: The main styles used for the Container of the page. This is generally only used once.
+     */
+    container: {
+        backgroundColor: Constants.ThemeColorMap.BACKGROUND_MOBILE_SECONDARY,
+        flex: 0.5,
+      },
+    /**
+     * @param {object} card: The color exclusively for the main Page card.
+     */
+    card: {
+        backgroundColor: Constants.ThemeColorMap.BACKGROUND_MOBILE_PRIMARY,
+        color: Constants.ThemeColorMap.TEXT_NORMAL
+    },
+    /**
+     * @param {object} header: The color used for the Header at the top of the Page View.
+     */
+    header: {
+        backgroundColor: Constants.ThemeColorMap.BACKGROUND_MOBILE_SECONDARY,
+        shadowColor: 'transparent',
+        elevation: 0,
+    },
+    /**
+     * @param {object} text: The main styling for the Close Button's Text Component.
+     */
+    text: {
+        color: Constants.ThemeColorMap.HEADER_PRIMARY,
+        fontFamily: Constants.Fonts.PRIMARY_MEDIUM,
+        fontSize: 16,
+    },
+    /**
+     * @param {title}: The main color for the left and centre headers for the stack pages.
+     */
+    title: {
+        color: 'white',
+        fontFamily: Constants.Fonts.PRIMARY_NORMAL,
+    },
+})
+
+/**
+ * @param PageOptions: Common/Default options passed to the @arg Stack.Navigator's screenOptions prop
+ */
+const PageOptions = {
+    cardStyle: PageStyles.card,
+    headerStyle: PageStyles.header,
+    headerTitleContainerStyle: { color: Constants.ThemeColorMap.HEADER_PRIMARY },
+    headerTitleAlign: 'center',
+    safeAreaInsets: {
+        top: 0,
+    }
+}
+
 
 /** 
  * Open a toast with the text provided saying it has been copied to clipboard or as a tooltip
@@ -104,6 +162,8 @@ export default
 {
     externalPlugins,
     shadow,
+    PageStyles,
+    PageOptions,
     displayToast,
     filterColor
 };

@@ -20,13 +20,11 @@
 import { get, set } from 'enmity/api/settings';
 import { FormDivider, FormRow, FormSwitch, Text, View } from 'enmity/components';
 import { bulk, filters } from 'enmity/metro';
-import { React, Constants, Navigation, Storage, StyleSheet, Toasts } from 'enmity/metro/common';
+import { React, Constants, Storage, StyleSheet, Toasts } from 'enmity/metro/common';
 import { Miscellaneous, Debug, Format, ArrayImplementations as ArrayOps, Icons, Updater } from '../../common';
 import Credits from './Credits';
 import ExitWrapper from '../Wrappers/ExitWrapper';
 import SectionWrapper from '../Wrappers/SectionWrapper'
-import Languages from '../Pages/Languages/Languages';
-import Page from '../Pages/Page';
 
 /** 
  * Main modules being fetched by the plugin to open links externally and copy text to clipboard
@@ -52,7 +50,7 @@ const [
         * @uses @param authors: List of authors with their Discord ID and a link to their GitHub profile.
         * @uses @param release: The current release channel of the plugin. This is generally a toggle between @arg stable and @arg development
   */
-export default ({ settings, manifest: { name, version, plugin, authors, release }, languages }) => {
+export default ({ settings, manifest: { name, version, plugin, authors, release }, Navigator}) => {
     /**
      * @param {StyleSheet} styles: The main stylesheet for the items in the UI.
      */
@@ -67,7 +65,8 @@ export default ({ settings, manifest: { name, version, plugin, authors, release 
          * @param {object} item: Style for trailing text to give it the Muted color, and contrast the normal colour of the text.
          */
         item: {
-            color: Constants.ThemeColorMap.TEXT_MUTED
+            color: Constants.ThemeColorMap.TEXT_MUTED,
+            fontFamily: Constants.Fonts.PRIMARY_MEDIUM
         },
         /**
          * @param {object} container: Main style for a rounded container for creating custom FormSection implementations.
@@ -92,6 +91,8 @@ export default ({ settings, manifest: { name, version, plugin, authors, release 
             fontSize: 14
         }
     });
+
+    const Navigation = Navigator.useNavigation();
 
     /**
      * Main component render
@@ -139,12 +140,15 @@ export default ({ settings, manifest: { name, version, plugin, authors, release 
                         <FormRow
                             label='Translate From'
                             leading={<FormRow.Icon style={styles.icon} source={Icons.Settings.TranslateFrom} />}
-                            trailing={() => <Text style={styles.item}>
+                            trailing={() => <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
+                                <Text adjustsFontSizeToFit={true} style={styles.item}>
                                     {/**
                                      * Renders the language that the user current selected. If the setting call returns undefined, use N/A
                                      */}
                                     {Format.string(get(name, "DislateLangFrom", "detect")) ?? "N/A"}
-                                </Text>}
+                                </Text>
+                                <FormRow.Arrow />
+                            </View>}
                             onPress={()=>{
                                 /**
                                  * Sets the language filter to either true or false. 
@@ -156,15 +160,9 @@ export default ({ settings, manifest: { name, version, plugin, authors, release 
                                 set(name, "DislateLangFilter", false)
                                 
                                 /**
-                                 * @param wrapper: The main @arg Language page, wrapped as a function to add the languages list as a prop safely.
-                                 * @returns {Languages TSX Page.}
+                                 * Finally, push the @arg Languages page out to the user, using @arg Navigator.useNavigation.navigate, and allow them to pick the @arg from language.
                                  */
-                                const wrapper = (): any => <Languages languages={languages} />;
-                                
-                                /**
-                                 * Finally, push the @arg Languages page out to the user, using the @arg NavigationStack, and allow them to pick the @arg from language.
-                                 */
-                                Navigation.push(Page, { component: wrapper, name: `${name}: Language From` });
+                                Navigation.navigate(`Language`)
                             }}
                             onLongPress={() => Miscellaneous.displayToast('Open a new page allowing you to choose a language that you can translate from. The default is "Detect".', 'tooltip')}
                         />
@@ -176,12 +174,15 @@ export default ({ settings, manifest: { name, version, plugin, authors, release 
                         <FormRow
                             label='Translate To'
                             leading={<FormRow.Icon style={styles.icon} source={Icons.Settings.TranslateTo} />}
-                            trailing={() => <Text style={styles.item}>
+                            trailing={() => <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
+                                <Text adjustsFontSizeToFit={true} style={styles.item}>
                                     {/**
                                      * Renders the language that the user current selected. If the setting call returns undefined, use N/A
                                      */}
                                     {Format.string(get(name, "DislateLangTo", "english")) ?? "N/A"}
-                                </Text>}
+                                </Text>
+                                <FormRow.Arrow />
+                            </View>}
                             onPress={()=>{
                                 /**
                                  * Sets the language filter to either true or false. 
@@ -191,17 +192,11 @@ export default ({ settings, manifest: { name, version, plugin, authors, release 
                                  * As this is true, the @arg Detect option @arg won't appear, and when the user clicks on an option it will set it as the @arg to language.
                                  */
                                 set(name, "DislateLangFilter", true)
-
-                                /**
-                                 * @param wrapper: The main @arg Languages page, wrapped as a function to add the languages list as a prop safely.
-                                 * @returns {Languages TSX Page.}
-                                 */
-                                const wrapper = (): any => <Languages languages={languages} />;
                                 
                                 /**
-                                 * Finally, push the @arg Languages page out to the user, using the @arg NavigationStack, and allow them to pick the @arg to language.
+                                 * Finally, push the @arg Languages page out to the user, using @arg Navigator.useNavigation.navigate, and allow them to pick the @arg to language.
                                  */
-                                Navigation.push(Page, { component: wrapper, name: `${name}: Language To` });
+                                Navigation.navigate(`Language`)
                             }}
                             onLongPress={() => Miscellaneous.displayToast('Open a new page allowing you to choose a language that you can translate to. The default is "English".', 'tooltip')}
                         />

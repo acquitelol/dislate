@@ -13,7 +13,7 @@
  */
 import { get, set } from 'enmity/api/settings';
 import { FormRow, TouchableOpacity } from 'enmity/components';
-import { Constants, Navigation, React, Toasts, StyleSheet } from 'enmity/metro/common';
+import { Constants, React, Toasts, StyleSheet } from 'enmity/metro/common';
 import { name } from '../../../../manifest.json';
 import ISO from '../../../translate/languages/iso';
 import ISO2 from '../../../translate/languages/iso2'
@@ -30,7 +30,7 @@ const Animated = window.enmity.modules.common.Components.General.Animated;
  * Main Languages Page Item Component.
  * @param {string} language: The main language that the Component represents.
  */
-export default ({ language, languages }) => { 
+export default ({ language, languages, Navigation }) => { 
     /**
      * Puts the list of languages into an object where the key is the ISO2 Entry and the Value is the ISO1 Entry.
      */
@@ -115,63 +115,61 @@ export default ({ language, languages }) => {
         /**
          * Finally, close the page.
          */
-        Navigation.pop();
+        Navigation.navigate("Settings")
     }
  
+    /**
+     * The main Touchable opacity. This would override the FormRow effects, and also is what controls the animation.
+     */
     return <>
-        {/**
-         * The main Touchable opacity. This would override the FormRow effects, and also is what controls the animation.
-         */}
-         <>
-            <TouchableOpacity
-                /**
-                 * @arg {callback?} onPress: Set the language pressed as the chosen language to translate to or from.
-                 * @arg {callback?} onLongPress: Set the language pressed as the chosen language to translate to or from.
-                 * @arg {callback} onPressIn: Scale in the component to @arg {1.05} scale.
-                 * @arg {callback} onPressOut: Scale out the component back to @arg {1} scale.
-                 * 
-                 * @uses @param {string} language
-                 */
-                onPress={() => setLanguage(language)}
-                onLongPress={() => setLanguage(language)}
-                onPressIn={onPressIn}
-                onPressOut={onPressOut}
-            >
-                {/**
-                 * The main view. This is what the scale style is actually applied to.
-                 * @uses @param {object} animatedScaleStyle: The current transform scale value. This will change depending on the Ref.
-                 * @uses @param {object} styles.container: The main style for the Language item, allowing it to seem rounded.
-                 */}
-                <Animated.View style={[animatedScaleStyle, styles.container]}>
-                    <FormRow
-                        label={Format.string(language)}
+        <TouchableOpacity
+            /**
+             * @arg {callback?} onPress: Set the language pressed as the chosen language to translate to or from.
+             * @arg {callback?} onLongPress: Set the language pressed as the chosen language to translate to or from.
+             * @arg {callback} onPressIn: Scale in the component to @arg {1.05} scale.
+             * @arg {callback} onPressOut: Scale out the component back to @arg {1} scale.
+             * 
+             * @uses @param {string} language
+             */
+            onPress={() => setLanguage(language)}
+            onLongPress={() => setLanguage(language)}
+            onPressIn={onPressIn}
+            onPressOut={onPressOut}
+        >
+            {/**
+             * The main view. This is what the scale style is actually applied to.
+             * @uses @param {object} animatedScaleStyle: The current transform scale value. This will change depending on the Ref.
+             * @uses @param {object} styles.container: The main style for the Language item, allowing it to seem rounded.
+             */}
+            <Animated.View style={[animatedScaleStyle, styles.container]}>
+                <FormRow
+                    label={Format.string(language)}
 
+                    /**
+                     * Fetches the shorter names of each language. As the ISO's are all directly linked to the names, this will never return undefined.
+                     * @uses @param {string} languageNames[language]: Shorter implementation of the language
+                     */
+                    subLabel={`Aliases: ${languages[language]}, ${MappedISO2[languages[language]]}`}
+                    trailing={FormRow.Arrow}
+                    leading={<FormRow.Icon style={{color: Constants.ThemeColorMap.INTERACTIVE_NORMAL}} source={
                         /**
-                         * Fetches the shorter names of each language. As the ISO's are all directly linked to the names, this will never return undefined.
-                         * @uses @param {string} languageNames[language]: Shorter implementation of the language
-                         */
-                        subLabel={`Aliases: ${languages[language]}, ${MappedISO2[languages[language]]}`}
-                        trailing={FormRow.Arrow}
-                        leading={<FormRow.Icon style={{color: Constants.ThemeColorMap.INTERACTIVE_NORMAL}} source={
-                            /**
-                             * Either set the Icon to ✓ or + depending on whether @arg DislateLangFilter is true or false, and then further whether the current @arg language is the same as the current language stored in @arg DislateLang*.
-                             * @uses @param {number} Icons.Settings.Toasts: Part of the icon dependency to display icons for Toasts, can also be used in this scenario.
-                             * 
-                             * @if {(@arg DislateLangFilter) evaluates to true} ->
-                                    * @if {(@arg language) is equal to (@arg DislateLangTo)} -> Show ✓ Icon
-                                    * @else {()} -> Show + Icon
-                             * @else {()} ->
-                                    * @if {(@arg language) is equal to (@arg DislateLangFrom)} -> Show ✓ Icon
-                                    * @else {()} -> Show + Icon
-                             */
-                            language == get(name, `DislateLang${get(name, "DislateLangFilter") ? "To" : "From"}`)
-                                ?   Icons.Settings.Toasts.Settings
-                                :   Icons.Add
-                            } 
-                        />}
-                    />
-                </Animated.View>
-            </TouchableOpacity>
-         </>
-     </>;
+                         * Either set the Icon to ✓ or + depending on whether @arg DislateLangFilter is true or false, and then further whether the current @arg language is the same as the current language stored in @arg DislateLang*.
+                         * @uses @param {number} Icons.Settings.Toasts: Part of the icon dependency to display icons for Toasts, can also be used in this scenario.
+                         * 
+                         * @if {(@arg DislateLangFilter) evaluates to true} ->
+                                * @if {(@arg language) is equal to (@arg DislateLangTo)} -> Show ✓ Icon
+                                * @else {()} -> Show + Icon
+                        * @else {()} ->
+                                * @if {(@arg language) is equal to (@arg DislateLangFrom)} -> Show ✓ Icon
+                                * @else {()} -> Show + Icon
+                        */
+                        language == get(name, `DislateLang${get(name, "DislateLangFilter") ? "To" : "From"}`)
+                            ?   Icons.Settings.Toasts.Settings
+                            :   Icons.Add
+                        } 
+                    />}
+                />
+            </Animated.View>
+        </TouchableOpacity>
+    </>;
  };

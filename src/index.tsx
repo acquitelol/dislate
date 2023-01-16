@@ -28,9 +28,10 @@ import {
    Icons, 
    Devices
 } from './common';
-import { DebugCommand, TranslateCommand, Settings } from './components/';
+import { DebugCommand, TranslateCommand } from './components/';
 import LanguageNamesArray from './translate/languages/names';
 import ISO from './translate/languages/iso'
+import Stack from './components/Settings/Stack';
 
 /**  
  * Top Level Bulk-Filter Variable Declaration --
@@ -544,7 +545,7 @@ const Dislate: Plugin = {
        * Opens a settings panel
        * @param {TSX} Settings: React Native Page.
        */
-      return <Settings
+      return <Stack
          settings={settings}
          manifest={{
             name: manifest.name,

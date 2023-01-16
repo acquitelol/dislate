@@ -35,6 +35,7 @@ export default {
         Debug: getIDByName('ic_rulebook_16px'),
         Initial: getIDByName('coffee'),
         Update: getIDByName("ic_upload"),
-        Locale: getIDByName("ic_locale_24px")
+        Locale: getIDByName("ic_locale_24px"),
+        Back: getIDByName("ios-back")
     }
 };

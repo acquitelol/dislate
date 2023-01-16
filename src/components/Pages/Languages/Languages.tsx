@@ -11,13 +11,12 @@
  * @param ExitWrapper: Used as a wrapped to place @arg components inside of a @arg ScrollView and allow closing the page by swiping to the right.
  */
 import { get } from 'enmity/api/settings';
-import { View } from 'enmity/components';
+import { ScrollView, } from 'enmity/components';
 import { getByName } from 'enmity/metro';
 import { React } from 'enmity/metro/common';
 import { name } from '../../../../manifest.json';
 import { ArrayImplementations as ArrayOps } from '../../../common';
 import Dialog from '../../Modals/Dialog';
-import ExitWrapper from '../../Wrappers/ExitWrapper';
 import LanguageItem from './LanguageItem';
 
 /**
@@ -29,13 +28,14 @@ const Search = getByName('StaticSearchBarContainer');
 /**
  * Main Languages Page Component.
  */
-export default ({ languages }) => {
+export default ({ languages, Navigator }) => {
     /**
      * States used throughout the Page
      * @param {Getter, Setter} languages: The list of available languages, populated by the @arg React.useEffect hook.
      * @param {Getter, Setter} query: The query that has been inputted by the user in the search box. By default this is []. and as @arg {[] == true}, which can be shown by logging @arg {!![]}, by default all options will be showing because the filter will evaluate to true on all instances.
      */
     const [query, setQuery] = React.useState([]);
+    const Navigation = Navigator.useNavigation();
 
     return <>
         {/**
@@ -49,8 +49,7 @@ export default ({ languages }) => {
          * The main part of the component, showing available options to toggle.
          * This is wrapped in an @arg ExitWrapper component to allow the user to close out the page by swiping to the right.
          */}
-        <ExitWrapper component={<>
-            <View style={{marginBottom: 15}}>
+        <ScrollView style={{marginBottom: 15}}>
                 {/**
                  * Renders a @arg LanguageItem component for each of the available languages. If the page opened was the language to translate to, then the "Detect" option will not be rendered at all.
                  */}
@@ -58,12 +57,11 @@ export default ({ languages }) => {
                     ArrayOps.filterItem(Object.keys(languages), (language: string) => language.toLowerCase().includes(query), 'getting searched languages'), 
                     (language: string) => (get(name, "DislateLangFilter") && language=='detect') 
                         ? <></> 
-                        : <LanguageItem language={language} languages={languages} />,
+                        : <LanguageItem language={language} languages={languages} Navigation={Navigation} />,
                     
                     "listing different possible languages"
                 )}
-            </View>
-        </>} />
+        </ScrollView>
          {/**
          * Renders a custom Dialog implementation to display a tip to help you navigate the page, and informs you that the current selected language has a tick next to it.
          */}

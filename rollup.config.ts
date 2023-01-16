@@ -20,7 +20,8 @@ export default defineConfig({
       common_js(),
       json(),
       esbuild({ 
-         minify: manifest.release=="stable", 
+         // minify: manifest.release=="stable", 
+         minify: false,
          target: 'ES2019',
       }),
    ]
