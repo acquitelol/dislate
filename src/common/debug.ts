@@ -36,7 +36,7 @@ async function fetchDebugArguments(): Promise<debugArguments> {
      * @param {object} ReactNativeConstants: The React Native Constants
      * @param {object} ReactNativeVersion: The React Native Versions
      @ts-ignore */
-    const ReactNativeConstants = window.ReactNative.Platform.Constants
+    const ReactNativeConstants = window.ReactNative.Platform.constants
     const ReactNativeVersion = ReactNativeConstants.reactNativeVersion
 
     return {
