@@ -24,6 +24,21 @@ async function fetchDebugArguments(): Promise<debugArguments> {
      * @param {object} devices: The formatted list of devices from the API.
      */
     const devices = await Devices.getDeviceList()
+
+    /**
+     * Gets the properties of Hermes
+     * @param {object} hermes: The list of internal Hermes Properties
+     @ts-ignore */
+    const Hermes = window.HermesInternal.getRuntimeProperties()
+
+    /**
+     * Gets the React Native Constants (version)
+     * @param {object} ReactNativeConstants: The React Native Constants
+     * @param {object} ReactNativeVersion: The React Native Versions
+     @ts-ignore */
+    const ReactNativeConstants = window.ReactNative.Platform.Constants
+    const ReactNativeVersion = ReactNativeConstants.reactNativeVersion
+
     return {
         "Plugin": {
             "Version": version,
@@ -36,10 +51,17 @@ async function fetchDebugArguments(): Promise<debugArguments> {
             "Release": Native.InfoDictionaryManager.ReleaseChannel,
             "Bundle": (Native.InfoDictionaryManager.Identifier).split('.')[2],
         },
+        "React": {
+            "Version": React.version,
+            "Bytecode": Hermes['Bytecode Version'],
+            "Hermes": Hermes['OSS Release Version'],
+            "Native": `${ReactNativeVersion.major ?? 0}.${ReactNativeVersion.minor ?? 0}.${ReactNativeVersion.patch ?? 0}`
+        },
         "Native": {
             "Version": Native.DCDDeviceManager.systemVersion,
             "Device": devices[Native.DCDDeviceManager.device],
-            "Manufacturer": Native.DCDDeviceManager.deviceManufacturer
+            "Manufacturer": Native.DCDDeviceManager.deviceManufacturer,
+            "Idiom": ReactNativeConstants['interfaceIdiom']
         }
     }
 }

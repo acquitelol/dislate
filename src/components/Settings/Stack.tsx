@@ -1,7 +1,6 @@
 import { getBoolean } from "enmity/api/settings";
-import { View } from "enmity/components";
 import { getByKeyword, getByName } from "enmity/metro";
-import { React, NavigationStack, StyleSheet, Constants } from "enmity/metro/common";
+import { React, NavigationStack, StyleSheet } from "enmity/metro/common";
 import { Icons, Miscellaneous } from "../../common";
 import { Languages } from "../Pages";
 import Settings from "./Settings";

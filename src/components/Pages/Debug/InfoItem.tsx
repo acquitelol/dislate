@@ -9,7 +9,7 @@
  * @param name: The name of the plugin, from @arg manifest.json
  * @param Debug: Main class to create Debug Arguments and send Debug Logs.
  */
-import { get, getBoolean, set } from "enmity/api/settings";
+import { get } from "enmity/api/settings";
 import { FormRow, Text } from "enmity/components";
 import { Constants, React, StyleSheet } from "enmity/metro/common";
 import { Icons, Debug, Store } from "../../../common";
