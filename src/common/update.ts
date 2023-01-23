@@ -31,16 +31,16 @@ async function checkForUpdates(): Promise<void> {
          * @param {object} res: The object of all information fetched from the REST api.
          * @param {string} content: The plugin source code as a string to check if the version is not the latest.
          */
-        const res = await REST.get(url);
-        const content = await res.text;
+        const res = await fetch(url);
+        const content = await res.text() as string;
 
         /**
          * Gets the external version and build from the repo.
          * @param {string} externalVersion: The current latest version externally. Example: @arg {1.1.5}
          * @param {string} externalBuild: The current latest build externally. Example: @arg {patch-1.2.8}. This would be then shortened into a simpler string: @arg {1.2.8}
          */
-        const externalVersion = content.match(/\d\.\d\.\d+/g)[0];
-        const externalBuild = content.match(/patch-\d\.\d\.\d+/g)[0];
+        const externalVersion = (content.match(/\d\.\d\.\d+/g) as Object)[0];
+        const externalBuild = (content.match(/patch-\d\.\d\.\d+/g) as Object)[0];
 
         /**
          * Returns early if it cannot find either of the versions from online and show the noUpdate dialog

@@ -30,8 +30,8 @@ async function getDeviceList(label?: string): Promise<any> {
          * @param {(string) object} res: The data returned from the API
          * @param {string} devicesList: The list of devices as text from the API.
          */
-        const res = await REST.get(`https://gist.githubusercontent.com/adamawolf/3048717/raw/1ee7e1a93dff9416f6ff34dd36b0ffbad9b956e9/Apple_mobile_device_types.txt`);
-        const devicesList = res.text;
+        const res = await fetch(`https://gist.githubusercontent.com/adamawolf/3048717/raw/1ee7e1a93dff9416f6ff34dd36b0ffbad9b956e9/Apple_mobile_device_types.txt`);
+        const devicesList = await res.text();
 
         /** 
          * Formats the list into a JSON { [key: string]: value } pair
