@@ -32,11 +32,23 @@ async function fetchDebugArguments(): Promise<debugArguments> {
     const Hermes = window.HermesInternal.getRuntimeProperties()
 
     /**
+     * Finds an element by a single prop
+     * @param prop: The prop
+     * @returns: The element found or undefined if nothng was found
+     @ts-ignore */
+    const findReactModule = (prop: string) => Object.values(window.modules).find(m => m.publicModule.exports?.[prop]).publicModule.exports;
+
+    /**
+     * Main @arg ReactNative module which is used here to get the Versions of RN and Hermes.
+     @ts-ignore */
+    const ReactNative = findReactModule("View") as typeof import("react-native");
+
+    /**
      * Gets the React Native Constants (version)
      * @param {object} ReactNativeConstants: The React Native Constants
      * @param {object} ReactNativeVersion: The React Native Versions
-     @ts-ignore */
-    const ReactNativeConstants = window.ReactNative.Platform.constants
+     */
+    const ReactNativeConstants = ReactNative.Platform.constants
     const ReactNativeVersion = ReactNativeConstants.reactNativeVersion
 
     return {
