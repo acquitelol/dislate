@@ -266,7 +266,7 @@ export default ({name, version, plugin, authors}): void => {
                          */
                         onPress={async function() {
                             const options = await Debug.fetchDebugArguments()
-                            Clipboard.setString(await Debug.debugInfo(Object.keys(options)));
+                            Clipboard.setString(await Debug.debugInfo(options));
                             Miscellaneous.displayToast('debug information', 'clipboard')
                         }}
                     >

@@ -11,7 +11,7 @@
  * @param ExitWrapper: Used as a wrapped to place @arg components inside of a @arg ScrollView and allow closing the page by swiping to the right.
  */
 import { get } from 'enmity/api/settings';
-import { ScrollView, } from 'enmity/components';
+import { FlatList, ScrollView, } from 'enmity/components';
 import { getByName } from 'enmity/metro';
 import { React } from 'enmity/metro/common';
 import { name } from '../../../../manifest.json';
@@ -53,14 +53,13 @@ export default ({ languages, Navigator }) => {
                 {/**
                  * Renders a @arg LanguageItem component for each of the available languages. If the page opened was the language to translate to, then the "Detect" option will not be rendered at all.
                  */}
-                {ArrayOps.mapItem(
-                    ArrayOps.filterItem(Object.keys(languages), (language: string) => language.toLowerCase().includes(query), 'getting searched languages'), 
-                    (language: string) => (get(name, "DislateLangFilter") && language=='detect') 
+                <FlatList
+                    data={ArrayOps.filterItem(Object.keys(languages), (language: string) => language.toLowerCase().includes(query), 'getting searched languages')}
+                    renderItem={({ item }) => (get(name, "DislateLangFilter") && item=='detect') 
                         ? <></> 
-                        : <LanguageItem language={language} languages={languages} Navigation={Navigation} />,
-                    
-                    "listing different possible languages"
-                )}
+                        : <LanguageItem language={item} languages={languages} Navigation={Navigation} />}
+                    keyExtractor={language => language}
+                />
         </ScrollView>
          {/**
          * Renders a custom Dialog implementation to display a tip to help you navigate the page, and informs you that the current selected language has a tick next to it.

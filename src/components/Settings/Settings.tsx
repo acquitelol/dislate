@@ -17,7 +17,7 @@
  * @param Languages: Page which allows you to choose a language
  * @param Page: Default Page which will render more TSX inside of it.
  */
-import { get, set } from 'enmity/api/settings';
+import { get, getBoolean, set } from 'enmity/api/settings';
 import { FormDivider, FormRow, FormSwitch, Text, View } from 'enmity/components';
 import { bulk, filters } from 'enmity/metro';
 import { React, Constants, Storage, StyleSheet, Toasts } from 'enmity/metro/common';
@@ -25,6 +25,7 @@ import { Miscellaneous, Debug, Format, ArrayImplementations as ArrayOps, Icons, 
 import Credits from './Credits';
 import ExitWrapper from '../Wrappers/ExitWrapper';
 import SectionWrapper from '../Wrappers/SectionWrapper'
+import { Languages } from '../Pages';
 
 /** 
  * Main modules being fetched by the plugin to open links externally and copy text to clipboard
@@ -50,7 +51,7 @@ const [
         * @uses @param authors: List of authors with their Discord ID and a link to their GitHub profile.
         * @uses @param release: The current release channel of the plugin. This is generally a toggle between @arg stable and @arg development
   */
-export default ({ settings, manifest: { name, version, plugin, authors, release }, Navigator}) => {
+export default ({ settings, manifest: { name, version, plugin, authors, release }, Navigator, languages }) => {
     /**
      * @param {StyleSheet} styles: The main stylesheet for the items in the UI.
      */
@@ -92,7 +93,7 @@ export default ({ settings, manifest: { name, version, plugin, authors, release 
         }
     });
 
-    const Navigation = Navigator.useNavigation();
+    const navigation = Navigator.useNavigation();
 
     /**
      * Main component render
@@ -162,7 +163,11 @@ export default ({ settings, manifest: { name, version, plugin, authors, release 
                                 /**
                                  * Finally, push the @arg Languages page out to the user, using @arg Navigator.useNavigation.navigate, and allow them to pick the @arg from language.
                                  */
-                                Navigation.navigate(`Language`)
+                                navigation.push("EnmityCustomPage", {
+                                    navigation,
+                                    pageName: `Translate ${getBoolean(name, "DislateLangFilter", true) ? "To" : "From"}`,
+                                    pagePanel: (): any => <Languages languages={languages} Navigator={Navigator} />
+                                })
                             }}
                             onLongPress={() => Miscellaneous.displayToast('Open a new page allowing you to choose a language that you can translate from. The default is "Detect".', 'tooltip')}
                         />
@@ -196,7 +201,11 @@ export default ({ settings, manifest: { name, version, plugin, authors, release 
                                 /**
                                  * Finally, push the @arg Languages page out to the user, using @arg Navigator.useNavigation.navigate, and allow them to pick the @arg to language.
                                  */
-                                Navigation.navigate(`Language`)
+                                navigation.push("EnmityCustomPage", {
+                                    navigation, 
+                                    pageName: `Translate ${getBoolean(name, "DislateLangFilter", true) ? "To" : "From"}`,
+                                    pagePanel: (): any => <Languages languages={languages} Navigator={Navigator} />
+                                })
                             }}
                             onLongPress={() => Miscellaneous.displayToast('Open a new page allowing you to choose a language that you can translate to. The default is "English".', 'tooltip')}
                         />
