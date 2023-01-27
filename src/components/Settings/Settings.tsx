@@ -371,7 +371,7 @@ export default ({ settings, manifest: { name, version, plugin, authors, release 
                                 /**
                                  * Set the full list of arguments wrapped in a @arg {debug} info function to format the message in a way that you can paste into Discord.
                                  */
-                                Clipboard.setString(await Debug.debugInfo(Object.keys(options)));
+                                Clipboard.setString(await Debug.debugInfo(options));
 
                                 /**
                                  * Finally, show a @arg Toast informing the user that the debug information text has been copied to clipboard.
