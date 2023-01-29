@@ -8,7 +8,7 @@
  * @param reload: Function to force a reload on Discord.
  */
 import { name, plugin, version } from '../../manifest.json';
-import { Dialog, REST } from 'enmity/metro/common';
+import { Dialog } from 'enmity/metro/common';
 import { reload } from 'enmity/api/native';
 import tryCallback from './try_callback';
 
@@ -22,9 +22,7 @@ async function checkForUpdates(): Promise<void> {
          * Gets a valid installation URL to fetch and see if the version is latest
          * @param {(constant)string} url: The url of the plugin to install.
          */
-        const url = `${plugin.download}?${Math.floor(
-            Math.random() * 1001
-        )}.js`;
+        const url = `${plugin.download}?${Math.floor(Math.random() * 1001)}.js`;
 
         /**
          * Gets the latest build source code as a string from the GitHub repo.
@@ -39,8 +37,8 @@ async function checkForUpdates(): Promise<void> {
          * @param {string} externalVersion: The current latest version externally. Example: @arg {1.1.5}
          * @param {string} externalBuild: The current latest build externally. Example: @arg {patch-1.2.8}. This would be then shortened into a simpler string: @arg {1.2.8}
          */
-        const externalVersion = (content.match(/\d\.\d\.\d+/g) as Object)[0];
-        const externalBuild = (content.match(/patch-\d\.\d\.\d+/g) as Object)[0];
+        const externalVersion = (content.match(/\d\.\d\.\d+/g) as object)[0];
+        const externalBuild = (content.match(/patch-\d\.\d\.\d+/g) as object)[0];
 
         /**
          * Returns early if it cannot find either of the versions from online and show the noUpdate dialog

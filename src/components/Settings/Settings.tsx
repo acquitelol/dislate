@@ -18,13 +18,14 @@
  */
 import { get, getBoolean, set } from 'enmity/api/settings';
 import { FormDivider, FormRow, FormSwitch, ScrollView, Text, View } from 'enmity/components';
-import { bulk, filters } from 'enmity/metro';
+import { bulk, filters, getModule } from 'enmity/metro';
 import { React, Constants, Storage, StyleSheet, Toasts } from 'enmity/metro/common';
-import { Miscellaneous, Debug, Format, ArrayImplementations as ArrayOps, Icons, Updater } from '../../common';
+import { Miscellaneous, Format, ArrayImplementations as ArrayOps, Icons, Updater } from '../../common';
 import Credits from './Credits';
 import SectionWrapper from '../Wrappers/SectionWrapper'
 import { Languages } from '../Pages';
 import { DebugInfoActionSheet } from '../Modals/';
+import { renderActionSheet } from '../Modals/DebugInfoActionSheet';
 
 /** 
  * Main modules being fetched by the plugin to open links externally and copy text to clipboard
@@ -46,7 +47,8 @@ const [
   * This page takes settings and a manifest to prevent having to re-import it again in this file.
   * @param {any} settings: The main prop of available methods to use for settings.
   * @param {object} manifest: Prop to fetch the strings from @arg manifest.json to prevent needing to import them inside of this file
-        * @uses @param name: The name of the plugin. In this case, its Dislate.
+        * @uses @param name: The name of the plugin. In this case, its Dislate.import { renderActionSheet } from '../Modals/DebugInfoActionSheet';
+
         * @uses @param version: The version of the plugin.
         * @uses @param plugin: Different constant values such as a raw plugin source etc.
         * @uses @param authors: List of authors with their Discord ID and a link to their GitHub profile.
@@ -356,7 +358,7 @@ export default ({ settings, manifest: { name, version, plugin, authors, release 
                     />
                     <FormDivider />
                     {/**
-                     * The main debug info log. This would allow the user to copy the entire debug log to clipboard. Of course, they could use the </dislate type:Debug :1> command to choose, but this copies the full log.
+                     * The main debug info log. This would allow the user to copy a part or the entire log to clipboard.
                      * @uses @param {number} Icons.Copy: The @arg toast initialisation icon.
                      * @uses @param {number} Icons.Settings.Toasts.Settings: The @arg tick icon.
                      */}
@@ -366,29 +368,27 @@ export default ({ settings, manifest: { name, version, plugin, authors, release 
                         onLongPress={() => Miscellaneous.displayToast(`Copy the full debug log to clipboard including ${name}'s Version, Build, and Release, Enmity's Version and Build, etc.`, 'tooltip')}
                         leading={<FormRow.Icon style={styles.icon} source={Icons.Copy} />}
                         trailing={FormRow.Arrow}
-                        onPress={ async function() {
+                        onPress={() => {
                             /**
                              * Opens an @arg ActionSheet to the user and passes an onConfirm and type of @arg Copy because this is inside Settings, not the Command.
                              */
-                            LazyActionSheet.openLazy(new Promise(r => r({ default: DebugInfoActionSheet })), "DebugInfoActionSheet", {
-                                onConfirm: async function(debugLog: string, type: string) {
-                                    /**
-                                     * This closes the current ActionSheet.
-                                     * @param LazyActionSheet.hideActionSheet: Removes the top level action sheet.
-                                     */
-                                    LazyActionSheet.hideActionSheet()
-                    
-                                    /**
-                                     * Set the full list of arguments wrapped in an @arg {debug} info function to format the message in a way that you can paste into Discord.
-                                     */
-                                    Clipboard.setString(debugLog);
+                            renderActionSheet((debugLog: string, type: string) => {
+                                /**
+                                 * This closes the current ActionSheet.
+                                 * @param LazyActionSheet.hideActionSheet: Removes the top level action sheet.
+                                 */
+                                LazyActionSheet.hideActionSheet()
+                
+                                /**
+                                 * Set the full list of arguments wrapped in an @arg {debug} info function to format the message in a way that you can paste into Discord.
+                                 */
+                                Clipboard.setString(debugLog);
 
-                                    /**
-                                     * Finally, show an @arg Toast informing the user that the debug information text has been copied to clipboard.
-                                     */
-                                    Miscellaneous.displayToast(`${type}`, 'clipboard')
-                                }, type: "copy" // The type being "copy" means that it'll display Copy for all the parts such as Copy Message etc.
-                            })
+                                /**
+                                 * Finally, show an @arg Toast informing the user that the debug information text has been copied to clipboard.
+                                 */
+                                Miscellaneous.displayToast(`${type}`, 'clipboard')
+                            }, "copy" /* The type being "copy" means that it'll display Copy for all the parts such as Copy Message etc. */)
                         }}
                     />
                     <FormDivider />

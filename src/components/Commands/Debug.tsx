@@ -30,7 +30,7 @@ import { bulk, filters } from "enmity/metro";
 import { get, set } from "enmity/api/settings";
 import LanguageNames from '../../translate/languages/names';
 import ISO from '../../translate/languages/iso';
-import { DebugInfoActionSheet } from "../Modals/";
+import { renderActionSheet } from "../Modals/DebugInfoActionSheet";
 
 /** 
  * Main modules being fetched by the plugin to open links externally and copy text to clipboard
@@ -44,6 +44,7 @@ const [
     filters.byProps('setString'),
     filters.byProps("openLazy", "hideActionSheet")
 );
+
 
 /**
  * Returns an object of all available options. To add a new option, just write a new @arg key - @arg value pair with the callback as the value.
@@ -60,32 +61,30 @@ const options = (channelName: string): any => {
                 /**
                  * Opens an @arg ActionSheet to the user and passes an onConfirm and type of @arg Send because this is inside the Command, not Settings.
                  */
-                LazyActionSheet.openLazy(new Promise(r => r({ default: DebugInfoActionSheet })), "DebugInfoActionSheet", {
-                    onConfirm: (debugLog: string, type: string) => {
-                        /**
-                         * This closes the current ActionSheet.
-                         * @param LazyActionSheet.hideActionSheet: Removes the top level action sheet.
-                         */
-                        LazyActionSheet.hideActionSheet()
+                renderActionSheet((debugLog: string, type: string) => {
+                    /**
+                     * This closes the current ActionSheet.
+                     * @param LazyActionSheet.hideActionSheet: Removes the top level action sheet.
+                     */
+                    LazyActionSheet.hideActionSheet()
         
-                        /**
-                         * Opens a toast saying that a Log with the specific type has been sent to the channelName.
-                         * @uses @param {string} type: The type of log that has been sent
-                         * @uses @param {string} channelName: The name of the channel where the message has been sent.
-                         */
-                        Toasts.open({ 
-                            content: `Sent ${type} in #${channelName}`, 
-                            source: Icons.Settings.Toasts.Settings
-                        })
+                    /**
+                     * Opens a toast saying that a Log with the specific type has been sent to the channelName.
+                     * @uses @param {string} type: The type of log that has been sent
+                     * @uses @param {string} channelName: The name of the channel where the message has been sent.
+                     */
+                    Toasts.open({ 
+                        content: `Sent ${type} in #${channelName}`, 
+                        source: Icons.Settings.Toasts.Settings
+                    })
         
-                        /**
-                         * The user has either clicked Send All from the Debug page, or has customized the options and clicked Send Message.
-                         * Therefore, get the Debug Log passed as a parameter in the child component, and resolve the promise with it.
-                         * @param debugLog: The partial or full debug log message, as an @arg string.
-                         */
-                        resolve({ content: debugLog })
-                    }, type: "send" // The type being "send" means that it'll display Send for all the parts such as Send Message etc.
-                })
+                    /**
+                     * The user has either clicked Send All from the Debug page, or has customized the options and clicked Send Message.
+                     * Therefore, get the Debug Log passed as a parameter in the child component, and resolve the promise with it.
+                     * @param debugLog: The partial or full debug log message, as an @arg string.
+                     */
+                    resolve({ content: debugLog })
+                }, "send" /* The type being "send" means that it'll display Send for all the parts such as Send Message etc. */)
             })
         },
         /**
@@ -294,6 +293,7 @@ export default {
          * @param throwToast: A fallback toast, used in case the function from the debug argumetns couldnt be found. As a result, this toast will appear instead.
                 * @uses @param Icons.Clock: Clock icon imported from ./icons
          */
+
 
         const availableOptions = options(context.channel.name);
         const throwToast = () => {

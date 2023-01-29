@@ -6,7 +6,7 @@
  * @param Format.object: Convert an object to a JSON format, which requires some hacky alterations.
  * @param tryCallback: Function to wrap another function in a try-catch
  */
-import { Dialog, Native, REST, Storage } from "enmity/metro/common";
+import { Dialog, Native, Storage } from "enmity/metro/common";
 import { name } from '../../manifest.json';
 import Format from "./format";
 import Store from './store_item';
