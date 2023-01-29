@@ -69,7 +69,7 @@ export default {
   displayDescription: `Send a message using ${name} in any language chosen, using the Google Translate API.`,
 
   /**
-   * @param {ApplicationCommandType} type: The type of command, in this case it's a @arg Chat command.
+   * @param {ApplicationCommandType} type: The type of command, in this case it's an @arg Chat command.
    * @param {ApplicationCommandInputType} inputType: The type of input for the command parameters, which is @arg {built in text}.
    */
   type: ApplicationCommandType.Chat,
@@ -211,7 +211,7 @@ export default {
         cancelText: "Nope, don't send it",
         onConfirm: () => {
           /**
-           * Then, open a @arg Toast declaring that the message has been sent into the context channel and the language that it was sent as.
+           * Then, open an @arg Toast declaring that the message has been sent into the context channel and the language that it was sent as.
            * @uses @param {string} context.channel.name: The name of the channel where the command was executed
            * @uses @param {string} language: The language that the user provided when running the command.
            * @uses @param {number} Icons.Translate: The icon from Discord that I have picked for Translating.

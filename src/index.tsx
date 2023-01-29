@@ -4,12 +4,12 @@
  * @param { Plugin, registerPlugin }: These are used to register an Enmity plugin, and @arg Plugin in particular is also used as a type.
  * @param { bulk, filters, getByProps }: These are used to fetch modules from the Discord API.
  * @param React: This is used to run proprietary functions such as @arg React.useState or @arg React.useEffect
- * @param Toasts: This is a function used to open a @arg toast, which is a little notification at the top of your screen.
+ * @param Toasts: This is a function used to open an @arg toast, which is a little notification at the top of your screen.
  * @param create: This is used to create the @arg Patcher.
  * @param manifest: This is the main @arg manifest.json which is required for displaying the @arg Plugin.
  * @param {get, getBoolean}: This allows you to get data from the Enmity Settings store. @arg Setting data is not required in this file, and as a result hasn't been imported.
  * @param TranslateCommand: The main command to send a translated message. Trigger: @arg {/translate text:{string} language:{option}} 
- * @param TebugCommand: The main command to debug @arg Dislate. Trigger: @arg {/dislate type:{option}}
+ * @param DebugCommand: The main command to debug @arg Dislate. Trigger: @arg {/dislate type:{option}}
  * @param Settings: The main settings page.
  * @param LanguageNames: The key pair list of languages and their abbreviated forms.
  */
@@ -379,7 +379,7 @@ import language from '../deprecated/translate/src/languages/index';
                                  content: `${
                                     isTranslated 
                                        ? res 
-                                       : existingCachedObject[messageId]} ${
+                                       : (existingCachedObject as object)[messageId]} ${
                                     isTranslated 
                                        ? `\`[${getBoolean(manifest.name, "DislateLangAbbr", false) 
                                           ? (LanguageNames[toLanguage]).toUpperCase() 

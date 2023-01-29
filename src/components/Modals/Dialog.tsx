@@ -41,11 +41,11 @@ export default ({ label, content, type }) => {
      * The values for @arg width, @arg marginLeft, and @arg marginRight may seem quite random, but the margins are just (100 (%) - @arg width) / 2 each. This evenly splits the available space on each side of the button.
      */
     button: {
-      width: "92%",
+      width: "90%",
       borderRadius: 10,
-      marginLeft: "4%",
-      marginRight: "4%",
-      ...Miscellaneous.shadow,
+      marginLeft: "5%",
+      marginRight: "5%",
+      ...Miscellaneous.shadow(),
     },
     /**
      * @param {object} text: The main styling for the text component.
@@ -92,7 +92,7 @@ export default ({ label, content, type }) => {
   /**
    * @func onPress: Open a pop-up asking the user whether they want to just hide the Dialog or never show it again.
    */
-  const onPress = (): void => {
+  async function onPress(): Promise<void> {
     /**
      * Move @param animatedButtonScale to @arg {0}, in @arg {250ms} with the @arg sinusoidal easing type (@arg Easing.sin).
      * @returns {void}
@@ -110,35 +110,26 @@ export default ({ label, content, type }) => {
     Dialog.show({
       title: "Close Tip?",
       body: `You can either hide this information box forever, or just hide it until you open this page again.`,
-      confirmText: "Hide",
-      cancelText: "Don't show again",
-      onConfirm: () => {
+      confirmText: "Don't Show Again",
+      cancelText: "Cancel",
+      onConfirm: async function () {
         /**
-         * "Confirming" means that you just want the Dialog to hide for this instance. Therefore, play the animation to scale down the Dialog, and nothing else.
-         * @func animate: Moves the scale of the dialog to 0 with sinusoidal easing.
-         */
-        animate();
-      },
-      onCancel: async function () {
-        /**
-         * "Cancelling" means that you want the Dialog to never show again. Therefore, set the option in Settings for this specific label to true (hidden).
+         * "Confirming" means that you want the Dialog to never show again. Therefore, set the option in Settings for this specific label to true (hidden).
          * @func Store.item: Stores a setting or store item asynchronously.
          */
-        await Store.item(
-          {
-            name: label,
-            content: true,
-            type: "setting",
-          },
-          `storing dialog at ${label} in Dialog component`
-        );
+        await Store.item({
+          name: label,
+          content: true,
+          type: "setting",
+          override: false
+        }, `storing dialog at ${label} in Dialog component`)
 
         /**
          * Finally, call the @arg animate function to hide the Dialog.
          * @func animate: Moves the scale of the dialog to 0 with sinusoidal easing.
          */
         animate();
-      },
+      }
     });
   };
 
@@ -193,7 +184,7 @@ export default ({ label, content, type }) => {
            * If this returns undefined (it couldn't find the type in the array) then use @arg standard instead.
            */
           style={[styles.button, types[type] ?? types["standard"]]}
-          onPress={onPress}
+          onPress={async function() { await onPress() }}
         >
           <View
             style={{
@@ -206,7 +197,7 @@ export default ({ label, content, type }) => {
               source={{
                 /**
                  * The image used for the @arg Image.
-                 * @param uri: Can be either a @arg URI, which is what is provided, or it can be a @arg require.
+                 * @param uri: Can be either an @arg URI, which is what is provided, or it can be an @arg require.
                  */
                 uri: "https://i.imgur.com/rl1ga06.png",
               }}

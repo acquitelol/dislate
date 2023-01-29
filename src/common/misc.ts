@@ -25,18 +25,19 @@ const externalPlugins: { [key: string]: string | undefined; } = {
 
 /**
  * @param shadow: Native shadow implementation that is used throughout the entire plugin.
+ * This is a function which can take in a number for the opacity, but this @param is optional.
  */
 type DefaultObject = { [key: string]: string | number | DefaultObject }
-const shadow: DefaultObject = {
+const shadow = (opacity: number = 0.10): DefaultObject => ({
     shadowColor: "#000",
     shadowOffset: {
         width: 1,
         height: 4,
     },
-    shadowOpacity: 0.10,
+    shadowOpacity: opacity,
     shadowRadius: 4.65,
     elevation: 8
-};
+});
 
 /**
  * @param PageStyles: Common styling for Card and Stack pages rendered by Dislate.

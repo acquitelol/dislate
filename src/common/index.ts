@@ -17,7 +17,7 @@ import Debug from './debug';
  * @param externalPlugins: List of external plugin keys to be verified in @arg index.tsx and push down the Dislate button if any are found.
  * @param shadow: Native shadow implementation so that it can be changed from a single place.
  * @param filterColor: Takes an input color and returns a dark or light color if the contrast of the given color reaches a threshold.
- * @param displayToast: Opens a @arg Toast which informs the user that @arg {any} something has been copied to clipboard or @arg {opens} tooltip
+ * @param displayToast: Opens an @arg Toast which informs the user that @arg {any} something has been copied to clipboard or @arg {opens} tooltip
  */
 import Miscellaneous from './misc';
 
@@ -60,7 +60,7 @@ import Icons from "./icons";
 /**
  * @param Format: Main Class to manipulate/format objects and strings.
  * 
- * @param string: Adds a capital letter to the beginning and replaces underscores with spaces in a @arg string.
+ * @param string: Adds a capital letter to the beginning and replaces underscores with spaces in an @arg string.
  * @param object: Formats the specific return from the Device List GitHub Gist as a valid JSON object.
  */
 import Format from "./format";

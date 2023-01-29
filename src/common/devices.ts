@@ -83,14 +83,14 @@ async function isCompatibleDevice(label?: string): Promise<void> {
 
         /** 
          * Formats the current device into a float so it can be compared.
-         * @param {number} device: User's device formatted as a floating point number, still in a @arg string format. @arg {example}: "iPhone 12,8" -> "12.8"
-         * @param {(constant) number | undefined} deviceFloat: Device casted from a @arg string into an actual @arg float.
+         * @param {number} device: User's device formatted as a floating point number, still in an @arg string format. @arg {example}: "iPhone 12,8" -> "12.8"
+         * @param {(constant) number | undefined} deviceFloat: Device casted from an @arg string into an actual @arg float.
          */
         device = device.replace('iPhone', '').replace(',', '.')
         const deviceFloat: number | undefined = parseFloat(device)
 
         /** 
-         * Opens a @arg Dialog showing that device is incompatible and never shows again after you click "I understand" (Can be cleared by clearing the store in settings)
+         * Opens an @arg Dialog showing that device is incompatible and never shows again after you click "I understand" (Can be cleared by clearing the store in settings)
          * @returns {void}
          */
         async function openIncompatibleDialog(): Promise<void> {

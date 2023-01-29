@@ -1,8 +1,8 @@
 import { DebugCommand, TranslateCommand } from "./Commands";
 import { Dialog } from './Modals';
-import { Debug, Languages, Page } from './Pages';
+import { Debug, Languages } from './Pages';
 import { Credits, Settings } from './Settings';
-import { ExitWrapper, SectionWrapper } from "./Wrappers";
+import { SectionWrapper } from "./Wrappers";
 
 export {
     DebugCommand,
@@ -10,9 +10,7 @@ export {
     Dialog,
     Debug,
     Languages,
-    Page,
     Credits,
     Settings,
-    ExitWrapper,
     SectionWrapper
 }

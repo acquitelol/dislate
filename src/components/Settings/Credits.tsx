@@ -6,7 +6,7 @@
  * @param {bulk, filters}: Used to import modules in bulk
  * @param TouchableOpacity: Adds an opacity effect upon pressing it.
  * @param View: Allows you to create a closure to place components inside of.
- * @param Image: Allows you to render an image from @arg require or a @arg uri.
+ * @param Image: Allows you to render an image from @arg require or an @arg uri.
  * @param Text: Allows you to render text.
  * @param { displayToast, Debug, FetchDebugArguments, ArrayOps.mapItem, shadow }: Functions which will be used throughout the script.
  */
@@ -66,7 +66,7 @@ export default ({name, version, plugin, authors}): void => {
             paddingTop: 5,
             flexDirection: 'column',
             flexWrap: 'wrap',
-            ...Miscellaneous.shadow
+            ...Miscellaneous.shadow()
         },
         /**
          * Style for the @arg {<Image>} component. Pretty self explanatory.
@@ -75,7 +75,7 @@ export default ({name, version, plugin, authors}): void => {
             width: 75,
             height: 75,
             borderRadius: 10,
-            ...Miscellaneous.shadow
+            ...Miscellaneous.shadow()
         },
         /**
          * Styles shared between the @arg Main text and the @arg Subtitle text.
@@ -85,7 +85,7 @@ export default ({name, version, plugin, authors}): void => {
             letterSpacing: 0.25
         },
         /**
-         * Style used for only the @arg {Main Text} component. Involes a @arg bold weight and @arg primary color.
+         * Style used for only the @arg {Main Text} component. Involes an @arg bold weight and @arg primary color.
          * Also involes a larger @arg fontSize and @arg letterSpacing
          */
         header: {
@@ -95,7 +95,7 @@ export default ({name, version, plugin, authors}): void => {
             letterSpacing: 0.25
         },
         /**
-         * Style used for only the @arg {Subtitle Text} components. Involes a @arg normal weight (@arg bold was omitted) and @arg secondary color.
+         * Style used for only the @arg {Subtitle Text} components. Involes an @arg normal weight (@arg bold was omitted) and @arg secondary color.
          * Additionally, the @arg fontSize is larger but not as large as @arg {Main Text} component
          */
         subHeader: {
@@ -159,7 +159,7 @@ export default ({name, version, plugin, authors}): void => {
          */}
         <View style={styles.container}>
             {/**
-             * The main @arg Image of the plugin. Wrapped in a @arg TouchableOpacity to add a bit of extra motion on press.
+             * The main @arg Image of the plugin. Wrapped in an @arg TouchableOpacity to add a bit of extra motion on press.
              * @uses @arg {uri https://i.imgur.com/rl1ga06.png}
              */}
             <TouchableOpacity 
@@ -184,7 +184,7 @@ export default ({name, version, plugin, authors}): void => {
                         source={{
                             /**
                              * The image used for the @arg Image.
-                             * @param uri: Can be either a @arg URI, which is what is provided, or it can be a @arg require.
+                             * @param uri: Can be either an @arg URI, which is what is provided, or it can be an @arg require.
                              */
                             uri: 'https://i.imgur.com/rl1ga06.png', 
                         }}
@@ -219,7 +219,7 @@ export default ({name, version, plugin, authors}): void => {
                         A project by 
                     </Text>
                     {/**
-                      * Loops through an array of objects and returns a @arg {TSX} element for each iteration
+                      * Loops through an array of objects and returns an @arg {TSX} element for each iteration
                       * @param authors: The list of authors for the plugin. In this case its only 1, but its scaleable.
                       * @param {() => {}}: The callback to run for each iteration
                             * @uses @arg author: The main author object, which contains @arg name, @arg id, and @arg profile.

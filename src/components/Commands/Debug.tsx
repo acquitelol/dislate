@@ -16,7 +16,7 @@ import {
   ApplicationCommandInputType,
   ApplicationCommandOptionType,
 } from "enmity/api/commands";
-import { Dialog, Navigation } from 'enmity/metro/common';
+import { Dialog } from 'enmity/metro/common';
 import { React, Toasts, Storage } from 'enmity/metro/common';
 import { name, plugin } from '../../../manifest.json';
 import { 
@@ -24,25 +24,25 @@ import {
     Miscellaneous, 
     Icons, 
     ArrayImplementations as ArrayOps, 
-    Debug, 
     Translate
 } from '../../common';
 import { bulk, filters } from "enmity/metro";
-import Info from "../Pages/Debug/Info";
-import Page from "../Pages/Page";
-import { set } from "enmity/api/settings";
+import { get, set } from "enmity/api/settings";
 import LanguageNames from '../../translate/languages/names';
 import ISO from '../../translate/languages/iso';
+import { DebugInfoActionSheet } from "../Modals/";
 
 /** 
  * Main modules being fetched by the plugin to open links externally and copy text to clipboard
- * @param Router: This is used to open a url externally with @arg Router.openURL ~
  * @param Clipboard: This is used to copy any string to clipboard with @arg Clipboard.setString ~
+ * @param LazyActionSheet: This is used to render out an ActionSheet to the user with any props.
  */
 const [
     Clipboard,
+    LazyActionSheet
 ] = bulk(
     filters.byProps('setString'),
+    filters.byProps("openLazy", "hideActionSheet")
 );
 
 /**
@@ -56,155 +56,42 @@ const options = (channelName: string): any => {
          * @param {any} debug: The main command that will get run to display important information such as the version of @param Dislate or the @param Discord build.
          */
         debug: async function() {
-            /**
-             * Get the full debug log message asynchronously
-             * @param {returns object} debugOptions: The full list of debug arguments.
-             */
-            const fullDebugLog = await Debug.debugInfo(
-                await Debug.fetchDebugArguments(), 
-                "full log"
-            );
-
             return await new Promise(resolve => {
                 /**
-                 * Opens a dialog informing the user that they may customize the information sent with this command.
-                 * 
-                 * @uses @param {callback} Dialog: The main module to open @arg dialogs or @arg popups
+                 * Opens an @arg ActionSheet to the user and passes an onConfirm and type of @arg Send because this is inside the Command, not Settings.
                  */
-                Dialog.show({
-                    title: "Choose extra options",
-                    body: "You can customize the information sent with this command. If you do not want to customize the debug log, press \"\`Ignore\`\" instead to send the full log.",
-                    confirmText: "Customize",
-                    cancelText: "Ignore",
-                    onConfirm: () => {
+                LazyActionSheet.openLazy(new Promise(r => r({ default: DebugInfoActionSheet })), "DebugInfoActionSheet", {
+                    onConfirm: (debugLog: string, type: string) => {
                         /**
-                         * @param wrapper: The main @arg Info page, wrapped as a function to add the channel id as a prop safely.
-                         * @returns {Info TSX Page.}
+                         * This closes the current ActionSheet.
+                         * @param LazyActionSheet.hideActionSheet: Removes the top level action sheet.
                          */
-                        const wrapper = (): any => <Info onConfirmCallback={(debugLog: string, type: string) => {
-                            /**
-                             * This closes the most top-level item in the Navigation stack. As the current @arg Info page is at the top, because this button is visible, This method will close the page.
-                             * @param Navigation.pop: Removes the top item from the Navigation stack, closing the top level page.
-                             */
-                            Navigation.pop();
-
-                            /**
-                             * Opens a toast saying that a Log with the specific type has been sent to the channelName.
-                             * @uses @param {string} type: The type of log that has been sent
-                             * @uses @param {string} channelName: The name of the channel where the message has been sent.
-                             */
-                            Toasts.open({ 
-                                content: `Sent ${type} log in #${channelName}.`, 
-                                source: Icons.Settings.Toasts.Settings
-                            })
-
-                            /**
-                             * The user has either clicked Send All from the Debug page, or has customized the options and clicked Send Message.
-                             * Therefore, get the Debug Log passed as a parameter in the child component, and resolve the promise with it.
-                             * @param debugLog: The partial or full debug log message, as a @arg string.
-                             */
-                            resolve({
-                                content: debugLog
-                            })
-                        }} />;
-                        
-                        /**
-                         * Push the wrapped page to Navigation, hence opening new page.
-                         * @arg {TSX} Page: The main default page
-                         * @arg {TSX} wrapper: The wrapped Info component
-                         * @uses @arg {string} name: The name of the Page, which will show up at the top.
-                         */
-                        Navigation.push(Page, { component: wrapper, name: `${name}: Customize`});
-                    },
-                    onCancel: () => {
+                        LazyActionSheet.hideActionSheet()
+        
                         /**
                          * Opens a toast saying that a Log with the specific type has been sent to the channelName.
                          * @uses @param {string} type: The type of log that has been sent
                          * @uses @param {string} channelName: The name of the channel where the message has been sent.
                          */
                         Toasts.open({ 
-                            content: `Sent full log in #${channelName}.`, 
+                            content: `Sent ${type} in #${channelName}`, 
                             source: Icons.Settings.Toasts.Settings
                         })
-
+        
                         /**
-                         * As the user has cancelled customizing the Debug Log, send the full log, fetched beforehand.
-                         * @param fullDebugLog: The full debug log message.
+                         * The user has either clicked Send All from the Debug page, or has customized the options and clicked Send Message.
+                         * Therefore, get the Debug Log passed as a parameter in the child component, and resolve the promise with it.
+                         * @param debugLog: The partial or full debug log message, as an @arg string.
                          */
-                        resolve({
-                            content: fullDebugLog
-                        })
-                    },
+                        resolve({ content: debugLog })
+                    }, type: "send" // The type being "send" means that it'll display Send for all the parts such as Send Message etc.
                 })
             })
         },
         /**
-         * @param {any} clearStores: Allows to user to clear all of their Dislate stores.
+         * @param {any} example: Tests by attempting to send a translated message in english and 1 other random language.
          */
-         clearStores: async function() {
-            /**
-             * Fetch any existing stored state inside of the @arg dislateStoreState array.
-             * @param storeItems: List of existing items in array form containing objects with name and type.
-             */
-            const storeItems: any = JSON.parse(await Storage.getItem("dislate_store_state")) ?? [];
-
-            /**
-             * Loop through the stored items with a custom implementation of a forEach to allow for labels.
-             * @param {object} storeItems: List of items to clear the store of, which were explicitly set with the store_item.ts file.
-             */
-            ArrayOps.forItem(storeItems, async function(item: any) {
-                /**
-                 * Either removes the item or sets it to false depending on whether the item type is storage or not
-                 * @if {(@arg item.type) is equal to @arg {string} storage} -> Remove the item's name from storage.
-                 * @else {()} -> Set the item name to @arg {override} value or @arg false as a setting.
-                 */
-                item.type==='storage'
-                    ? await Storage.removeItem(item.name)
-                    : set(name, item.name, item.override ?? false)
-            }, 'clearing state store');
-
-            /**
-             * Remove the store to ensure it doesnt get cleared twice.
-             */
-            await Storage.removeItem('dislate_store_state');
-            
-            return await new Promise(async function(resolve) {
-                /**
-                 * Finally, open a @arg Toast to notify the user that all of the stores have been cleared.
-                 */
-                Toasts.open({ 
-                    content: `Cleared all ${name} stores.`, 
-                    source: Icons.Settings.Toasts.Settings 
-                });
-
-                resolve({});
-            })
-        },
-        /**
-         * @param {any} download: Allows the user to copy a unique download link of Dislate to the clipboard.
-         */
-        download: async function() {
-            return await new Promise(resolve => {
-                /**
-                 * Set a new download link to clipboard every time the function is called, to prevent the plugin reinstalling with the same code, due to caching.
-                 * @param {string} plugin.download: The raw GitHub link of the plugin to install from @arg manifest.json
-                 */
-                Clipboard.setString(`${plugin.download}?${Math.floor(Math.random() * 1001)}.js`);
-
-                /**
-                 * Opens a toast saying that the "@arg {download link}" has been copied to clipboard.
-                 * 
-                 * @func displayToast: Opens a toast with a specified string as the argument saying that it has been copied to clipboard.
-                 * @returns {void}
-                 */
-                Miscellaneous.displayToast("download link", 'clipboard');
-                resolve({})
-            })
-        },
-        /**
-         * @param {any} test: Tests by attempting to send a translated message
-         */
-        Example: async function() {
+        example: async function() {
             const englishContent = "Example Message. Enmity is a state or feeling of active opposition or hostility.";
             const randomLanguageIndex = Math.floor(Math.random() * (LanguageNames.length));
             const randomLanguageName = LanguageNames[randomLanguageIndex];
@@ -233,7 +120,7 @@ const options = (channelName: string): any => {
                     cancelText: "Nope, don't send it",
                     onConfirm: () => {                
                         /**
-                         * Then, open a @arg Toast declaring that the test message has been sent into the context channel
+                         * Then, open an @arg Toast declaring that the test message has been sent into the context channel
                          * @uses @param {string} channelName: The name of the channel where the command was executed
                          * @uses @param {number} Icons.Translate: The icon from Discord that I have picked for Translating.
                          */
@@ -258,6 +145,65 @@ const options = (channelName: string): any => {
                     },
                 })
             })
+        },
+        /**
+         * @param {any} clearStores: Allows to user to clear all of their Dislate stores.
+         */
+         clearStores: async function() {
+            /**
+             * Fetch any existing stored state inside of the @arg dislateStoreState array.
+             * @param {object} storeItems: List of existing items in array form containing objects with name and type.
+             */
+            const storeItems: any = JSON.parse(get("Dislate", "state_store", null) as string) ?? []
+
+            /**
+             * Loop through the stored items with a custom implementation of a forEach to allow for labels.
+             * @uses @param {object} storeItems: List of items to clear the store of, which were explicitly set with the @arg store_item.ts file.
+             */
+            await ArrayOps.forItemAsync(storeItems, async function(item: any) {
+                /**
+                 * Either removes the item or sets it to false depending on whether the item type is storage or not
+                 * @if {(@arg item.type) is equal to @arg {string} storage} -> Remove the item's name from storage.
+                 * @else {()} -> Set the item name to @arg {override} value or @arg false as a setting.
+                 */
+                item.type==='storage'
+                    ? await Storage.removeItem(item.name)
+                    : set(name, item.name, item.override ?? false)
+            }, 'clearing state store')
+
+            /**
+             * Remove the store to ensure it doesnt get cleared twice.
+             */
+            set("Dislate", "state_store", null);
+
+            /**
+             * Finally, open an @arg Toast to notify the user that all of the stores have been cleared.
+             */
+            Toasts.open({ 
+                content: `Cleared all ${name} stores.`, 
+                source: Icons.Settings.Toasts.Settings 
+            });
+        },
+        /**
+         * @param {any} download: Allows the user to copy a unique download link of Dislate to the clipboard.
+         */
+        download: async function() {
+            return await new Promise(resolve => {
+                /**
+                 * Set a new download link to clipboard every time the function is called, to prevent the plugin reinstalling with the same code, due to caching.
+                 * @param {string} plugin.download: The raw GitHub link of the plugin to install from @arg manifest.json
+                 */
+                Clipboard.setString(`${plugin.download}?${Math.floor(Math.random() * 1001)}.js`);
+
+                /**
+                 * Opens a toast saying that the "@arg {download link}" has been copied to clipboard.
+                 * 
+                 * @func displayToast: Opens a toast with a specified string as the argument saying that it has been copied to clipboard.
+                 * @returns {void}
+                 */
+                Miscellaneous.displayToast("download link", 'clipboard');
+                resolve({})
+            })
         }
     }
 }
@@ -265,7 +211,7 @@ const options = (channelName: string): any => {
 /**
  * @param {any[]} commandOptions: The list of command options set as a simple array instead of hardcoding all of the values.
  * 
- * @func ArrayOps.mapItem: Takes in an @arg array and returns a new value for each item in the @arg array, in a @arg {new array}.
+ * @func ArrayOps.mapItem: Takes in an @arg array and returns a new value for each item in the @arg array, in an @arg {new array}.
  */
 const commandOptions: any[] = ArrayOps.mapItem(
     Object.keys(options("placeholder")), 
@@ -348,6 +294,7 @@ export default {
          * @param throwToast: A fallback toast, used in case the function from the debug argumetns couldnt be found. As a result, this toast will appear instead.
                 * @uses @param Icons.Clock: Clock icon imported from ./icons
          */
+
         const availableOptions = options(context.channel.name);
         const throwToast = () => {
             Toasts.open({ content: 'Invalid command argument.', source: Icons.Clock });

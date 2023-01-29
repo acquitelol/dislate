@@ -17,16 +17,16 @@ import { name } from '../../../../manifest.json';
 
 /**
  * This is a component which is part of the Info page which is part of the Debug command.
- * @param {string} option: The current option, as a @arg string, passed from the @arg Info page
+ * @param {string} option: The current option, as an @arg string, passed from the @arg Info page
  * @param {string} channelId: The @arg {Channel ID}, This is passed as a prop to the component for the "Long Press to send a single item" functionality.
  * @param {string} channelName: The @arg {Channel Name}, This is the name of the channel where the message will be sent.
  */
-export default ({ option, parent, debugOptions, onConfirmCallback }) => {
+export default ({ option, parent, debugOptions, onConfirm }) => {
     /**
      * Create a new state for whether the Option is currently active, by default, this is false.
      * @param {Getter, Setter}: Allows you to set and re-render the component to determine whether the option is active or inactive.
      */
-    const [isActive, setIsActive] = React.useState<boolean>((get(name, parent, {}) as object)[option]);
+    const [active, setActive] = React.useState<boolean>((get(name, parent, {}) as object)[option]);
 
     React.useEffect(() => {
         /**
@@ -105,26 +105,26 @@ export default ({ option, parent, debugOptions, onConfirmCallback }) => {
              * Set the current state to whatever the new value of the setting is, effectively re-rendering the component to show the new icon.
              * @func getBoolean: Gets a boolean value from a file's setting.
              */
-            setIsActive((get(name, parent, {}) as object)[option]);
+            setActive((get(name, parent, {}) as object)[option]);
         }}
         onLongPress={async function() {
             /**
              * Send a debug log with a single option as the list of options, hence a single log
              * @uses @param {string} option: The option which will be logged.
              */
-            await onConfirmCallback(await Debug.debugInfo({ [parent]: { [option]: true }}), "single log");
+            await onConfirm(await Debug.debugInfo({ [parent]: { [option]: true }}), `${parent} ➝ ${option}`);
         }}
         leading={<FormRow.Icon style={styles.icon} source={
             /**
              * Either set the Icon to Tick or Cross depending on whether @arg isActive is true or false
              * @param {number} Icons.Settings.Toasts: Part of the icon dependency to display icons for Toasts, can also be used in this scenario.
              */
-            isActive
+            active
                 ?   Icons.Settings.Toasts.Settings
                 :   Icons.Settings.Toasts.Failed
             } 
         />}
-        trailing={() => <Text style={[{ paddingRight: 10, paddingTop: 5, paddingBottom: 5 }, isActive ? styles.itemEnabled : styles.itemDisabled]}>
+        trailing={() => <Text style={[{ paddingTop: 5, paddingBottom: 5, paddingRight: 10 }, active ? styles.itemEnabled : styles.itemDisabled]}>
             {debugOptions[parent][option]}
         </Text>}
     />

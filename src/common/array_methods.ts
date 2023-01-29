@@ -11,24 +11,24 @@ import tryCallback from './try_callback';
  * @param array: The item to find.
  * @param callback: A function which is ran to find the item.
  * @param label: A label which is used to determine what the function does
- * @returns (@param { any || undefined }): Logs either the item found or undefined if nothing found
+ * @returns (@param { T | undefined }): Logs either the item found or undefined if nothing found
  */
-const findItem = (array: any[], callback: any, label?: string): any | undefined => {
+const findItem = <T>(array: T[], callback: (item: T, index: number, array: T[]) => boolean | undefined, label?: string): T | undefined => {
     return tryCallback(() => {
         /** 
          * Returns early if it cannot find a valid array.
-         * @param {any || undefined} array: The array of items which is searched through
+         * @param { T[] | undefined } array: The array of items which is searched through
          */
         if (!array) return undefined
 
         /** 
          * Loops through the array of items
-         * @param {any[]} array: The array to loop through
-         * @param {any} callback: The function to run for each iteration
-         * @param {number} i: The iterator
+         * @param { T[] } array: The array to loop through
+         * @param { (item: T, index: number, array: T[]) => boolean } callback: The function to run for each iteration
+         * @param { number } i: The iterator
          */
         for (let i = 0; i < array.length; i++) { 
-            if (callback(array[i], i, callback)) {
+            if (callback(array[i], i, array)) {
                 return array[i]
             }
         }
@@ -145,13 +145,34 @@ const forItem = (array: any[], callback: any, label?: string): void => {
 }
 
 /** 
+ * Loops through an array of items and runs a callback for each iteration.
+ * @param {any[]} array: The array to loop through.
+ * @param {any} callback: The function to run at each iteration.
+ * @param {string?} label?: Optional label to descibe what the function is doing
+ * @returns {void}
+ */
+async function forItemAsync(array: any[], callback: any, label?: string): Promise<void> {
+    await tryCallback(async function() {
+        /** 
+         * Loop through the array and run the callback at each iteration
+         * @param {number} i: The iteration
+         * @param {any[]} array: The array provided
+         * @param {any} callback: The function to run
+         */
+        for(let i = 0; i < array.length; i++) {
+            await callback(array[i], i, array)
+        }
+    }, [array, callback], name, 'loop through an array at', label)
+}
+
+/** 
  * Loops through an array, runs a callback for each iteration, and pushes the result of that callback to a new array
  * @param {any[]} array: The starting array
  * @param {any} callback: The function to run
  * @param {string} label: Optional label to descibe what the function is doing
  * @returns {<array>}
  */
-const mapItem = (array: any[], callback: any, label?: string): any[] => {
+const mapItem = <T>(array: T[], callback: any, label?: string): any[] => {
     return tryCallback(() => {
         /** 
          * Start off with an empty array.
@@ -183,6 +204,7 @@ export default {
     filterItem,
     findItem,
     forItem,
+    forItemAsync,
     mapItem,
     insertItem
 };
