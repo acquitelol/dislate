@@ -160,7 +160,7 @@ export default ({name, version, plugin, authors}): void => {
         <View style={styles.container}>
             {/**
              * The main @arg Image of the plugin. Wrapped in an @arg TouchableOpacity to add a bit of extra motion on press.
-             * @uses @arg {uri https://i.imgur.com/rl1ga06.png}
+             * @uses @arg {uri https://cdn.discordapp.com/avatars/581573474296791211/4429e2dbe2bfcfbd34fb1778c802144d.png?size=1280}
              */}
             <TouchableOpacity 
                 /** 
@@ -186,7 +186,7 @@ export default ({name, version, plugin, authors}): void => {
                              * The image used for the @arg Image.
                              * @param uri: Can be either an @arg URI, which is what is provided, or it can be an @arg require.
                              */
-                            uri: 'https://i.imgur.com/rl1ga06.png', 
+                            uri: 'https://cdn.discordapp.com/avatars/581573474296791211/4429e2dbe2bfcfbd34fb1778c802144d.png?size=1280', 
                         }}
                     />
                 </Animated.View>

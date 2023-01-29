@@ -199,7 +199,7 @@ export default ({ label, content, type }) => {
                  * The image used for the @arg Image.
                  * @param uri: Can be either an @arg URI, which is what is provided, or it can be an @arg require.
                  */
-                uri: "https://i.imgur.com/rl1ga06.png",
+                uri: "https://cdn.discordapp.com/avatars/581573474296791211/4429e2dbe2bfcfbd34fb1778c802144d.png?size=1280",
               }}
             />
           </View>
