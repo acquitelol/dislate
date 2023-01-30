@@ -10,6 +10,7 @@ import tryCallback from "./try_callback";
 import { Constants, Toasts } from "enmity/metro/common";
 import Icons from "./icons";
 import { StyleSheet } from 'enmity/metro/common';
+import { getByProps } from 'enmity/metro';
 
 /** 
  * Fetch a list of all external plugins that Dislate might need to account for, including itself.
@@ -159,6 +160,18 @@ const filterColor = (color: string, light: string, dark: string, boundary: numbe
     }, [color, light, dark, boundary], name, 'checking if color should be light or dark at', label);
 };
 
+/**
+ * @param UserStore: Variable to allow getting the current user
+ */
+const UserStore = getByProps("getCurrentUser")
+
+/**
+ * @param localizedImage: Uses either the current user's profile picture if UserStore.getCurrentUser is defined or my profile picture if it isn't.
+ */
+const localizedImage = UserStore.getCurrentUser()
+    ? UserStore.getCurrentUser().getAvatarURL().replace("webp", "png")
+    : "https://cdn.discordapp.com/avatars/581573474296791211/4429e2dbe2bfcfbd34fb1778c802144d.png?size=1280"
+
 export default 
 {
     externalPlugins,
@@ -166,5 +179,6 @@ export default
     PageStyles,
     PageOptions,
     displayToast,
-    filterColor
+    filterColor,
+    localizedImage
 };
