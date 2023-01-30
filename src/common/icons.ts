@@ -34,7 +34,7 @@ export default {
         TranslateTo: getIDByName('ic_activity_24px'),
         Debug: getIDByName('ic_rulebook_16px'),
         Initial: getIDByName('coffee'),
-        Update: getIDByName("ic_upload"),
+        Update: getIDByName("discover"),
         Locale: getIDByName("ic_locale_24px"),
         Back: getIDByName("ios-back")
     }
