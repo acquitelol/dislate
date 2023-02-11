@@ -11,6 +11,8 @@ import { Native, React } from 'enmity/metro/common';
 import Devices from './devices';
 import ArrayOps from './array_methods';
 import tryCallback from './try_callback';
+import Format from './format';
+import { getByProps } from 'enmity/metro';
 
 type debugArguments = { [key: string]: string | undefined | debugArguments; }
 
@@ -32,16 +34,9 @@ async function fetchDebugArguments(): Promise<debugArguments> {
     const Hermes = window.HermesInternal.getRuntimeProperties()
 
     /**
-     * Finds an element by a single prop
-     * @param prop: The prop
-     * @returns: The element found or undefined if nothng was found
-     @ts-ignore */
-    const findReactModule = (prop: string) => Object.values(window.modules).find(m => m.publicModule.exports?.[prop]).publicModule.exports;
-
-    /**
      * Main @arg ReactNative module which is used here to get the Versions of RN and Hermes.
      @ts-ignore */
-    const ReactNative = findReactModule("View") as typeof import("react-native");
+    const ReactNative = getByProps("View") as typeof import("react-native");
 
     /**
      * Gets the React Native Constants (version)
@@ -54,7 +49,7 @@ async function fetchDebugArguments(): Promise<debugArguments> {
     return {
         "Plugin": {
             "Version": version,
-            "Build": (plugin.build).split('-')[1],
+            "Build": Format.hex((plugin.build).split('-')[1]),
             "Channel": release,
         },
         "Client": {

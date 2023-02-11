@@ -225,9 +225,7 @@ const Dislate: Plugin = {
                   /**
                    * Check whether any external plugins are installed through the keys of them which were fetched earlier.
                    * @function forItem: Loops through a list with a callback as the second argument. Custom implementation of forEach, imported from ./common/index.ts
-                        * @arg {Array}: The array which the function would loop through.import language from '../modified/translate/src/languages/index';
-import language from '../deprecated/translate/src/languages/index';
-
+                        * @arg {Array}: The array which the function would loop through.import language from '../modified/translate/src/languages/index';jdoiwahoaiwh
                         * @arg {callback}: This would run on each iteration of the loop.
                         * @arg {string} label: The label of what the function is looping. This is used for logging incase of an error and should always be provided, but is not required.
                      */
@@ -415,7 +413,7 @@ import language from '../deprecated/translate/src/languages/index';
                               */
                            Toasts.open({
                               content: isTranslated
-                                 ? `Modified message to ${Format.string(get(manifest.name, "DislateLangTo", "english"))}.`
+                                 ? `Modified message to ${Format.string(get(manifest.name, "DislateLangTo", "english") as string)}.`
                                  : `Reverted message back to original state.`,
                               source: Icons.Translate
                            });

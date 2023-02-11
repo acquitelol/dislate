@@ -13,8 +13,12 @@ import tryCallback from "./try_callback";
  * @param {string} text: The string to format.
  * @returns {string}
  */
-const string = (text: any, regex?: boolean): string => {
+const string = (text: string, regex?: boolean): string => {
     return ArrayOps.mapItem(text.split(regex ? /(?=[A-Z])/ : "_"), (e: string) => e[0].toUpperCase() + e.slice(1)).join(' ')
+}
+
+const hex = (text: string) => {
+    return text.split("").reduce((acc, cur)=> acc += cur.charCodeAt(0).toString(16), "")
 }
 
 /** 
@@ -57,5 +61,6 @@ const object = (text: string, label?: string): string => {
 
 export default {
    string,
+   hex,
    object
 };

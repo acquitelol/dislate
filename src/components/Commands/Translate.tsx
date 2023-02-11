@@ -206,7 +206,7 @@ export default {
          * Are you sure you want to send this?
          * }
          */
-        body: `The message **about to be sent** is:\n\`${translatedContent}\`\n\nIn **${Format.string(get(name, "DislateLangTo", 'english'))}**, this will translate to:\n\`${translatedBack}\`\n\n${get(name, "DislateBothLangToggle", false) ? `**Note: Sending original and translated**\n` : ''}Are you sure you want to send this? :3`,
+        body: `The message **about to be sent** is:\n\`${translatedContent}\`\n\nIn **${Format.string(get(name, "DislateLangTo", 'english') as string)}**, this will translate to:\n\`${translatedBack}\`\n\n${get(name, "DislateBothLangToggle", false) ? `**Note: Sending original and translated**\n` : ''}Are you sure you want to send this? :3`,
         confirmText: "Yep, send it!",
         cancelText: "Nope, don't send it",
         onConfirm: () => {

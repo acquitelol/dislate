@@ -18,19 +18,19 @@
  */
 import { get, getBoolean, set } from 'enmity/api/settings';
 import { FormDivider, FormRow, FormSwitch, ScrollView, Text, View } from 'enmity/components';
-import { bulk, filters, getModule } from 'enmity/metro';
+import { bulk, filters } from 'enmity/metro';
 import { React, Constants, Storage, StyleSheet, Toasts } from 'enmity/metro/common';
 import { Miscellaneous, Format, ArrayImplementations as ArrayOps, Icons, Updater } from '../../common';
 import Credits from './Credits';
 import SectionWrapper from '../Wrappers/SectionWrapper'
 import { Languages } from '../Pages';
-import { DebugInfoActionSheet } from '../Modals/';
 import { renderActionSheet } from '../Modals/DebugInfoActionSheet';
 
 /** 
  * Main modules being fetched by the plugin to open links externally and copy text to clipboard
  * @param Router: This is used to open a url externally with @arg Router.openURL ~
  * @param Clipboard: This is used to copy any string to clipboard with @arg Clipboard.setString ~
+ * @param LazyActionSheet: The main module to open and close an ActionSheet with a given component.
  */
 const [
     Router,
@@ -144,7 +144,7 @@ export default ({ settings, manifest: { name, version, plugin, authors, release 
                                 {/**
                                  * Renders the language that the user current selected. If the setting call returns undefined, use N/A
                                  */}
-                                {Format.string(get(name, "DislateLangFrom", "detect")) ?? "N/A"}
+                                {Format.string(get(name, "DislateLangFrom", "detect") as string) ?? "N/A"}
                             </Text>
                             <FormRow.Arrow />
                         </View>}
@@ -182,7 +182,7 @@ export default ({ settings, manifest: { name, version, plugin, authors, release 
                                 {/**
                                  * Renders the language that the user current selected. If the setting call returns undefined, use N/A
                                  */}
-                                {Format.string(get(name, "DislateLangTo", "english")) ?? "N/A"}
+                                {Format.string(get(name, "DislateLangTo", "english") as string)}
                             </Text>
                             <FormRow.Arrow />
                         </View>}
@@ -367,7 +367,7 @@ export default ({ settings, manifest: { name, version, plugin, authors, release 
                         subLabel={`Open useful page to copy debug information like version and build of ${name} to clipboard.`}
                         onLongPress={() => Miscellaneous.displayToast(`Copy the full debug log to clipboard including ${name}'s Version, Build, and Release, Enmity's Version and Build, etc.`, 'tooltip')}
                         leading={<FormRow.Icon style={styles.icon} source={Icons.Copy} />}
-                        trailing={FormRow.Arrow}
+                        trailing={() => <FormRow.Arrow />}
                         onPress={() => {
                             /**
                              * Opens an @arg ActionSheet to the user and passes an onConfirm and type of @arg Copy because this is inside Settings, not the Command.
@@ -402,7 +402,7 @@ export default ({ settings, manifest: { name, version, plugin, authors, release 
                         subLabel={`Void most of the settings and stores used throughout ${name} to store data locally.`}
                         onLongPress={() => Miscellaneous.displayToast(`Clear stores and settings throughout ${name} including the settings to hide popups forever and the list of device codes.`, 'tooltip')}
                         leading={<FormRow.Icon style={styles.icon} source={Icons.Delete} />}
-                        trailing={FormRow.Arrow}
+                        trailing={() => <FormRow.Arrow />}
                         onPress={async function() {
                             /**
                              * Fetch any existing stored state inside of the @arg dislateStoreState array.
@@ -461,7 +461,7 @@ export default ({ settings, manifest: { name, version, plugin, authors, release 
                         subLabel={`Search for any ${name} updates and notify you if an update is available.`}
                         onLongPress={() => Miscellaneous.displayToast(`Search GitHub for any new version or build of ${name} and prompts you to update, and then prompts you to restart Enmity afterwards.`, 'tooltip')}
                         leading={<FormRow.Icon style={styles.icon} source={Icons.Settings.Update} />}
-                        trailing={FormRow.Arrow}
+                        trailing={() => <FormRow.Arrow />}
                         onPress={ async function() {
                             /**
                              * Simply calls the @func Updater.checkForUpdates function asynchronously. This is a whole seperate documented script located at src/commmon/update.ts 
@@ -480,7 +480,7 @@ export default ({ settings, manifest: { name, version, plugin, authors, release 
                         subLabel={`Open the repository of ${name} externally.`}
                         onLongPress={() => Miscellaneous.displayToast(`Opens the repository of ${name} on GitHub in an external page to view any source code of the plugin.`, 'tooltip')}
                         leading={<FormRow.Icon style={styles.icon} source={Icons.Open} />}
-                        trailing={FormRow.Arrow}
+                        trailing={() => <FormRow.Arrow />}
                         onPress={() => {
                             /**
                              * Simply opens the plugin repository externally to the user using the Router.
@@ -496,7 +496,7 @@ export default ({ settings, manifest: { name, version, plugin, authors, release 
          * Renders a simple FormRow with a version and build to display to the user. This is unnecessary as there as multiple ways to view this but it adds slightly more polish to the Settings Panel.
          */}
         <Text style={styles.subheaderText}>
-            {`Build: (${(plugin.build).split('-')[1]}) Release: (${release})`}
+            {`Build: (${Format.hex((plugin.build).split('-')[1])}) Release: (${release})`}
         </Text>
    </ScrollView>
 };
