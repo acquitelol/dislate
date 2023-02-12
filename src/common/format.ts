@@ -17,8 +17,13 @@ const string = (text: string, regex?: boolean): string => {
     return ArrayOps.mapItem(text.split(regex ? /(?=[A-Z])/ : "_"), (e: string) => e[0].toUpperCase() + e.slice(1)).join(' ')
 }
 
-const hex = (text: string) => {
-    return text.split("").reduce((acc, cur)=> acc += cur.charCodeAt(0).toString(16), "")
+/**
+ * Converts any version string into a hex string (1.1.1 -> hex variant)
+ * @param text: The input version to convert to hex
+ * @returns {string} Hex variant of string 
+ */
+const hex = (text: string): string => {
+    return text.split(".").join("").split("").reduce((acc, cur) => acc += cur.charCodeAt(0).toString(16), "")
 }
 
 /** 
