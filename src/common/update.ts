@@ -4,14 +4,12 @@
  * @param plugin: Information about the plugin such as build, download link, and repo
  * @param version: The current latest version of the plugin
  * @param Dialog: The dialog module, to open alerts in app.
- * @param REST: The rest API to fetch the latest build from GitHub
  * @param reload: Function to force a reload on Discord.
  */
 import { name, plugin, version } from '../../manifest.json';
 import { Dialog } from 'enmity/metro/common';
 import { reload } from 'enmity/api/native';
 import tryCallback from './try_callback';
-import Format from './Format';
 
 /**
  * Checks if any updates are available.
@@ -38,32 +36,38 @@ async function checkForUpdates(): Promise<void> {
          * @param {string} externalVersion: The current latest version externally. Example: @arg {1.1.5}
          * @param {string} externalBuild: The current latest build externally. Example: @arg {patch-1.2.8}. This would be then shortened into a simpler string: @arg {1.2.8}
          */
-        const externalVersion = (content.match(/\d+\.\d+\.\d+/g) ?? [undefined])[0];
-        const externalBuild = (content.match(/patch-\d+\.\d+\.\d+/g) ?? [undefined])[0];
+        const potentialExternalVersion = content.match(/\d+\.\d+\.\d+/g)
+        const potentialExternalHash = content.match(/hash:"(.*?)"/)
 
         /**
          * Returns early if it cannot find either of the versions from online and show the noUpdate dialog
          * @if {(@param externalVersion is falsey) <OR> (@param externalBuild is falsey)} -> Return early and show @arg noUpdates dialog.
          */
-        if (!externalVersion || !externalBuild)
-            return noUpdates(name, [version, plugin.build]);
+        if (!potentialExternalVersion && !potentialExternalHash)
+            return failureUpdate(name, [version, plugin.build]);
+
+        /**
+         * Convert the versions into a normalized version and hash that can be compared
+         */
+        const externalVersion = potentialExternalVersion && potentialExternalVersion[0];
+        const externalHash = potentialExternalHash && potentialExternalHash[1]
 
         /**
          * Checks if the external version and build match the current version and build. The latest version takes priority over the latest build. If neither are found, then show @arg noUpdates dialog.
-         * @if {(@param externalVersion is not equal to @param version)} -> Show update dialog with new @arg version as the newer update.
-         * @elif {(@param externalBuild is not equal to @param plugin.build)} -> Show update dialog with new @arg build as the newer update.
+         * @if {(@param potentialExternalVersion is not equal to @param version)} -> Show update dialog with new @arg version as the newer update.
+         * @elif {(@param potentialExternalHash is not equal to @param plugin.hash)} -> Show update dialog with new @arg build as the newer update.
          * @else {()} -> Return @arg noUpdates dialog, showing there are no new updates.
          *
          * @function showUpdateDialog: Shows that an update is available.
          * @arg {string} url: The url that the plugin will install with.
-         * @arg {string} externalVersion: The latest version that the plugin will use as text
-         * @arg {string} externalBuild: The latest version that the plugin will use as text
+         * @arg {string} potentialExternalVersion: The potential latest version that the plugin will use as text
+         * @arg {string} potentialExternalHash: The potential latest build that the plugin will use as text
          * @arg {boolean}: Whether it's a version update or a build update.
          *
          */
-        if (externalVersion != version) return showUpdateDialog(url, externalVersion, 'version');
-        if (externalBuild != plugin.build) return showUpdateDialog(url, Format.hex(externalBuild.split('-')[1]), 'build');
-        return noUpdates(name, [version, plugin.build]);
+        if (externalVersion && (externalVersion != version)) return showUpdateDialog(url, externalVersion, 'version');
+        if (externalHash && (externalHash != plugin.hash)) return showUpdateDialog(url, externalHash, "build");
+        return noUpdates(name, [version, plugin.hash]);
     }, [plugin], name, 'checking if latest version at', 'the async check for updates callback');
 }
 
@@ -77,7 +81,11 @@ async function checkForUpdates(): Promise<void> {
 const showUpdateDialog = (url: string, updateLabel: string, updateType: string): void => {
     Dialog.show({
         title: 'Update found',
-        body: `A newer ${updateType} is available for ${name}. ${updateType == 'build' ? `\nThe version will remain at ${version}, but the build will update to ${updateLabel}.` : ''}\nWould you like to install ${updateType} \`${updateLabel}\` now?`,
+        body: `A newer ${updateType} is available for ${name}. ${
+            updateType == 'build' 
+                ? `\nThe version will remain at ${version}, but the build will update to ${updateLabel}.` 
+                : ''
+        }\nWould you like to install ${updateType} \`${updateLabel}\` now?`,
         confirmText: 'Update',
         cancelText: 'Not now',
 
@@ -92,14 +100,29 @@ const showUpdateDialog = (url: string, updateLabel: string, updateType: string):
 /**
  * Opens a dialog showing that there are no updates available for @arg Dislate.
  * @param name: The name of the plugin, in this case its @arg Dislate.
- * @param { version, build }: This is an array of both the latest version and latest build, which are displayed in the @arg Dialog.
+ * @param { version, hash }: This is an array of both the latest version and latest build hash, which are displayed in the @arg Dialog.
  * @returns {void}
  */
-const noUpdates = (name: string, [version, build]: string[]): void => {
-    console.log(`[${name}] Plugin is on the latest update, which is version ${version} and build ${build}`);
+const noUpdates = (name: string, [version, hash]: string[]): void => {
+    console.log(`[${name}] Plugin is on the latest update, which is version ${version} and build ${hash}`);
     Dialog.show({
         title: 'Already on latest',
-        body: `${name} is already updated to the latest version.\nVersion: \`${version}\`\nBuild: \`${Format.hex(build.split('-')[1])}\``,
+        body: `${name} is already updated to the latest version.\nVersion: \`${version}\`\nBuild: \`${hash}\``,
+        confirmText: 'Okay',
+    });
+};
+
+/**
+ * Opens a dialog showing that there is a failure to check for updates.
+ * @param name: The name of the plugin, in this case its @arg Dislate.
+ * @param { version, hash }: This is an array of both the latest version and latest build hash, which are displayed in the @arg Dialog.
+ * @returns {void}
+ */
+const failureUpdate = (name: string, [version, hash]: string[]): void => {
+    console.log(`[${name}] Plugin failed to update to the latest version and build, remaining at ${version} and ${hash}`);
+    Dialog.show({
+        title: 'Failed',
+        body: `${name} to find a new version or build.\nThe current versions will remain as follows:\nVersion: \`${version}\`\nBuild: \`${hash}\``,
         confirmText: 'Okay',
     });
 };
@@ -137,14 +160,11 @@ async function installPlugin(url: string, type: string, updateType: string): Pro
                          */
                         onConfirm: (): void => reload(),
                     })
-                : console.log(`[Dislate] Plugin failed to update to ${updateType} ${type}.`);
+                : console.log(`[${name}] Plugin failed to update to ${updateType} ${type}.`);
         });
     }, [url, type, updateType], name, 'installing plugin at', 'new version available');
 }
 
 export default {
-    checkForUpdates,
-    showUpdateDialog,
-    noUpdates,
-    installPlugin,
+    checkForUpdates
 };

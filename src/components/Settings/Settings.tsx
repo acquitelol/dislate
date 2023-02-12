@@ -496,7 +496,7 @@ export default ({ settings, manifest: { name, version, plugin, authors, release 
          * Renders a simple FormRow with a version and build to display to the user. This is unnecessary as there as multiple ways to view this but it adds slightly more polish to the Settings Panel.
          */}
         <Text style={styles.subheaderText}>
-            {`Build: (${Format.hex((plugin.build).split('-')[1])}) Release: (${release})`}
+            {`Build: (${plugin.hash}) Release: (${release})`}
         </Text>
    </ScrollView>
 };

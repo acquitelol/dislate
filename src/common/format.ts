@@ -17,15 +17,6 @@ const string = (text: string, regex?: boolean): string => {
     return ArrayOps.mapItem(text.split(regex ? /(?=[A-Z])/ : "_"), (e: string) => e[0].toUpperCase() + e.slice(1)).join(' ')
 }
 
-/**
- * Converts any version string into a hex string (1.1.1 -> hex variant)
- * @param text: The input version to convert to hex
- * @returns {string} Hex variant of string 
- */
-const hex = (text: string): string => {
-    return text.split(".").join("").split("").reduce((acc, cur) => acc += cur.charCodeAt(0).toString(16), "")
-}
-
 /** 
  * Convert a badly formatted string into a JSON-parsable format.
  * @param text: The source text
@@ -66,6 +57,5 @@ const object = (text: string, label?: string): string => {
 
 export default {
    string,
-   hex,
    object
 };

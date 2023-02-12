@@ -49,7 +49,7 @@ async function fetchDebugArguments(): Promise<debugArguments> {
     return {
         "Plugin": {
             "Version": version,
-            "Build": Format.hex((plugin.build).split('-')[1]),
+            "Build": plugin.hash,
             "Channel": release,
         },
         "Client": {

@@ -1,7 +1,8 @@
 {
    "ignore": [
       "dist/*",
-      "dist"
+      "dist",
+      "manifest.json"
    ],
    "exec": "npm run build",
    "ext": "*.*"

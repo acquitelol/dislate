@@ -13,7 +13,8 @@
    "plugin": {
       "download": "https://raw.githubusercontent.com/acquitelol/dislate/main/dist/Dislate.js",
       "repo": "https://github.com/acquitelol/dislate",
-      "build": "patch-2.2.7"
+      "build": "patch-2.2.8",
+      "hash": "f139cb02"
    },
    "color": "#ff91ff"
 }
