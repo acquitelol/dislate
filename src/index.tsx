@@ -191,8 +191,8 @@ const Dislate: DislatePlugin = {
                   // let finalLocation = res?.props?.children?.props?.children?.props?.children[1];
                   const finalLocation = findInReactTree(res, r => 
                      Array.isArray(r)
-                     && r?.[0]?.key
-                     && r?.[0]?.props?.message
+                     && r.find(o => typeof o?.key === "string"
+                        && typeof o?.props?.message === "string")
                   )
 
                   /**
