@@ -108,7 +108,7 @@ export default ({ language, languages, Navigation }) => {
          * @param {string[]} LanguageNames: The full list of languages.
          * @param {string} language: The language that this component is representing. This is the language that a user would press on.
          */
-        Toasts.open({ content: `Set ${(languages[language]).toUpperCase()} as Language to Translate ${get("Dislate", "DislateLangFilter") ? "to" : "from"}.`, 
+        Toasts.open({ content: `Set ${(languages[language]).toUpperCase()} as Language to Translate ${get(name, "DislateLangFilter") ? "to" : "from"}.`, 
             source: get(name, "DislateLangFilter") ? Icons.Settings.TranslateTo : Icons.Settings.TranslateFrom
         });
 

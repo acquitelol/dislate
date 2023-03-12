@@ -4,6 +4,6 @@
       "dist",
       "manifest.json"
    ],
-   "exec": "npm run build",
+   "exec": "clear && yarn build",
    "ext": "*.*"
 }

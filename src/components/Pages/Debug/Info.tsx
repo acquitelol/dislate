@@ -14,7 +14,7 @@
 import { get } from 'enmity/api/settings';
 import { FormDivider, Text, TouchableOpacity, View } from 'enmity/components';
 import { getByName, getByProps } from 'enmity/metro';
-import { Constants, React, StyleSheet } from 'enmity/metro/common';
+import { Constants, React, StyleSheet, Theme } from 'enmity/metro/common';
 import { name } from '../../../../manifest.json';
 import { ArrayImplementations as ArrayOps, Miscellaneous, Debug, Format, Store, Icons } from '../../../common';
 import InfoItem from './InfoItem';
@@ -29,6 +29,7 @@ import { Toasts } from 'enmity/metro/common';
  */
 const Search = getByName("StaticSearchBarContainer");
 const LazyActionSheet = getByProps("openLazy", "hideActionSheet");
+const ColorMap = getByProps("SemanticColor")
 
 /**
  * Main Info Page Component
@@ -84,7 +85,7 @@ export default ({ onConfirm, type }) => {
                 * @arg Note: The boundary value provided for this function is based on theory, and not 50%, as that will cause weird side effects.
          */
         text: {
-            color: Miscellaneous.filterColor(Constants.ThemeColorMap.HEADER_PRIMARY[0], '#f2f2f2', "#121212", 0.8, 'buttons in debug info menu'),
+            color: Miscellaneous.filterColor(ColorMap.RawColor[ColorMap.SemanticColor.HEADER_PRIMARY.dark.raw], '#f2f2f2', "#121212", 0.8, 'buttons in debug info menu'),
             textAlign: 'center',
             paddingLeft : 10,
             paddingRight : 10,

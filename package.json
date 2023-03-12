@@ -6,7 +6,7 @@
    "author": "Acquite",
    "scripts": {
       "build": "rollup -c --configPlugin esbuild",
-      "prettier-watch": "onchange \"**/*\" -- prettier --write --ignore-unknown {{changed}}"
+      "watch": "nodemon"
    },
    "devDependencies": {
       "@babel/plugin-transform-arrow-functions": "^7.18.6",

@@ -38,7 +38,7 @@ async function item(item: {
          * Fetch the current store from the Dislate settings store. If it hasn't stored anything yet, then make the store an empty array.
          * @param {any[]} stateStore: The current store available for clearing later.
          */
-        const stateStore: any[] = JSON.parse((get("Dislate", "state_store", null) as string) ?? "[]")
+        const stateStore: any[] = JSON.parse((get(name, "state_store", null) as string) ?? "[]")
 
         /**
          * Attempt to find the item in the store already, to not push the item twice if it's already there then clear it twice and waste resources.
@@ -50,7 +50,7 @@ async function item(item: {
         /**
          * Finally, set the store back to the original store state.
          */
-        set("Dislate", "state_store", JSON.stringify(stateStore))
+        set(name, "state_store", JSON.stringify(stateStore))
     }, [item], name, 'storing an item in plugin file or storage at', label) 
 };
 

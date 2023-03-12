@@ -153,7 +153,7 @@ const options = (channelName: string): any => {
              * Fetch any existing stored state inside of the @arg dislateStoreState array.
              * @param {object} storeItems: List of existing items in array form containing objects with name and type.
              */
-            const storeItems: any = JSON.parse(get("Dislate", "state_store", null) as string) ?? []
+            const storeItems: any = JSON.parse(get(name, "state_store", null) as string) ?? []
 
             /**
              * Loop through the stored items with a custom implementation of a forEach to allow for labels.
@@ -173,7 +173,7 @@ const options = (channelName: string): any => {
             /**
              * Remove the store to ensure it doesnt get cleared twice.
              */
-            set("Dislate", "state_store", null);
+            set(name, "state_store", null);
 
             /**
              * Finally, open an @arg Toast to notify the user that all of the stores have been cleared.
