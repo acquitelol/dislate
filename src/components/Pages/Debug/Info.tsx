@@ -85,7 +85,7 @@ export default ({ onConfirm, type }) => {
                 * @arg Note: The boundary value provided for this function is based on theory, and not 50%, as that will cause weird side effects.
          */
         text: {
-            color: Miscellaneous.filterColor(ColorMap.RawColor[ColorMap.SemanticColor.HEADER_PRIMARY.dark.raw], '#f2f2f2', "#121212", 0.8, 'buttons in debug info menu'),
+            color: Miscellaneous.filterColor(ColorMap.SemanticColor.HEADER_PRIMARY, '#f2f2f2', "#121212", 0.8, 'buttons in debug info menu'),
             textAlign: 'center',
             paddingLeft : 10,
             paddingRight : 10,

@@ -10,7 +10,7 @@
  * @param Text: Allows you to render text.
  * @param { displayToast, Debug, FetchDebugArguments, ArrayOps.mapItem, shadow }: Functions which will be used throughout the script.
  */
-import { React, Constants, StyleSheet } from 'enmity/metro/common';
+import { React, Constants, StyleSheet, Users } from 'enmity/metro/common';
 import { bulk, filters } from 'enmity/metro';
 import { TouchableOpacity, View, Image, Text } from 'enmity/components';
 import { Debug, ArrayImplementations as ArrayOps, Miscellaneous } from '../../common';
@@ -30,8 +30,8 @@ const [
     Router,
     Clipboard,
 ] = bulk(
-    filters.byProps('transitionToGuild'),
-    filters.byProps('setString'),
+    filters.byProps('transitionToGuild', 'openURL'),
+    filters.byProps('setString', 'getString'),
 );
 
  /** 
@@ -160,7 +160,6 @@ export default ({name, version, plugin, authors}): void => {
         <View style={styles.container}>
             {/**
              * The main @arg Image of the plugin. Wrapped in an @arg TouchableOpacity to add a bit of extra motion on press.
-             * @uses @arg {uri Miscellaneous.localizedImage}
              */}
             <TouchableOpacity 
                 /** 
@@ -186,7 +185,7 @@ export default ({name, version, plugin, authors}): void => {
                              * The image used for the @arg Image.
                              * @param uri: Can be either an @arg URI, which is what is provided, or it can be an @arg require.
                              */
-                            uri: Miscellaneous.localizedImage, 
+                            uri: Users.getCurrentUser().getAvatarURL(), 
                         }}
                     />
                 </Animated.View>

@@ -14,7 +14,7 @@
  * @param get: Allows you to retrieve a Setting from your plugin file.
  */
 import { TouchableOpacity, Text, Image, View } from "enmity/components";
-import { StyleSheet, Constants, React, Dialog } from "enmity/metro/common";
+import { StyleSheet, Constants, React, Dialog, Users } from "enmity/metro/common";
 import { Store, Miscellaneous } from "../../common";
 import { name } from "../../../manifest.json";
 import { get } from "enmity/api/settings";
@@ -199,7 +199,7 @@ export default ({ label, content, type }) => {
                  * The image used for the @arg Image.
                  * @param uri: Can be either an @arg URI, which is what is provided, or it can be an @arg require.
                  */
-                uri: Miscellaneous.localizedImage,
+                uri: Users.getCurrentUser().getAvatarURL(),
               }}
             />
           </View>

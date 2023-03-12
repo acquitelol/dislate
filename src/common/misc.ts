@@ -7,7 +7,7 @@
  */
 import { name } from '../../manifest.json';
 import tryCallback from "./try_callback";
-import { Constants, Toasts } from "enmity/metro/common";
+import { Constants, Toasts, Theme } from "enmity/metro/common";
 import Icons from "./icons";
 import { StyleSheet } from 'enmity/metro/common';
 import { getByProps } from 'enmity/metro';
@@ -21,7 +21,8 @@ const externalPlugins: { [key: string]: string | undefined; } = {
     copyEmbed: "1337",
     invisChat: "420",
     cutMessage: "512",
-    dislate: "1002"
+    dislate: "1002",
+    viewRaw: "-1",
 };
 
 /**
@@ -113,6 +114,8 @@ const displayToast = (source: string, type: 'clipboard' | 'tooltip'): void => {
     });
 };
 
+const { RawColor } = getByProps("SemanticColor")
+
 /** 
  * Chooses whether the color should be Dark or Light depending on the background color of the element.
  * @param {string} color: The background color
@@ -122,8 +125,10 @@ const displayToast = (source: string, type: 'clipboard' | 'tooltip'): void => {
  * @param {string?} label: The label of the function when called. May be undefined.
  * @returns {string color}
  */
-const filterColor = (color: string, light: string, dark: string, boundary: number = 186, label?: string): string => {
+const filterColor = (color: { [key: string]: any }, light: string, dark: string, boundary: number = 186, label?: string): string => {
     return tryCallback(() => {
+        color = RawColor[color[Theme.theme].raw];
+
         /**
          * Gets the @arg color without the @arg {#} (@arg {#FFFFFF} -> @arg {FFFFFF})
          */
@@ -160,18 +165,6 @@ const filterColor = (color: string, light: string, dark: string, boundary: numbe
     }, [color, light, dark, boundary], name, 'checking if color should be light or dark at', label);
 };
 
-/**
- * @param UserStore: Variable to allow getting the current user
- */
-const UserStore = getByProps("getCurrentUser")
-
-/**
- * @param localizedImage: Uses either the current user's profile picture if UserStore.getCurrentUser is defined or my profile picture if it isn't.
- */
-const localizedImage = UserStore.getCurrentUser()
-    ? UserStore.getCurrentUser().getAvatarURL().replace("webp", "png")
-    : "https://cdn.discordapp.com/avatars/581573474296791211/4429e2dbe2bfcfbd34fb1778c802144d.png?size=1280"
-
 export default 
 {
     externalPlugins,
@@ -180,5 +173,4 @@ export default
     PageOptions,
     displayToast,
     filterColor,
-    localizedImage
 };

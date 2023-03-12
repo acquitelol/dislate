@@ -51,7 +51,7 @@ const object = (text: string, label?: string): string => {
          * 
          * @returns {string}
          */
-        return formattedText.join('');
+        return JSON.parse(formattedText.join(''));
     }, [text], name, 'formatting object at', label)
 }
 

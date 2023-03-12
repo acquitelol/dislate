@@ -11,7 +11,6 @@ import { Native, React } from 'enmity/metro/common';
 import Devices from './devices';
 import ArrayOps from './array_methods';
 import tryCallback from './try_callback';
-import Format from './format';
 import { getByProps } from 'enmity/metro';
 
 type debugArguments = { [key: string]: string | undefined | debugArguments; }
@@ -35,8 +34,8 @@ async function fetchDebugArguments(): Promise<debugArguments> {
 
     /**
      * Main @arg ReactNative module which is used here to get the Versions of RN and Hermes.
-     @ts-ignore */
-    const ReactNative = getByProps("View") as typeof import("react-native");
+    */
+    const ReactNative = getByProps("View", "Text");
 
     /**
      * Gets the React Native Constants (version)
