@@ -29,7 +29,6 @@ import { Toasts } from 'enmity/metro/common';
  */
 const Search = getByName("StaticSearchBarContainer");
 const LazyActionSheet = getByProps("openLazy", "hideActionSheet");
-const ColorMap = getByProps("SemanticColor")
 
 /**
  * Main Info Page Component
@@ -85,7 +84,7 @@ export default ({ onConfirm, type }) => {
                 * @arg Note: The boundary value provided for this function is based on theory, and not 50%, as that will cause weird side effects.
          */
         text: {
-            color: Miscellaneous.filterColor(ColorMap.SemanticColor.HEADER_PRIMARY, '#f2f2f2', "#121212", 0.8, 'buttons in debug info menu'),
+            color: Miscellaneous.filterColor(Constants.ThemeColorMap.HEADER_PRIMARY, '#f2f2f2', "#121212", 0.8, 'buttons in debug info menu'),
             textAlign: 'center',
             paddingLeft : 10,
             paddingRight : 10,

@@ -37,8 +37,8 @@ const [
     Clipboard,
     LazyActionSheet
 ] = bulk(
-    filters.byProps('transitionToGuild'),
-    filters.byProps('setString'),
+    filters.byProps('transitionToGuild', 'openURL'),
+    filters.byProps('setString', 'getString'),
     filters.byProps("openLazy", "hideActionSheet")
 );
 

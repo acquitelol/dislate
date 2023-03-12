@@ -7,7 +7,7 @@
  */
 import { name } from '../../manifest.json';
 import tryCallback from "./try_callback";
-import { Constants, Toasts, Theme } from "enmity/metro/common";
+import { Constants, Toasts, Theme, Native } from "enmity/metro/common";
 import Icons from "./icons";
 import { StyleSheet } from 'enmity/metro/common';
 import { getByProps } from 'enmity/metro';
@@ -114,7 +114,32 @@ const displayToast = (source: string, type: 'clipboard' | 'tooltip'): void => {
     });
 };
 
-const { RawColor } = getByProps("SemanticColor")
+/**
+ * Returns a color from a different location depending on whether the version is newer than 164 or not.
+ * @param color: The color object, example is @Constants.ThemeColorMap.HEADER_PRIMARY
+ * @returns: Formatted color string
+ */
+const getBackwardsCompatibleColor = (color: { [key: string]: any }): string => {
+    return tryCallback(() => {
+        /**
+         * @param {string} Version: The version of Discord, example is @170.0
+         */
+        const { Version } = Native.InfoDictionaryManager;
+
+        /**
+         * Returns a color from @RawColor only if the version is above @164.0 based on the theme (dark, light, amoled)
+         */
+        if (parseInt(Version.substring(0, 3)) > 164) {
+            const { RawColor } = getByProps("SemanticColor")
+            return RawColor[color[Theme.theme].raw];
+        }
+    
+        /**
+         * Otherwise returns a color from the color object based on the theme (dark, light, amoled)
+         */
+        return color[{ dark: 0, light: 1, amoled: 2}[Theme.theme]]
+    }, [color], name, "getting a formatted color for both newest and older versions")
+}
 
 /** 
  * Chooses whether the color should be Dark or Light depending on the background color of the element.
@@ -127,12 +152,10 @@ const { RawColor } = getByProps("SemanticColor")
  */
 const filterColor = (color: { [key: string]: any }, light: string, dark: string, boundary: number = 186, label?: string): string => {
     return tryCallback(() => {
-        color = RawColor[color[Theme.theme].raw];
-
         /**
          * Gets the @arg color without the @arg {#} (@arg {#FFFFFF} -> @arg {FFFFFF})
          */
-        let baseColor = color.replace("#", "")
+        let baseColor = getBackwardsCompatibleColor(color).replace("#", "")
 
         /**
          * Parses a color as an integer from any @arg base provided to @arg {base 10}
