@@ -14,7 +14,7 @@
 import { get } from 'enmity/api/settings';
 import { FormDivider, Text, TouchableOpacity, View } from 'enmity/components';
 import { getByName, getByProps } from 'enmity/metro';
-import { Constants, React, StyleSheet, Theme } from 'enmity/metro/common';
+import { Constants, React, StyleSheet } from 'enmity/metro/common';
 import { name } from '../../../../manifest.json';
 import { ArrayImplementations as ArrayOps, Miscellaneous, Debug, Format, Store, Icons } from '../../../common';
 import InfoItem from './InfoItem';

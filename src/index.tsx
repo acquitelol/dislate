@@ -454,6 +454,8 @@ const Dislate: DislatePlugin = {
                    * Afterwards, Patches the @type of @FinalLocation with the data provided and passes it to a different function to avoid repetition
                    */
                   const unpatch = Patcher.after(FinalLocation?.content, "type", (_, message, res) => {
+                     if (!message || !res) return;
+
                      this.patchActionSheet({
                         unpatch,
                         data: {
@@ -469,6 +471,8 @@ const Dislate: DislatePlugin = {
              * Otherwise, uses the old method to patch which works for @164 to patch @default and still passes it to a different function
              */
             return Patcher.after(ActionSheetFor164, "default", (_, message, res) => { 
+               if (!message || !res) return;
+
                this.patchActionSheet({
                   unpatch: () => {},
                   data: {
