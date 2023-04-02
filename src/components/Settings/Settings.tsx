@@ -19,7 +19,7 @@
 import { get, getBoolean, set } from 'enmity/api/settings';
 import { FormDivider, FormRow, FormSwitch, ScrollView, Text, View } from 'enmity/components';
 import { bulk, filters } from 'enmity/metro';
-import { React, Constants, Storage, StyleSheet, Toasts } from 'enmity/metro/common';
+import { React, Constants, Storage, StyleSheet, Toasts, NavigationNative } from 'enmity/metro/common';
 import { Miscellaneous, Format, ArrayImplementations as ArrayOps, Icons, Updater } from '../../common';
 import Credits from './Credits';
 import SectionWrapper from '../Wrappers/SectionWrapper'
@@ -48,13 +48,14 @@ const [
   * @param {any} settings: The main prop of available methods to use for settings.
   * @param {object} manifest: Prop to fetch the strings from @arg manifest.json to prevent needing to import them inside of this file
         * @uses @param name: The name of the plugin. In this case, its Dislate.import { renderActionSheet } from '../Modals/DebugInfoActionSheet';
+import { NavigationNative } from 'enmity/metro/common';
 
         * @uses @param version: The version of the plugin.
         * @uses @param plugin: Different constant values such as a raw plugin source etc.
         * @uses @param authors: List of authors with their Discord ID and a link to their GitHub profile.
         * @uses @param release: The current release channel of the plugin. This is generally a toggle between @arg stable and @arg development
   */
-export default ({ settings, manifest: { name, version, plugin, authors, release }, Navigator, languages }) => {
+export default ({ settings, manifest: { name, version, plugin, authors, release }, languages, renderPage }) => {
     /**
      * @param {StyleSheet} styles: The main stylesheet for the items in the UI.
      */
@@ -96,7 +97,7 @@ export default ({ settings, manifest: { name, version, plugin, authors, release 
         }
     });
 
-    const navigation = Navigator.useNavigation();
+    const navigation = NavigationNative.useNavigation();
 
     /**
      * Main component render
@@ -161,8 +162,7 @@ export default ({ settings, manifest: { name, version, plugin, authors, release 
                             /**
                              * Finally, push the @arg Languages page out to the user, using @arg Navigator.useNavigation.navigate, and allow them to pick the @arg from language.
                              */
-                            navigation.push("EnmityCustomPage", {
-                                navigation,
+                            renderPage(navigation, {
                                 pageName: `Translate ${getBoolean(name, "DislateLangFilter", true) ? "To" : "From"}`,
                                 pagePanel: (): any => <Languages languages={languages} Navigator={Navigator} />
                             })
@@ -199,8 +199,7 @@ export default ({ settings, manifest: { name, version, plugin, authors, release 
                             /**
                              * Finally, push the @arg Languages page out to the user, using @arg Navigator.useNavigation.navigate, and allow them to pick the @arg to language.
                              */
-                            navigation.push("EnmityCustomPage", {
-                                navigation, 
+                            renderPage(navigation, {
                                 pageName: `Translate ${getBoolean(name, "DislateLangFilter", true) ? "To" : "From"}`,
                                 pagePanel: (): any => <Languages languages={languages} Navigator={Navigator} />
                             })

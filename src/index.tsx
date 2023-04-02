@@ -94,6 +94,7 @@ interface ActionSheetInformation {
 type DislatePlugin = Plugin | { 
    patchActionSheet: (info: ActionSheetInformation) => void;
    initializeActionSheet: () => void;
+   renderPage: (navigation: any, { pageName, pagePanel }: { pageName: string, pagePanel: any }) => any;
 }
 
 /** 
@@ -573,6 +574,13 @@ const Dislate: DislatePlugin = {
       this.commands = [];
    },
 
+   renderPage(navigation, { pageName, pagePanel }) {
+      return navigation?.push?.("EnmityCustomPage", {
+         pageName,
+         pagePanel
+      })
+   },
+
    getSettingsPanel({ settings }) {
       /**
        * Opens a settings panel
@@ -584,7 +592,7 @@ const Dislate: DislatePlugin = {
          plugin: manifest.plugin, 
          authors: manifest.authors, 
          release: manifest.release}
-      } Navigator={NavigationNative} languages={LanguageNames} />
+      } renderPage={this.renderPage} languages={LanguageNames} />
    }
 };
 
