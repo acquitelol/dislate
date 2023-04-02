@@ -115,7 +115,7 @@ export default ({ language, languages, Navigation }) => {
         /**
          * Finally, close the page.
          */
-        Navigation.pop()
+        Navigation?.pop?.()
     }
  
     /**
