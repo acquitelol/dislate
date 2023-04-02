@@ -91,7 +91,7 @@ interface ActionSheetInformation {
 /**
  * A custom Dislate plugin type to allow for extra functions on the object.
  */
-type DislatePlugin = Plugin | { 
+type DislatePlugin = Plugin & { 
    patchActionSheet: (info: ActionSheetInformation) => void;
    initializeActionSheet: () => void;
    renderPage: (navigation: any, { pageName, pagePanel }: { pageName: string, pagePanel: any }) => any;
@@ -592,8 +592,8 @@ const Dislate: DislatePlugin = {
          plugin: manifest.plugin, 
          authors: manifest.authors, 
          release: manifest.release}
-      } renderPage={this.renderPage} languages={LanguageNames} />
+      } renderPage={Dislate.renderPage} languages={LanguageNames} />
    }
 };
 
-registerPlugin(Dislate as Plugin);
+registerPlugin(Dislate);
