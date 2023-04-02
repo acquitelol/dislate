@@ -30,7 +30,7 @@ const Animated = window.enmity.modules.common.Components.General.Animated;
  * Main Languages Page Item Component.
  * @param {string} language: The main language that the Component represents.
  */
-export default ({ language, languages, Navigation }) => { 
+export default ({ language, languages, Navigation, selected, setSelected }) => { 
     /**
      * Puts the list of languages into an object where the key is the ISO2 Entry and the Value is the ISO1 Entry.
      */
@@ -112,6 +112,8 @@ export default ({ language, languages, Navigation }) => {
             source: get(name, "DislateLangFilter") ? Icons.Settings.TranslateTo : Icons.Settings.TranslateFrom
         });
 
+        setSelected(get(name, `DislateLang${get(name, "DislateLangFilter") ? "To" : "From"}`))
+
         /**
          * Finally, close the page.
          */
@@ -163,7 +165,7 @@ export default ({ language, languages, Navigation }) => {
                                 * @if {(@arg language) is equal to (@arg DislateLangFrom)} -> Show ✓ Icon
                                 * @else {()} -> Show + Icon
                         */
-                        language == get(name, `DislateLang${get(name, "DislateLangFilter") ? "To" : "From"}`)
+                        selected === language
                             ?   Icons.Settings.Toasts.Settings
                             :   Icons.Add
                         } 

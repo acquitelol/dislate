@@ -39,6 +39,7 @@ export default ({ languages, Navigator }) => {
     const [query, setQuery] = React.useState([]);
     const [languageList, setLanguageList] = React.useState(languages);
     const [refreshing, setRefreshing] = React.useState(false);
+    const [selected, setSelected] = React.useState( get(name, `DislateLang${get(name, "DislateLangFilter") ? "To" : "From"}`));
     const Navigation = Navigator.useNavigation();
 
     return <View style={{ marginBottom: 50 }}>
@@ -72,7 +73,13 @@ export default ({ languages, Navigator }) => {
                     data={ArrayOps.filterItem(Object.keys(languageList), (language: string) => language.toLowerCase().includes(query), 'getting searched languages')}
                     renderItem={({ item }) => (get(name, "DislateLangFilter") && item=='detect') 
                         ? <></> 
-                        : <LanguageItem language={item} languages={languageList} Navigation={Navigation} />}
+                        : <LanguageItem 
+                            language={item} 
+                            languages={languageList} 
+                            Navigation={Navigation} 
+                            selected={selected} 
+                            setSelected={setSelected}
+                        />}
                     keyExtractor={language => language}
                 />
             </View>
