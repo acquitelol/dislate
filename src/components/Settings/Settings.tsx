@@ -164,7 +164,7 @@ export default ({ settings, manifest: { name, version, plugin, authors, release 
                              */
                             renderPage(navigation, {
                                 pageName: `Translate ${getBoolean(name, "DislateLangFilter", true) ? "To" : "From"}`,
-                                pagePanel: (): any => <Languages languages={languages} Navigator={Navigator} />
+                                pagePanel: (): any => <Languages languages={languages} Navigator={NavigationNative} />
                             })
                         }}
                         onLongPress={() => Miscellaneous.displayToast('Open a new page allowing you to choose a language that you can translate from. The default is "Detect".', 'tooltip')}
@@ -201,7 +201,7 @@ export default ({ settings, manifest: { name, version, plugin, authors, release 
                              */
                             renderPage(navigation, {
                                 pageName: `Translate ${getBoolean(name, "DislateLangFilter", true) ? "To" : "From"}`,
-                                pagePanel: (): any => <Languages languages={languages} Navigator={Navigator} />
+                                pagePanel: (): any => <Languages languages={languages} Navigator={NavigationNative} />
                             })
                         }}
                         onLongPress={() => Miscellaneous.displayToast('Open a new page allowing you to choose a language that you can translate to. The default is "English".', 'tooltip')}
