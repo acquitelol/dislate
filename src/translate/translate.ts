@@ -1,4 +1,4 @@
-import { LanguageType } from './types';
+import { LanguageType } from '../def';
 
 const base = "https://translate.googleapis.com/translate_a/single";
 const engine = {
@@ -18,11 +18,11 @@ if (typeof fetch === "undefined") {
     }
 }
 
-export default async function translate(text: string, { fromLang, toLang }: LanguageType) {
+export default async function translate(text: string, { fromLanguage, toLanguage }: LanguageType) {
     const url = engine.fetch({
         text,
-        from: fromLang, 
-        to: toLang, 
+        from: fromLanguage, 
+        to: toLanguage, 
     });
     return await fetch(url).then(engine.parse)
 };

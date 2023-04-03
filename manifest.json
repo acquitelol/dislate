@@ -1,6 +1,6 @@
 {
    "name": "Dislate",
-   "version": "1.3.8",
+   "version": "1.4.0",
    "description": "Translates text into a desired language.",
    "release": "stable",
    "authors": [
@@ -14,7 +14,7 @@
       "download": "https://raw.githubusercontent.com/acquitelol/dislate/main/dist/Dislate.js",
       "repo": "https://github.com/acquitelol/dislate",
       "build": "patch-2.2.8",
-      "hash": "f8727fb7"
+      "hash": "ef440334"
    },
    "color": "#ff91ff"
 }

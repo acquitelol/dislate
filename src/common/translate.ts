@@ -1,10 +1,5 @@
-/** 
- * Imports 
- * @param translate: The main Asynchronous translate function.
- * @param LanguageNames: The main list of language names
- */
 import translate from "../translate/translate";
-import { LanguageType } from "../translate/types";
+import { LanguageType } from "../def";
 
 /** 
  * Translates text to a language provided in iso.
@@ -14,15 +9,15 @@ import { LanguageType } from "../translate/types";
  * @param {boolean} cancel: Toggles translation. If false will return untranslated text.
  * @returns {string text}
  */
-async function string(text: string, { fromLang = 'detect', toLang = 'english' }: LanguageType, languages, cancel?: boolean): Promise<string> {
+async function string(text: string, { fromLanguage = 'detect', toLanguage = 'english' }: LanguageType, languages, cancel?: boolean): Promise<string> {
     /**
      * Returns the original string early if @arg cancel is @arg true.
      */
     return cancel
         ? text
         : await translate(text, {
-            fromLang: languages[fromLang],
-            toLang: languages[toLang]
+            fromLanguage: languages[fromLanguage],
+            toLanguage: languages[toLanguage]
         });
 };
 

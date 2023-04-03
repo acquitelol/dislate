@@ -1,3 +1,3 @@
-import Debug from './Info';
+import Debug from './Debug';
 
 export { Debug };

@@ -1,12 +1,5 @@
-/**
- * @param getIDByName: Fetches the ID of an icon based on its name.
- */
 import { getIDByName } from 'enmity/api/assets';
 
-/** 
- * Icons used throughout Dislate, available in a single place for ease of use.
- * @param {object} Icons: Object of Icons which are grouped by their place of use.
- */
 export default {
     Translate: getIDByName('img_nitro_star'),
     Revert: getIDByName('ic_highlight'),
@@ -14,13 +7,13 @@ export default {
     Debug: getIDByName('debug'),
     Retry: getIDByName('ic_message_retry'),
     Failed: getIDByName('Small'),
-    Cancel:  getIDByName('ic_megaphone_nsfw_16px'),
-    Delete:  getIDByName('ic_message_delete'),
+    Cancel: getIDByName('ic_megaphone_nsfw_16px'),
+    Delete: getIDByName('ic_message_delete'),
 
-    Copy:  getIDByName('toast_copy_link'),
-    Open:  getIDByName('ic_leave_stage'),
-    Clipboard:  getIDByName('pending-alert'),
-    Add:  getIDByName("ic_add_perk_24px"),
+    Copy: getIDByName('toast_copy_link'),
+    Open: getIDByName('ic_leave_stage'),
+    Clipboard: getIDByName('pending-alert'),
+    Add: getIDByName("ic_add_perk_24px"),
 
     Clock: getIDByName('clock'),
 
