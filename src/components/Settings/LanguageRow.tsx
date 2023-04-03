@@ -9,7 +9,7 @@ import { Languages } from "../Pages";
 export default function LanguageRow({ manifest, renderPage, Navigation, languages, kind }: LanguageRowProps) {
     return <FormRow
         label={`Translate ${Format.string(kind)}`}
-        leading={<FormRow.Icon style={styles.icon} source={Icons.Settings.TranslateFrom} />}
+        leading={<FormRow.Icon style={styles.icon} source={kind === "to" ? Icons.Settings.TranslateTo : Icons.Settings.TranslateFrom} />}
         trailing={() => <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
             <Text adjustsFontSizeToFit={true} style={styles.item}>
                 {Format.string(get(manifest.name, `DislateLang${Format.string(kind)}`, "detect") as string) ?? "N/A"}
