@@ -1,11 +1,10 @@
-import { get, getBoolean, set } from 'enmity/api/settings';
+import { get, set } from 'enmity/api/settings';
 import { FormDivider, FormRow, FormSwitch, ScrollView, Text, View } from 'enmity/components';
 import { getByProps } from 'enmity/metro';
 import { React, Storage, Toasts, NavigationNative, Clipboard } from 'enmity/metro/common';
-import { Miscellaneous, Format, Icons, Updater } from '../../common';
+import { Miscellaneous, Icons, Updater } from '../../common';
 import Credits from './Credits';
 import SectionWrapper from '../Wrappers/SectionWrapper'
-import { Languages } from '../Pages';
 import { renderActionSheet } from '../Modals/DebugInfoActionSheet';
 import { styles } from './Settings.styles';
 import { SettingsProps } from '../../def';
