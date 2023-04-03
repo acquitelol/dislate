@@ -10,9 +10,11 @@ import { renderActionSheet } from '../Modals/DebugInfoActionSheet';
 import { styles } from './Settings.styles';
 import { SettingsProps } from '../../def';
 import LanguageRow from './LanguageRow';
+import { version } from 'enmity/api/native';
 
 const Router = getByProps('transitionToGuild', 'openURL');
 const LazyActionSheet = getByProps("openLazy", "hideActionSheet");
+const optionalMargin = parseInt(version.split(".")[0]) > 163 ? 15 : 0;
 
 export default ({ settings, manifest, languages, renderPage }: SettingsProps) => {
     const Navigation = NavigationNative.useNavigation();
@@ -43,6 +45,7 @@ export default ({ settings, manifest, languages, renderPage }: SettingsProps) =>
                         onLongPress={() => Miscellaneous.displayToast('Convert the full language name to an abbreviation when translating someone else\'s message. (test [English] ➝ test [EN])', 'tooltip')}
                         trailing={() => <FormSwitch
                             value={settings.getBoolean('DislateLangAbbr', false)}
+                            style={{ marginLeft: -optionalMargin }}
                             onValueChange={() => {
                                 settings.toggle('DislateLangAbbr', false)
                                 Toasts.open({ 
@@ -60,6 +63,7 @@ export default ({ settings, manifest, languages, renderPage }: SettingsProps) =>
                         onLongPress={() => Miscellaneous.displayToast('When using the /translate command, send both the original message and the translated message at once.', 'tooltip')}
                         trailing={() => <FormSwitch
                             value={settings.getBoolean('DislateBothLangToggle', false)}
+                            style={{ marginLeft: -optionalMargin }}
                             onValueChange={() => {    
                                 settings.toggle('DislateBothLangToggle', false)
                                 Toasts.open({ 
@@ -80,6 +84,7 @@ export default ({ settings, manifest, languages, renderPage }: SettingsProps) =>
                         onLongPress={() => Miscellaneous.displayToast(`When Enmity is first started, show toasts based on ${manifest.name}'s current state (starting, failed, retrying, etc)`, 'tooltip')}
                         trailing={() => <FormSwitch
                             value={settings.getBoolean('toastEnable', false)}
+                            style={{ marginLeft: -optionalMargin }}
                             onValueChange={() => {
                                 settings.toggle('toastEnable', false)
 
@@ -96,7 +101,7 @@ export default ({ settings, manifest, languages, renderPage }: SettingsProps) =>
                         subLabel={`Open useful page to copy debug information like version and build of ${manifest.name} to clipboard.`}
                         onLongPress={() => Miscellaneous.displayToast(`Copy the full debug log to clipboard including ${manifest.name}'s Version, Build, and Release, Enmity's Version and Build, etc.`, 'tooltip')}
                         leading={<FormRow.Icon style={styles.icon} source={Icons.Copy} />}
-                        trailing={() => <FormRow.Arrow />}
+                        trailing={() => <FormRow.Arrow style={{ marginLeft: -optionalMargin }} />}
                         onPress={() => {
                             renderActionSheet({
                                 onConfirm: (debugLog: string, type: string) => {
@@ -114,7 +119,7 @@ export default ({ settings, manifest, languages, renderPage }: SettingsProps) =>
                         subLabel={`Void most of the settings and stores used throughout ${manifest.name} to store data locally.`}
                         onLongPress={() => Miscellaneous.displayToast(`Clear stores and settings throughout ${manifest.name} including the settings to hide popups forever and the list of device codes.`, 'tooltip')}
                         leading={<FormRow.Icon style={styles.icon} source={Icons.Delete} />}
-                        trailing={() => <FormRow.Arrow />}
+                        trailing={() => <FormRow.Arrow style={{ marginLeft: -optionalMargin }} />}
                         onPress={async function() {
                             const storeItems: any = JSON.parse(get(manifest.name, "state_store", null) as string) ?? []
                             for (let i = 0; i < storeItems.length; i++) {
@@ -126,6 +131,7 @@ export default ({ settings, manifest, languages, renderPage }: SettingsProps) =>
                             }
 
                             set(manifest.name, "state_store", null);
+
                             Toasts.open({ 
                                 content: `Cleared all ${manifest.name} stores.`, 
                                 source: Icons.Settings.Toasts.Settings 
@@ -141,7 +147,7 @@ export default ({ settings, manifest, languages, renderPage }: SettingsProps) =>
                         subLabel={`Search for any ${manifest.name} updates and notify you if an update is available.`}
                         onLongPress={() => Miscellaneous.displayToast(`Search GitHub for any new version or build of ${manifest.name} and prompts you to update, and then prompts you to restart Enmity afterwards.`, 'tooltip')}
                         leading={<FormRow.Icon style={styles.icon} source={Icons.Settings.Update} />}
-                        trailing={() => <FormRow.Arrow />}
+                        trailing={() => <FormRow.Arrow style={{ marginLeft: -optionalMargin }} />}
                         onPress={ async function() {
                             await Updater.checkForUpdates();
                         }}
