@@ -27,14 +27,14 @@ export default ({ settings, manifest, languages, renderPage }: SettingsProps) =>
                         manifest={manifest} 
                         renderPage={renderPage} 
                         Navigation={Navigation} 
-                        languages={languages} kind={"to"}                        
+                        languages={languages} kind={"from"}                        
                     />
                     <FormDivider/>
                     <LanguageRow 
                         manifest={manifest} 
                         renderPage={renderPage} 
                         Navigation={Navigation} 
-                        languages={languages} kind={"from"}                        
+                        languages={languages} kind={"to"}                        
                     />
                     <FormDivider/>
                     <FormRow

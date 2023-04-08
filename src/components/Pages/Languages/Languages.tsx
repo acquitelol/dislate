@@ -1,7 +1,7 @@
 import { get } from 'enmity/api/settings';
 import { FlatList, RefreshControl, ScrollView, View } from 'enmity/components';
 import { getByName } from 'enmity/metro';
-import { NavigationNative, React } from 'enmity/metro/common';
+import { React } from 'enmity/metro/common';
 import { name } from '../../../../manifest.json';
 import Dialog from '../../Modals/Dialog';
 import LanguageItem from './LanguageItem';
@@ -15,7 +15,6 @@ export default ({ languages }: LanguagesProps) => {
     const [languageList, setLanguageList] = React.useState(languages);
     const [refreshing, setRefreshing] = React.useState(false);
     const [selected, setSelected] = React.useState(get(name, `DislateLang${get(name, "DislateLangFilter") ? "To" : "From"}`));
-    const Navigation = NavigationNative.useNavigation();
 
     return <View style={{ marginBottom: 50 }}>
         <Search
