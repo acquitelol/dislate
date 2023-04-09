@@ -65,7 +65,6 @@ const Dislate: DislatePlugin = {
          && typeof o?.props?.message === "string")
       )
 
-      console.log(finalLocation)
       if (!finalLocation) {
          console.log(`[${manifest.name} Local Error: 'finalLocation' seems to be undefined!]`);
          return res;
