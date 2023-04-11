@@ -22,23 +22,19 @@ const [
    ChannelStore,
    Icon,
    LazyActionSheet,
-   I18N
+   I18N,
+   ActionSheetFor170,
+   ActionSheetFor164,
+   FluxDispatcher
 ] = bulk(
    filters.byProps("getChannel", "getDMFromUserId"),
    filters.byName("Icon"),
    filters.byProps("openLazy", "hideActionSheet"),
-   filters.byProps("Messages")
+   filters.byProps("Messages"),
+   filters.byName("ActionSheet", false),
+   filters.byProps("EmojiRow"),
+   filters.byProps("_currentDispatchActionType", "_subscriptions", "_actionHandlers", "_waitQueue")
 );
-
-const MessageStore = getByProps("getMessage", "getMessages");
-const FluxDispatcher = getByProps(
-   "_currentDispatchActionType",
-   "_subscriptions",
-   "_actionHandlers",
-   "_waitQueue"
-);
-const ActionSheetFor170 = getByName("ActionSheet", { default: false });
-const ActionSheetFor164 = getByProps("EmojiRow");
 
 const Patcher = create(manifest.name);
 const LanguageNames = Object.assign({}, ...LanguageNamesArray.map((k, i) => ({ [k]: ISO[i] })));
@@ -48,15 +44,13 @@ const Dislate: DislatePlugin = {
    ...manifest,
    commands: [],
 
-   patchActionSheet({ unpatch, data: { message, res } }: ActionSheetInformation) {
-      unpatch();
-                  
+   patchActionSheet({ data: { message, res } }: ActionSheetInformation) {
       let translateType: string = "Translate"
       let buttonOffset: number = 0;
 
       if (!res?.props) {
          console.log(`[${manifest.name} Local Error: Property "props" Does not Exist on "res"]`);
-         return res;
+         return;
       }
 
       const finalLocation = findInReactTree(res, r => 
@@ -67,7 +61,7 @@ const Dislate: DislatePlugin = {
 
       if (!finalLocation) {
          console.log(`[${manifest.name} Local Error: 'finalLocation' seems to be undefined!]`);
-         return res;
+         return;
       }
 
       Object.values(Miscellaneous.externalPlugins).forEach((index) => {
@@ -87,18 +81,13 @@ const Dislate: DislatePlugin = {
          if (item) buttonOffset++;
       }
 
-      const originalMessage = MessageStore.getMessage(
-         message[0]?.message?.channel_id,
-         message[0]?.message?.id
-      );
-
-      if (!originalMessage?.content && !message[0]?.message?.content) {
+      if (!message?.content) {
          console.log(`[${manifest.name}] No message content.`);
-         return res;
+         return;
       }
 
-      const messageId = originalMessage?.id ?? message[0]?.message?.id;
-      const messageContent = originalMessage?.content ?? message[0]?.message?.content;
+      const messageId = message?.id;
+      const messageContent = message?.content;
       const existingCachedObject = cachedData.find((o: any) => Object.keys(o)[0] === messageId, 'cache object');
 
       translateType = existingCachedObject ? "Revert" : "Translate"
@@ -117,7 +106,7 @@ const Dislate: DislatePlugin = {
             const isTranslated = translateType === "Translate";
 
             Translate.string(
-               originalMessage.content,
+               message.content,
                {
                   fromLanguage: fromLanguage,
                   toLanguage: toLanguage,
@@ -128,7 +117,7 @@ const Dislate: DislatePlugin = {
                const editEvent = {
                   type: "MESSAGE_UPDATE",
                   message: {
-                     ...originalMessage,
+                     ...message,
                      content: `${
                         isTranslated 
                            ? res 
@@ -138,9 +127,7 @@ const Dislate: DislatePlugin = {
                               ? (LanguageNames[toLanguage]).toUpperCase() 
                               : Format.string(toLanguage)}]\`` 
                            : ""}`,
-                     guild_id: ChannelStore.getChannel(
-                        originalMessage.channel_id
-                     ).guild_id,
+                     guild_id: ChannelStore.getChannel(message.channel_id).guild_id,
                   },
                   log_edit: false
                };
@@ -160,7 +147,8 @@ const Dislate: DislatePlugin = {
             });
 
             LazyActionSheet.hideActionSheet();
-         } } />;
+         }} 
+      />;
 
       finalLocation.splice(buttonOffset, 0, mainElement);
    },
@@ -195,37 +183,24 @@ const Dislate: DislatePlugin = {
 
          try {
             if (parseInt(version.substring(0, 3)) > 164) {
-               Patcher.after(ActionSheetFor170, "default", (_, __, res) => {
-                  const FinalLocation = findInReactTree(res, r => r.sheetKey)
-                  if (FinalLocation?.sheetKey !== "MessageLongPressActionSheet") return;
-   
-                  const unpatch = Patcher.after(FinalLocation?.content, "type", (_, message, res) => {
-                     if (!message || !res) return;
-                     this.patchActionSheet({
-                        unpatch,
-                        data: {
-                           message,
-                           res
-                        }
-                     })
-                  }) 
-               })
-            } else {
-               Patcher.after(ActionSheetFor164, "default", (_, message, res) => { 
-                  if (!message || !res) return;
+               typeof ActionSheetFor170.default === 'function' && 
+                  Patcher.after(ActionSheetFor170, "default", (_, __, res) => {
+                     const FinalLocation = findInReactTree(res, r => r.sheetKey)
+                     if (FinalLocation?.sheetKey && FinalLocation.sheetKey !== "MessageLongPressActionSheet") return;
 
-                  this.patchActionSheet({
-                     unpatch: () => {},
-                     data: {
-                        message,
-                        res
-                     }
+                     Patcher.after(FinalLocation?.content, "type", (_, [{ message }], res) => {
+                        this.patchActionSheet({ data: { message, res } })
+                     }) 
                   })
-               });
+            } else {
+               typeof ActionSheetFor164.default === 'function' && 
+                  Patcher.after(ActionSheetFor164, "default", (_, [{ message }], res) => { 
+                     this.patchActionSheet({ data: { message, res } })
+                  });
             }
          } catch (err) {
             console.error(`[${manifest.name}] Local ${err} At Intermediate Level`);
-           
+
             enableToasts
                ? Toasts.open({
                   content: `[${manifest.name}] failed to open action sheet.`,
