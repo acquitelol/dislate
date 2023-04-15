@@ -12,7 +12,7 @@ export default function LanguageRow({ manifest, renderPage, Navigation, language
         leading={<FormRow.Icon style={styles.icon} source={kind === "to" ? Icons.Settings.TranslateTo : Icons.Settings.TranslateFrom} />}
         trailing={() => <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
             <Text adjustsFontSizeToFit={true} style={styles.item}>
-                {Format.string(get(manifest.name, `DislateLang${Format.string(kind)}`, "detect") as string) ?? "N/A"}
+                {Format.string(get(manifest.name, `DislateLang${Format.string(kind)}`, "Detect") as string) ?? "N/A"}
             </Text>
             <FormRow.Arrow />
         </View>}

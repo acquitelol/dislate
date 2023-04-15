@@ -11,7 +11,7 @@ import LanguageNames from '../../translate/languages/names';
 import ISO from "../../translate/languages/iso";
 import { Format, Icons, Translate } from "../../common";
 
-const languageOptions = LanguageNames.filter((e: string) => e !== 'detect')
+const languageOptions = LanguageNames.filter((e: string) => e !== 'Detect')
   .map((item: string) => ({
     name: Format.string(item),
     displayName: Format.string(item),
@@ -51,10 +51,20 @@ export default {
     const language = args.find((o: any) => o.name === "language").value;
     const languageMap = Object.assign({}, ...LanguageNames.map((k, i) => ({ [k]: ISO[i] })));
 
+    const apiKeyRegExp = /[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}?:fx/
+    const apiKey = get("Dislate-DeepL", "deeplApiKey") as string;
+    if (!apiKey || !apiKeyRegExp.test(apiKey)) {
+       Toasts.open({
+          content:'Invalid API Key',
+          source:Icons.Failed
+       });
+       return;
+    }
+
     const translatedContent = await Translate.string(
       message,
       {
-        fromLanguage: get(name, "DislateLangFrom", "detect") as string,
+        fromLanguage: get(name, "DislateLangFrom", "Detect") as string,
         toLanguage: language,
       },
       languageMap
@@ -63,8 +73,8 @@ export default {
     const translatedBack = await Translate.string(
       translatedContent, 
       {
-        fromLanguage: get(name, "DislateLangFrom", "detect") as string,
-        toLanguage: get(name, "DislateLangTo", 'english') as string,
+        fromLanguage: get(name, "DislateLangFrom", "Detect") as string,
+        toLanguage: get(name, "DislateLangTo", 'English') as string,
       },
       languageMap
     );
@@ -92,7 +102,7 @@ export default {
          * Are you sure you want to send this?
          * }
          */
-        body: `The message **about to be sent** is:\n\`${translatedContent}\`\n\nIn **${Format.string(get(name, "DislateLangTo", 'english') as string)}**, this will translate to:\n\`${translatedBack}\`\n\n${get(name, "DislateBothLangToggle", false) ? `**Note: Sending original and translated**\n` : ''}Are you sure you want to send this? :3`,
+        body: `The message **about to be sent** is:\n\`${translatedContent}\`\n\nIn **${Format.string(get(name, "DislateLangTo", 'English') as string)}**, this will translate to:\n\`${translatedBack}\`\n\n${get(name, "DislateBothLangToggle", false) ? `**Note: Sending original and translated**\n` : ''}Are you sure you want to send this? :3`,
         confirmText: "Yep, send it!",
         cancelText: "Nope, don't send it",
         onConfirm: () => {

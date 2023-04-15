@@ -37,7 +37,7 @@ export default ({ languages }: LanguagesProps) => {
             <View style={{ paddingBottom: 30 }}>
                 <FlatList
                     data={Object.keys(languageList).filter((language: string) => language.toLowerCase().includes(query))}
-                    renderItem={({ item }) => (get(name, "DislateLangFilter") && item=='detect') 
+                    renderItem={({ item }) => (get(name, "DislateLangFilter") && item=='Detect') 
                         ? <></> 
                         : <LanguageItem 
                             language={item} 

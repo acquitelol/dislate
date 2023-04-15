@@ -1,5 +1,5 @@
 import { get, set } from 'enmity/api/settings';
-import { FormDivider, FormRow, FormSwitch, ScrollView, Text, View } from 'enmity/components';
+import { FormDivider, FormRow, FormSwitch, ScrollView, Text, View, FormInput } from 'enmity/components';
 import { getByProps } from 'enmity/metro';
 import { React, Storage, Toasts, NavigationNative, Clipboard } from 'enmity/metro/common';
 import { Miscellaneous, Icons, Updater } from '../../common';
@@ -21,8 +21,14 @@ export default ({ settings, manifest, languages, renderPage }: SettingsProps) =>
     return <ScrollView>
         <Credits manifest={manifest} /> 
         <View style={{marginTop: 20}}>
-            <SectionWrapper label='Language'>
+            <SectionWrapper label='Translate'>
                 <View style={styles.container}>
+                    <FormInput 
+                        value={settings.get('deeplApiKey')}
+                        onChange={(value) => settings.set('deeplApiKey', value || undefined)}
+                        title="API Key"
+                        placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx:fx"
+                    />
                     <LanguageRow 
                         manifest={manifest} 
                         renderPage={renderPage} 
@@ -160,6 +166,16 @@ export default ({ settings, manifest, languages, renderPage }: SettingsProps) =>
                         trailing={() => <FormRow.Arrow />}
                         onPress={() => {
                             Router.openURL(manifest.plugin.repo)
+                        }}
+                    />
+                    <FormRow
+                        label="Original Source"
+                        subLabel={`Open the repository of original Dislate externally.`}
+                        onLongPress={() => Miscellaneous.displayToast(`Opens the repository of Dislate on GitHub in an external page to view any source code of the plugin.`, 'tooltip')}
+                        leading={<FormRow.Icon style={styles.icon} source={Icons.Open} />}
+                        trailing={() => <FormRow.Arrow />}
+                        onPress={() => {
+                            Router.openURL(manifest.plugin.originalRepo)
                         }}
                     />
                 </View>

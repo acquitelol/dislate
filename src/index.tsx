@@ -101,8 +101,18 @@ const Dislate: DislatePlugin = {
                : Icons.Revert}
          />}
          onPress={() => {
-            const fromLanguage = get(manifest.name, "DislateLangFrom", "detect") as string;
-            const toLanguage = get(manifest.name, "DislateLangTo", "english") as string;
+            const apiKeyRegExp = /[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}?:fx/
+            const apiKey = get("Dislate-DeepL", "deeplApiKey") as string;
+            if (!apiKey || !apiKeyRegExp.test(apiKey)) {
+               LazyActionSheet.hideActionSheet();
+               Toasts.open({
+                  content:'Invalid API Key',
+                  source:Icons.Failed
+               });
+               return;
+            }
+            const fromLanguage = get(manifest.name, "DislateLangFrom", "Detect") as string;
+            const toLanguage = get(manifest.name, "DislateLangTo", "English") as string;
             const isTranslated = translateType === "Translate";
 
             Translate.string(
@@ -136,7 +146,7 @@ const Dislate: DislatePlugin = {
 
                Toasts.open({
                   content: isTranslated
-                     ? `Modified message to ${Format.string(get(manifest.name, "DislateLangTo", "english") as string)}.`
+                     ? `Modified message to ${Format.string(get(manifest.name, "DislateLangTo", "English") as string)}.`
                      : `Reverted message back to original state.`,
                   source: Icons.Translate
                });

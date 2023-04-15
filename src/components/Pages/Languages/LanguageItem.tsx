@@ -3,7 +3,6 @@ import { FormRow, TouchableOpacity } from 'enmity/components';
 import { Constants, React, Toasts, NavigationNative } from 'enmity/metro/common';
 import { name } from '../../../../manifest.json';
 import ISO from '../../../translate/languages/iso';
-import ISO2 from '../../../translate/languages/iso2'
 import { Format, Icons } from '../../../common';
 import { styles } from './LanguageItem.styles';
 import { LanguageItemProps } from '../../../def';
@@ -13,7 +12,7 @@ const Animated = window.enmity.modules.common.Components.General.Animated;
 
 export default ({ language, languages, selected, setSelected }: LanguageItemProps) => { 
     const Navigation = NavigationNative.useNavigation();
-    const MappedISO2 = Object.assign({}, ...ISO.map((k, i) => ({ [k]: ISO2[i] })));
+    const MappedISO2 = Object.assign({}, ...ISO.map((k) => ( [k] )));
     const animatedButtonScale = React.useRef(new Animated.Value(1)).current;
 
     const onPressIn = (): void => Animated.spring(animatedButtonScale, {
