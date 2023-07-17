@@ -20,7 +20,6 @@ import { ActionSheetInformation, DislatePlugin } from './def';
 
 const [
    ChannelStore,
-   Icon,
    LazyActionSheet,
    I18N,
    ActionSheetFor170,
@@ -28,7 +27,6 @@ const [
    FluxDispatcher
 ] = bulk(
    filters.byProps("getChannel", "getDMFromUserId"),
-   filters.byName("Icon"),
    filters.byProps("openLazy", "hideActionSheet"),
    filters.byProps("Messages"),
    filters.byName("ActionSheet", false),
@@ -95,7 +93,7 @@ const Dislate: DislatePlugin = {
       const mainElement = <FormRow
          key={Miscellaneous.externalPlugins.dislate}
          label={translateType}
-         leading={<Icon 
+         leading={<FormRow.Icon 
             source={translateType === "Translate"
                ? Icons.Translate
                : Icons.Revert}
@@ -183,7 +181,7 @@ const Dislate: DislatePlugin = {
 
          try {
             if (parseInt(version.substring(0, 3)) > 164) {
-               typeof ActionSheetFor170.default === 'function' && 
+               ActionSheetFor170.default && 
                   Patcher.after(ActionSheetFor170, "default", (_, __, res) => {
                      const FinalLocation = findInReactTree(res, r => r.sheetKey)
                      if (FinalLocation?.sheetKey && FinalLocation.sheetKey !== "MessageLongPressActionSheet") return;
@@ -193,7 +191,7 @@ const Dislate: DislatePlugin = {
                      }) 
                   })
             } else {
-               typeof ActionSheetFor164.default === 'function' && 
+               ActionSheetFor164.default &&
                   Patcher.after(ActionSheetFor164, "default", (_, [{ message }], res) => { 
                      this.patchActionSheet({ data: { message, res } })
                   });
